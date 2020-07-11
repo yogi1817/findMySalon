@@ -8,10 +8,17 @@ server:
   
 spring: 
   datasource:
-    url: jdbc:postgresql://192.168.56.1:5432/postgres
-    username: spjadmin
-    password: spjsecret
-    platform: postgres
+    driver-class-name: org.postgresql.Driver
+    maxActive: 10
+    maxIdle: 5
+    minIdle: 2
+    initialSize: 5
+    removeAbandoned: true
+    url: postgres://uvggimrrnrwdtl:d03a64d1ad3a7e1237a722931c466fca6e2857005421c7ac784dc4095e62d058@ec2-54-234-44-238.compute-1.amazonaws.com:5432/d8splc8qben1is
+    ##url: jdbc:postgresql://192.168.56.1:5432/postgres
+    ##username: spjadmin
+    ##password: spjsecret
+    ##platform: postgres
   jpa:
     database: POSTGRESQL
     show-sql: true
