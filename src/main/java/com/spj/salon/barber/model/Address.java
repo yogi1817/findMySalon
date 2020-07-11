@@ -1,0 +1,171 @@
+package com.spj.salon.barber.model;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+/**
+ * 
+ * @author Yogesh Sharma
+ *
+ */
+@Entity
+@Table(name = "address", schema = "usa", uniqueConstraints = @UniqueConstraint(columnNames = "address_id"))
+public class Address implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5833513921844126261L;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "address_id", unique = true, nullable = false, columnDefinition = "serial")
+	private Long addressId;
+	
+	private String addressLineOne;
+	private String addressLineTwo;
+	private String city;
+	private String state;
+	private String zip;
+	private String country;
+	private Date createDate;
+	private Date modifyDate;
+	
+	@Column(name = "mapping_id")
+	private Long mappingId;
+	/**
+	 * @return the addressId
+	 */
+	public Long getAddressId() {
+		return addressId;
+	}
+	/**
+	 * @param addressId the addressId to set
+	 */
+	public void setAddressId(Long addressId) {
+		this.addressId = addressId;
+	}
+	
+	/**
+	 * @return the addressLineOne
+	 */
+	public String getAddressLineOne() {
+		return addressLineOne;
+	}
+	/**
+	 * @param addressLineOne the addressLineOne to set
+	 */
+	public void setAddressLineOne(String addressLineOne) {
+		this.addressLineOne = addressLineOne;
+	}
+	/**
+	 * @return the addressLineTwo
+	 */
+	public String getAddressLineTwo() {
+		return addressLineTwo;
+	}
+	/**
+	 * @param addressLineTwo the addressLineTwo to set
+	 */
+	public void setAddressLineTwo(String addressLineTwo) {
+		this.addressLineTwo = addressLineTwo;
+	}
+	/**
+	 * @return the city
+	 */
+	public String getCity() {
+		return city;
+	}
+	/**
+	 * @param city the city to set
+	 */
+	public void setCity(String city) {
+		this.city = city;
+	}
+	/**
+	 * @return the state
+	 */
+	public String getState() {
+		return state;
+	}
+	/**
+	 * @param state the state to set
+	 */
+	public void setState(String state) {
+		this.state = state;
+	}
+	/**
+	 * @return the zip
+	 */
+	public String getZip() {
+		return zip;
+	}
+	/**
+	 * @param zip the zip to set
+	 */
+	public void setZip(String zip) {
+		this.zip = zip;
+	}
+	/**
+	 * @return the country
+	 */
+	public String getCountry() {
+		return country;
+	}
+	/**
+	 * @param country the country to set
+	 */
+	public void setCountry(String country) {
+		this.country = country;
+	}
+	/**
+	 * @return the createDate
+	 */
+	public Date getCreateDate() {
+		return createDate;
+	}
+	/**
+	 * @param createDate the createDate to set
+	 */
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+	/**
+	 * @return the modifyDate
+	 */
+	public Date getModifyDate() {
+		return modifyDate;
+	}
+	/**
+	 * @param modifyDate the modifyDate to set
+	 */
+	public void setModifyDate(Date modifyDate) {
+		this.modifyDate = modifyDate;
+	}
+	/**
+	 * @return the mappingId
+	 */
+	public Long getMappingId() {
+		return mappingId;
+	}
+	/**
+	 * @param mappingId the mappingId to set
+	 */
+	public void setMappingId(Long mappingId) {
+		this.mappingId = mappingId;
+	}
+	@Override
+	public String toString() {
+		return "Address [addressId=" + addressId + ", addressLineOne=" + addressLineOne + ", addressLineTwo="
+				+ addressLineTwo + ", city=" + city + ", state=" + state + ", zip=" + zip + ", country=" + country
+				+ ", createDate=" + createDate + ", modifyDate=" + modifyDate + ", mappingId=" + mappingId + "]";
+	}
+}

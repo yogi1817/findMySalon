@@ -1,0 +1,38 @@
+plugins {
+	id 'org.springframework.boot' version '2.2.2.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+}
+
+group = 'com.spj.find.salon'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	set('springCloudVersion', "Hoxton.SR4")
+}
+
+dependencies {
+	compile 'org.springframework.boot:spring-boot-starter-web'
+	compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+	compile 'org.postgresql:postgresql:42.2.6'
+	compile 'org.springframework.boot:spring-boot-starter-actuator'
+	//compile 'org.springframework.cloud:spring-cloud-starter-config'
+	//compile 'org.springframework.cloud:spring-cloud-starter-oauth2'
+	//compile 'org.springframework.cloud:spring-cloud-starter-security'
+	//compile 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+	//compile 'org.springframework.security:spring-security-jwt:1.1.0.RELEASE'
+
+	
+	testCompile('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+}
+
+test {
+	useJUnitPlatform()
+}
