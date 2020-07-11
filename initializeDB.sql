@@ -69,7 +69,7 @@ create table usa.daily_barbers(
 	daily_id BIGSERIAL PRIMARY KEY,
 	barbers_description varchar(255),
 	barbers_count int8,
-	barbers_mapping_id int8 REFERENCES usa.barber(barber_id),
+	barber_mapping_id int8 REFERENCES usa.barber(barber_id),
 	create_timestamp TIMESTAMP);
 	
 create table usa.check_in(
