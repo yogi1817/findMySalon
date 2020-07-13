@@ -41,8 +41,8 @@ create table usa.barber_services(
 
 create table usa.address(
 	address_id BIGSERIAL PRIMARY KEY,
-	address_line_1 varchar(255),
-	address_line_2 varchar(255),
+	address_line_one varchar(255),
+	address_line_two varchar(255),
 	city varchar(255),
 	state varchar(255),
 	zip varchar(255),
