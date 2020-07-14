@@ -14,11 +14,12 @@ spring:
     minIdle: 2
     initialSize: 5
     removeAbandoned: true
-    url: postgres://uvggimrrnrwdtl:d03a64d1ad3a7e1237a722931c466fca6e2857005421c7ac784dc4095e62d058@ec2-54-234-44-238.compute-1.amazonaws.com:5432/d8splc8qben1is
-    ##url: jdbc:postgresql://192.168.56.1:5432/postgres
+    ##url: postgres://uvggimrrnrwdtl:d03a64d1ad3a7e1237a722931c466fca6e2857005421c7ac784dc4095e62d058@ec2-54-234-44-238.compute-1.amazonaws.com:5432/d8splc8qben1is
+    url: jdbc:postgresql://localhost:5432/postgres
     ##username: spjadmin
-    ##password: spjsecret
-    ##platform: postgres
+    username: postgres
+    password: spjsecret
+    platform: postgres
   jpa:
     database: POSTGRESQL
     show-sql: true
@@ -29,7 +30,16 @@ spring:
       hibernate.format_sql: true
       hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
       hibernate.jdbc.lob.non_contextual_creation: true
+
 management:
   endpoint:
     health:
       show-details: always
+
+logging:
+  level:
+    com.spg.salon: DEBUG
+
+spj:
+  variables:
+    googleapikey: 

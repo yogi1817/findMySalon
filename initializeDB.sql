@@ -49,8 +49,10 @@ create table usa.address(
 	country varchar(255),
 	create_date DATE,
 	modify_date DATE,
+	longitude decimal,
+	latitude decimal,
 	mapping_id int8 not null);
-		
+
 create table usa.facilities(
 	facility_id BIGSERIAL PRIMARY KEY REFERENCES usa.barber(barber_id),
 	facility_name varchar(255),

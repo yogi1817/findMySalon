@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.springframework.util.StringUtils;
+
 /**
  * 
  * @author Yogesh Sharma
@@ -38,6 +40,8 @@ public class Address implements Serializable{
 	private String country;
 	private Date createDate;
 	private Date modifyDate;
+	private double longitude;
+	private double latitude;
 	
 	@Column(name = "mapping_id")
 	private Long mappingId;
@@ -162,10 +166,46 @@ public class Address implements Serializable{
 	public void setMappingId(Long mappingId) {
 		this.mappingId = mappingId;
 	}
+	
+	/**
+	 * @return the longitude
+	 */
+	public double getLongitude() {
+		return longitude;
+	}
+	/**
+	 * @param longitude the longitude to set
+	 */
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
+	}
+	/**
+	 * @return the latitude
+	 */
+	public double getLatitude() {
+		return latitude;
+	}
+	/**
+	 * @param latitude the latitude to set
+	 */
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+	
 	@Override
 	public String toString() {
 		return "Address [addressId=" + addressId + ", addressLineOne=" + addressLineOne + ", addressLineTwo="
 				+ addressLineTwo + ", city=" + city + ", state=" + state + ", zip=" + zip + ", country=" + country
-				+ ", createDate=" + createDate + ", modifyDate=" + modifyDate + ", mappingId=" + mappingId + "]";
+				+ ", createDate=" + createDate + ", modifyDate=" + modifyDate + ", longitude=" + longitude
+				+ ", latitude=" + latitude + ", mappingId=" + mappingId + "]";
+	}
+	
+	public String getAddress() {
+		StringBuilder address = new StringBuilder();
+		address.append(addressLineOne);
+		address.append(StringUtils.isEmpty(addressLineTwo)?"":" "+addressLineTwo);
+		address.append(" "+ city);
+		address.append(" "+ state);
+		return address.toString();
 	}
 }
