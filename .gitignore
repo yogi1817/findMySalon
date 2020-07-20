@@ -33,4 +33,3 @@ out/
 *.class
 bin
 logs
-src/main/resources/application.yml
