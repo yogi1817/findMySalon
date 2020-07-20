@@ -43,8 +43,9 @@ public class GoogleGeoCodingClient{
 		if("localhost".equals(UserContextHolder.getContext().getHost())) {
 			logger.debug("Inside If in  GoogleGeoCodingClient");
 			geoCodingUrl+="&key="+serviceConfig.getGoogleApiKey();
+			logger.debug("geoCodingUrl --> {}", geoCodingUrl);
 		}else {
-			logger.debug("Inside If in  GoogleGeoCodingClient");
+			logger.debug("Inside else in  GoogleGeoCodingClient");
 			geoCodingUrl+="&sensor=false";
 			logger.debug("geoCodingUrl --> {}", geoCodingUrl);
 			URL proxyUrl = new URL(System.getenv("QUOTAGUARD_URL"));
