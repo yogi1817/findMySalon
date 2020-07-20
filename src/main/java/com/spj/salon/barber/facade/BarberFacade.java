@@ -10,11 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.yaml.snakeyaml.util.UriEncoder;
 
-import com.google.maps.GeoApiContext;
-import com.google.maps.GeocodingApi;
-import com.google.maps.errors.ApiException;
 import com.google.maps.model.GeocodingResult;
 import com.spj.salon.barber.model.Address;
 import com.spj.salon.barber.model.Barber;
@@ -22,6 +18,7 @@ import com.spj.salon.barber.model.BarberCalendar;
 import com.spj.salon.barber.model.BarberServicesMapping;
 import com.spj.salon.barber.model.DailyBarbers;
 import com.spj.salon.barber.repository.BarberRepository;
+import com.spj.salon.client.GoogleGeoCodingClient;
 import com.spj.salon.services.model.Services;
 import com.spj.salon.services.repository.ServicesRepository;
 import com.spj.salon.utils.DateUtils;
@@ -43,7 +40,7 @@ public class BarberFacade implements IBarberFacade {
 	private ServicesRepository serviceRepo;
 	
 	@Autowired
-	private GeoApiContext context;
+	private GoogleGeoCodingClient googleGeoCodingClient;
 	
 	@Override
 	public boolean registerBarber(Barber barber) {
@@ -153,16 +150,18 @@ public class BarberFacade implements IBarberFacade {
 	@Override
 	public boolean addBarberAddress(long barberId, Address address) {
 		Optional<Barber> barberOpt = barberRepository.findById(barberId);
-		GeocodingResult[] results = null;
 		try {
-			results =  GeocodingApi.geocode(context,
-				    UriEncoder.encode(address.getAddress())).await();
-		} catch (ApiException | InterruptedException | IOException e1) {
+			/*GeocodingResult[] results =  GeocodingApi.geocode(context,
+				    address.getAddress()).await();*/
+			
+			GeocodingResult[] results = googleGeoCodingClient.findGeocodingResult(address.getAddress());
+			
+			validateAddress(address, barberId, results);
+		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
-		validateAddress(address, barberId, results);
 		if(barberOpt.isPresent()) {
 			Barber barber = barberOpt.get();
 			Set<Address> barberAddresses = barber.getAddressSet();
@@ -175,11 +174,18 @@ public class BarberFacade implements IBarberFacade {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param address
+	 * @param barberId
+	 * @param results
+	 */
 	private void validateAddress(Address address, Long barberId, GeocodingResult[] results) {
 		address.setMappingId(barberId);
 		address.setCreateDate(DateUtils.getTodaysDate());
 		address.setModifyDate(DateUtils.getTodaysDate());
 		logger.debug("longitude "+ results[0].geometry.location.lng);
+		logger.debug("latitude "+ results[0].geometry.location.lat);
 		address.setLongitude(results[0].geometry.location.lng);
 		address.setLatitude(results[0].geometry.location.lat);
 	}

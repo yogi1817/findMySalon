@@ -42,7 +42,7 @@ public class BarberServicesMapping implements Serializable{
 	private int	timeToPerform;
 	private Date createDate;
 	
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "service_id", referencedColumnName = "service_id", insertable = false, updatable = false)
 	private SalonServices salonServices;
 

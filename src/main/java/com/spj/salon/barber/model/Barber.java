@@ -21,6 +21,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.spj.salon.checkin.model.CheckIn;
 
 /**
@@ -30,6 +31,7 @@ import com.spj.salon.checkin.model.CheckIn;
  */
 @Entity
 @Table(name = "barber", schema = "usa", uniqueConstraints = @UniqueConstraint(columnNames = "barber_id"))
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "addressSet"})
 public class Barber implements Serializable{
 
 	/**
@@ -45,6 +47,7 @@ public class Barber implements Serializable{
 	private String firstName;
 	private String lastName;
 	private String middleName;
+	private String storeName;
 	private String email;
 	private String phone;
 	private String loginId;
@@ -52,24 +55,24 @@ public class Barber implements Serializable{
 	private Date createDate;
 	private Date modifyDate;
 	
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "barber_mapping_id", referencedColumnName = "barber_id")
 	@OrderBy("createTimestamp DESC")
 	private List<DailyBarbers> dailyBarberSet;
 	
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "barber_id", referencedColumnName = "barber_id")
 	private Set<BarberServicesMapping> barberServicesMappingSet;
 	
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "barber_mapping_id", referencedColumnName = "barber_id")
 	private Set<BarberCalendar> barberCalendarSet;
 	
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "barber_mapping_id", referencedColumnName = "barber_id")
 	private Set<CheckIn> checkInSet;
 	
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "mapping_id", referencedColumnName = "barber_id")
 	private Set<Address> addressSet;
 	
@@ -273,13 +276,25 @@ public class Barber implements Serializable{
 	public void setAddressSet(Set<Address> addressSet) {
 		this.addressSet = addressSet;
 	}
+	/**
+	 * @return the storeName
+	 */
+	public String getStoreName() {
+		return storeName;
+	}
+	/**
+	 * @param storeName the storeName to set
+	 */
+	public void setStoreName(String storeName) {
+		this.storeName = storeName;
+	}
 	@Override
 	public String toString() {
 		return "Barber [barberId=" + barberId + ", firstName=" + firstName + ", lastName=" + lastName + ", middleName="
-				+ middleName + ", email=" + email + ", phone=" + phone + ", loginId=" + loginId + ", password="
-				+ password + ", createDate=" + createDate + ", modifyDate=" + modifyDate + ", dailyBarberSet="
-				+ dailyBarberSet + ", barberServicesMappingSet=" + barberServicesMappingSet + ", barberCalendarSet="
-				+ barberCalendarSet + ", checkInSet=" + checkInSet + ", addressSet=" + addressSet + ", authCode="
-				+ authCode + "]";
+				+ middleName + ", storeName=" + storeName + ", email=" + email + ", phone=" + phone + ", loginId="
+				+ loginId + ", password=" + password + ", createDate=" + createDate + ", modifyDate=" + modifyDate
+				+ ", dailyBarberSet=" + dailyBarberSet + ", barberServicesMappingSet=" + barberServicesMappingSet
+				+ ", barberCalendarSet=" + barberCalendarSet + ", checkInSet=" + checkInSet + ", addressSet="
+				+ addressSet + ", authCode=" + authCode + "]";
 	}
 }

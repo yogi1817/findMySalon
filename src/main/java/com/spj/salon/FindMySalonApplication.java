@@ -3,8 +3,6 @@ package com.spj.salon;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.PreDestroy;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,7 +14,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestTemplate;
 
-import com.google.maps.GeoApiContext;
 import com.spj.salon.config.ServiceConfig;
 import com.spj.salon.utils.UserContextInterceptor;
 
@@ -55,7 +52,8 @@ public class FindMySalonApplication {
 		return template;
 	}
 	
-	@Bean
+	//Uncomment below code if you want to use goofle api for location
+	/*@Bean
 	public GeoApiContext getGeoApiContext() {
 		return new GeoApiContext.Builder()
 			    .apiKey(serviceConfig.getGoogleApiKey())
@@ -65,6 +63,6 @@ public class FindMySalonApplication {
 	@PreDestroy
     public void preDestroy() {
 		getGeoApiContext().shutdown();
-    }
+    }*/
 	
 }

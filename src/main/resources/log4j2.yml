@@ -27,7 +27,13 @@ Configuration:
         AppenderRef:
           - ref: LogToConsole
           - ref: LogToRollingFile
-
+      - name: org.springframework
+        level: error
+        additivity: false
+        AppenderRef:
+          - ref: LogToConsole
+          - ref: LogToRollingFile
+          
     Root:
       level: error
       AppenderRef:

@@ -13,11 +13,14 @@ public class UserContext {
     public static String AUTH_TOKEN     = "Authorization";
     public static String USER_ID        = "tmx-user-id";
     public static String ORG_ID         = "tmx-org-id";
+    public static String HOST			= "host";
 	
     private String correlationId= new String();
     private String authToken= new String();
     private String userId = new String();
     private String orgId = new String();
+    private String host = new String();
+    
 	/**
 	 * @return the correlationId
 	 */
@@ -65,5 +68,17 @@ public class UserContext {
 	 */
 	public void setOrgId(String orgId) {
 		this.orgId = orgId;
+	}
+	/**
+	 * @return the host
+	 */
+	public String getHost() {
+		return host;
+	}
+	/**
+	 * @param host the host to set
+	 */
+	public void setHost(String host) {
+		this.host = host;
 	} 
 }

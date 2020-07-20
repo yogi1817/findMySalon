@@ -5,6 +5,7 @@ create table usa.barber(
 	first_name varchar(255),
 	last_name varchar(255),
 	middle_name varchar(255),
+	store_name varchar(255),
 	email varchar(255),
 	phone varchar(255),
 	login_id varchar(255),
@@ -49,8 +50,8 @@ create table usa.address(
 	country varchar(255),
 	create_date DATE,
 	modify_date DATE,
-	longitude decimal,
-	latitude decimal,
+	longitude DOUBLE PRECISION,
+	latitude DOUBLE PRECISION,
 	mapping_id int8 not null);
 
 create table usa.facilities(
@@ -100,3 +101,10 @@ create table usa.barber_calendar(
 	calendar_day varchar(255),
 	calendar_date date,
 	modify_date date);
+	
+create table usa.zip_code_lookup(
+	id  BIGSERIAL PRIMARY KEY,
+	zip_code bigint unique,
+	longitude DOUBLE PRECISION,
+	latitude DOUBLE PRECISION,
+	create_date date);

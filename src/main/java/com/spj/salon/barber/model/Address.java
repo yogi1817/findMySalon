@@ -5,9 +5,12 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -42,6 +45,10 @@ public class Address implements Serializable{
 	private Date modifyDate;
 	private double longitude;
 	private double latitude;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="mapping_Id", referencedColumnName = "barber_id", insertable = false, updatable = false) 
+    private Barber barber;
 	
 	@Column(name = "mapping_id")
 	private Long mappingId;
@@ -200,12 +207,31 @@ public class Address implements Serializable{
 				+ ", latitude=" + latitude + ", mappingId=" + mappingId + "]";
 	}
 	
+	/**
+	 * @return the barber
+	 */
+	public Barber getBarber() {
+		return barber;
+	}
+	
+	/**
+	 * @param barber the barber to set
+	 */
+	public void setBarber(Barber barber) {
+		this.barber = barber;
+	}
+    
+	/**
+	 * 
+	 * @return
+	 */
 	public String getAddress() {
 		StringBuilder address = new StringBuilder();
 		address.append(addressLineOne);
-		address.append(StringUtils.isEmpty(addressLineTwo)?"":" "+addressLineTwo);
-		address.append(" "+ city);
-		address.append(" "+ state);
+		address.append(StringUtils.isEmpty(addressLineTwo)?"":"+"+addressLineTwo);
+		address.append("+"+ city);
+		address.append("+"+ state);
+		address.append("+"+ zip);
 		return address.toString();
 	}
 }

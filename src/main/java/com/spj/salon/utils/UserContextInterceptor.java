@@ -34,7 +34,7 @@ public class UserContextInterceptor implements ClientHttpRequestInterceptor {
           .lines()
           .collect(Collectors.joining("\n"));
         logger.debug("Response body: {}", responseBody);
-        
+             
         return response;
 	}
 }

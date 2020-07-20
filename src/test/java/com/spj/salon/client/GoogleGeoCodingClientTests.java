@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.spj.salon.barber.model.Address;
 
 @SpringBootTest
-public class RestTemplateClientTests {
+public class GoogleGeoCodingClientTests {
 
 	/*
 	 * @Autowired private RestTemplateClient client;
@@ -25,11 +25,6 @@ public class RestTemplateClientTests {
 		address.setState("PA");
 		
 		Map<String, Double> longitudeMap = new HashMap<>();
-		/*
-		 * try { longitudeMap = client.getLongitideLatitude(address); } catch
-		 * (UnsupportedEncodingException e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); }
-		 */
 		
 		Assertions.assertThatObject(longitudeMap.containsKey("longitude"));
 	}
