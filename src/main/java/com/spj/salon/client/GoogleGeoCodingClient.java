@@ -9,6 +9,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
@@ -32,6 +34,8 @@ public class GoogleGeoCodingClient{
 	@Autowired
 	private Gson gson;
 	
+	private static final Logger logger = LoggerFactory.getLogger(GoogleGeoCodingClient.class.getName());
+	
 	public GeocodingResult[] findGeocodingResult(String addessOrZip) throws IOException {
 		
 		String geoCodingUrl = "https://maps.googleapis.com/maps/api/geocode/json?address="+
@@ -40,11 +44,13 @@ public class GoogleGeoCodingClient{
 			geoCodingUrl+="&key="+serviceConfig.getGoogleApiKey();
 		}else {
 			geoCodingUrl+="&sensor=false";
+			logger.debug("geoCodingUrl --> {}", geoCodingUrl);
 			URL proxyUrl = new URL(System.getenv("QUOTAGUARD_URL"));
 	        String userInfo = proxyUrl.getUserInfo();
 	        String user = userInfo.substring(0, userInfo.indexOf(':'));
 	        String password = userInfo.substring(userInfo.indexOf(':') + 1);
 
+	        logger.debug("user --> {}",user);
 	        System.setProperty("http.proxyHost", proxyUrl.getHost());
 	        System.setProperty("http.proxyPort", Integer.toString(proxyUrl.getPort()));
 
@@ -62,6 +68,7 @@ public class GoogleGeoCodingClient{
         String responseBody = new BufferedReader(in)
                 .lines()
                 .collect(Collectors.joining("\n"));
+        logger.debug("responseBody -->{}", responseBody);
 		Response response = gson.fromJson(responseBody , Response.class);
 		GeocodingResult[] results = response.results;
 		
