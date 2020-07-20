@@ -41,11 +41,14 @@ public class GoogleGeoCodingClient{
 		String geoCodingUrl = "https://maps.googleapis.com/maps/api/geocode/json?address="+
 				addessOrZip;
 		if("localhost".equals(UserContextHolder.getContext().getHost())) {
+			logger.debug("Inside If in  GoogleGeoCodingClient");
 			geoCodingUrl+="&key="+serviceConfig.getGoogleApiKey();
 		}else {
+			logger.debug("Inside If in  GoogleGeoCodingClient");
 			geoCodingUrl+="&sensor=false";
 			logger.debug("geoCodingUrl --> {}", geoCodingUrl);
 			URL proxyUrl = new URL(System.getenv("QUOTAGUARD_URL"));
+			logger.debug("proxyUrl --> {}",proxyUrl);
 	        String userInfo = proxyUrl.getUserInfo();
 	        String user = userInfo.substring(0, userInfo.indexOf(':'));
 	        String password = userInfo.substring(userInfo.indexOf(':') + 1);
@@ -53,7 +56,8 @@ public class GoogleGeoCodingClient{
 	        logger.debug("user --> {}",user);
 	        System.setProperty("http.proxyHost", proxyUrl.getHost());
 	        System.setProperty("http.proxyPort", Integer.toString(proxyUrl.getPort()));
-
+	        logger.debug("proxyUrl.getHost() --> {}",proxyUrl.getHost());
+	        logger.debug("proxyUrl.getPort() --> {}",proxyUrl.getPort());
 	        Authenticator.setDefault(new Authenticator() {
 	                protected PasswordAuthentication getPasswordAuthentication() {
 	                    return new PasswordAuthentication(user, password.toCharArray());
