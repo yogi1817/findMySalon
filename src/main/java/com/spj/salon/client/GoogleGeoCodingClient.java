@@ -40,7 +40,7 @@ public class GoogleGeoCodingClient{
 			geoCodingUrl+="&key="+serviceConfig.getGoogleApiKey();
 		}else {
 			geoCodingUrl+="&sensor=false";
-			URL proxyUrl = new URL(System.getenv("QUOTAGUARDSTATIC_URL"));
+			URL proxyUrl = new URL(System.getenv("QUOTAGUARD_URL"));
 	        String userInfo = proxyUrl.getUserInfo();
 	        String user = userInfo.substring(0, userInfo.indexOf(':'));
 	        String password = userInfo.substring(userInfo.indexOf(':') + 1);

@@ -1,6 +1,7 @@
 package com.spj.salon.barber.facade;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -154,7 +155,7 @@ public class BarberFacade implements IBarberFacade {
 			/*GeocodingResult[] results =  GeocodingApi.geocode(context,
 				    address.getAddress()).await();*/
 			
-			GeocodingResult[] results = googleGeoCodingClient.findGeocodingResult(address.getAddress());
+			GeocodingResult[] results = googleGeoCodingClient.findGeocodingResult(URLEncoder.encode(address.getAddress(), "UTF-8"));
 			
 			validateAddress(address, barberId, results);
 		} catch (IOException e1) {

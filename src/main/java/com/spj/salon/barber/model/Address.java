@@ -228,10 +228,10 @@ public class Address implements Serializable{
 	public String getAddress() {
 		StringBuilder address = new StringBuilder();
 		address.append(addressLineOne);
-		address.append(StringUtils.isEmpty(addressLineTwo)?"":"+"+addressLineTwo);
-		address.append("+"+ city);
-		address.append("+"+ state);
-		address.append("+"+ zip);
+		address.append(StringUtils.isEmpty(addressLineTwo)?"":" "+addressLineTwo);
+		address.append(" "+ city);
+		address.append(" "+ state);
+		address.append(" "+ zip);
 		return address.toString();
 	}
 }

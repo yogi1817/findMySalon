@@ -1,5 +1,7 @@
 package com.spj.salon.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,6 +19,7 @@ import com.spj.salon.barber.model.Address;
 import com.spj.salon.barber.model.Barber;
 import com.spj.salon.barber.model.BarberCalendar;
 import com.spj.salon.barber.model.DailyBarbers;
+import com.spj.salon.utils.UserContextHolder;
 
 /**
  * 
@@ -62,7 +66,8 @@ public class BarberController {
 	@PostMapping(value = "{barberId}/address",
 			consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> addBarberAddress(@PathVariable long barberId,
-										@RequestBody Address address){
+										@RequestBody Address address, @RequestHeader Map<String,String> headers){
+		UserContextHolder.getContext().setHost(headers.get("hostname"));
 		return new ResponseEntity<>(barberFacade.addBarberAddress(barberId, address), HttpStatus.OK);
 	}
 }

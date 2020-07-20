@@ -139,6 +139,7 @@ public class CheckInFacade implements ICheckinFacade {
 		Optional<Barber> barberOpt = barberRepository.findById(barberId);
 		if(barberOpt.isPresent()) {
 			Barber barber = barberOpt.get();
+			//TODO: Find current wait time
 			Set<CheckIn> checkInSet = barber.getCheckInSet();
 			CheckIn checkIn = new CheckIn(barberId, userId, Integer.parseInt(time));
 			checkInSet.add(checkIn);
