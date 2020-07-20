@@ -3,6 +3,8 @@ package com.spj.salon.controller;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.ServiceUnavailableException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -50,7 +52,7 @@ public class CheckInController {
 	
 	@GetMapping(value = "barbers/zip/{zipCode}/distance/{distance}")
 	public ResponseEntity<List<BarberAddressDTO>> findBarbersAtZip(@PathVariable String zipCode, 
-						@PathVariable String distance, @RequestHeader Map<String,String> headers) {
+						@PathVariable String distance, @RequestHeader Map<String,String> headers) throws ServiceUnavailableException {
 		UserContextHolder.getContext().setHost(headers.get("hostname"));
 		return new ResponseEntity<>(checkInFacade.findBarbersAtZip(zipCode, distance), HttpStatus.OK);
 	}

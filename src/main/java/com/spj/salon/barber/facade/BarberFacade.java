@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.naming.ServiceUnavailableException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -149,7 +151,7 @@ public class BarberFacade implements IBarberFacade {
 	}
 
 	@Override
-	public boolean addBarberAddress(long barberId, Address address) {
+	public boolean addBarberAddress(long barberId, Address address) throws ServiceUnavailableException {
 		Optional<Barber> barberOpt = barberRepository.findById(barberId);
 		try {
 			/*GeocodingResult[] results =  GeocodingApi.geocode(context,
@@ -159,8 +161,8 @@ public class BarberFacade implements IBarberFacade {
 			
 			validateAddress(address, barberId, results);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
+			throw new ServiceUnavailableException("Google api not available"); 
 		}
 		
 		if(barberOpt.isPresent()) {

@@ -2,6 +2,8 @@ package com.spj.salon.controller;
 
 import java.util.Map;
 
+import javax.naming.ServiceUnavailableException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -66,7 +68,7 @@ public class BarberController {
 	@PostMapping(value = "{barberId}/address",
 			consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> addBarberAddress(@PathVariable long barberId,
-										@RequestBody Address address, @RequestHeader Map<String,String> headers){
+										@RequestBody Address address, @RequestHeader Map<String,String> headers) throws ServiceUnavailableException{
 		UserContextHolder.getContext().setHost(headers.get("hostname"));
 		return new ResponseEntity<>(barberFacade.addBarberAddress(barberId, address), HttpStatus.OK);
 	}

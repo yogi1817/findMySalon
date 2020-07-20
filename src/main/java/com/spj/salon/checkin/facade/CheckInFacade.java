@@ -10,6 +10,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+import javax.naming.ServiceUnavailableException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -165,10 +167,11 @@ public class CheckInFacade implements ICheckinFacade {
 	}
 
 	/**
+	 * @throws ServiceUnavailableException 
 	 * 
 	 */
 	@Override
-	public List<BarberAddressDTO> findBarbersAtZip(String zipCode, String distance) {
+	public List<BarberAddressDTO> findBarbersAtZip(String zipCode, String distance) throws ServiceUnavailableException {
 		double longitude = 0;
 		double latitude = 0;
 		
@@ -192,8 +195,8 @@ public class CheckInFacade implements ICheckinFacade {
 						saveZipCode(zipCode, results);
 					});
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					throw new ServiceUnavailableException("Google service unavailable");
 				}
 						
 				logger.debug("longitude "+ longitude);

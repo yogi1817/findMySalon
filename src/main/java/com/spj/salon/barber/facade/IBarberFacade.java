@@ -1,5 +1,7 @@
 package com.spj.salon.barber.facade;
 
+import javax.naming.ServiceUnavailableException;
+
 import com.spj.salon.barber.model.Address;
 import com.spj.salon.barber.model.Barber;
 import com.spj.salon.barber.model.BarberCalendar;
@@ -20,5 +22,5 @@ public interface IBarberFacade {
 
 	public boolean addBarberCalendar(long barberId, BarberCalendar barberCalendar);
 
-	public boolean addBarberAddress(long barberId, Address address);
+	public boolean addBarberAddress(long barberId, Address address) throws ServiceUnavailableException ;
 }
