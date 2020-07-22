@@ -55,6 +55,10 @@ public class Barber implements Serializable{
 	private Date createDate;
 	private Date modifyDate;
 	
+	@OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	@JoinColumn(name = "mapping_id", referencedColumnName = "barber_id")
+	private List<Authorities> authorities;
+	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "barber_mapping_id", referencedColumnName = "barber_id")
 	@OrderBy("createTimestamp DESC")
@@ -288,13 +292,27 @@ public class Barber implements Serializable{
 	public void setStoreName(String storeName) {
 		this.storeName = storeName;
 	}
+
+	/**
+	 * @return the authorities
+	 */
+	public List<Authorities> getAuthorities() {
+		return authorities==null? new ArrayList<>() : authorities;
+	}
+	/**
+	 * @param authorities the authorities to set
+	 */
+	public void setAuthorities(List<Authorities> authorities) {
+		this.authorities = authorities;
+	}
+	
 	@Override
 	public String toString() {
 		return "Barber [barberId=" + barberId + ", firstName=" + firstName + ", lastName=" + lastName + ", middleName="
 				+ middleName + ", storeName=" + storeName + ", email=" + email + ", phone=" + phone + ", loginId="
 				+ loginId + ", password=" + password + ", createDate=" + createDate + ", modifyDate=" + modifyDate
-				+ ", dailyBarberSet=" + dailyBarberSet + ", barberServicesMappingSet=" + barberServicesMappingSet
-				+ ", barberCalendarSet=" + barberCalendarSet + ", checkInSet=" + checkInSet + ", addressSet="
-				+ addressSet + ", authCode=" + authCode + "]";
+				+ ", dailyBarberSet=" + dailyBarberSet + ", barberServicesMappingSet="
+				+ barberServicesMappingSet + ", barberCalendarSet=" + barberCalendarSet + ", checkInSet=" + checkInSet
+				+ ", addressSet=" + addressSet + ", authCode=" + authCode + "]";
 	}
 }

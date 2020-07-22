@@ -14,7 +14,7 @@ import com.spj.salon.barber.model.DailyBarbers;
  */
 public interface IBarberFacade {
 
-	public boolean registerBarber(Barber barber);
+	public String registerBarber(Barber barber);
 
 	public boolean addBarbersCountToday(Long id, DailyBarbers dailyBarbers);
 

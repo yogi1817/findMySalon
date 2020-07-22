@@ -14,6 +14,8 @@ import com.spj.salon.barber.model.Barber;
 @Repository
 public interface BarberRepository extends JpaRepository<Barber, Long>{
 
-	long countByEmail(String email);
-	long countByPhone(String phone);
+	public long countByEmail(String email);
+	public long countByLoginId(String loginId);
+	public long countByPhone(String phone);
+	public Barber findByLoginId(String loginId);
 }

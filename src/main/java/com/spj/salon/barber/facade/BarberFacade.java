@@ -11,15 +11,18 @@ import javax.naming.ServiceUnavailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.google.maps.model.GeocodingResult;
 import com.spj.salon.barber.model.Address;
+import com.spj.salon.barber.model.Authorities;
 import com.spj.salon.barber.model.Barber;
 import com.spj.salon.barber.model.BarberCalendar;
 import com.spj.salon.barber.model.BarberServicesMapping;
 import com.spj.salon.barber.model.DailyBarbers;
+import com.spj.salon.barber.repository.AuthoritiesRepository;
 import com.spj.salon.barber.repository.BarberRepository;
 import com.spj.salon.client.GoogleGeoCodingClient;
 import com.spj.salon.services.model.Services;
@@ -35,44 +38,63 @@ import com.spj.salon.utils.DateUtils;
 public class BarberFacade implements IBarberFacade {
 
 	private static final Logger logger = LoggerFactory.getLogger(BarberFacade.class.getName());
-	
+
 	@Autowired
 	private BarberRepository barberRepository;
-	
+
 	@Autowired
 	private ServicesRepository serviceRepo;
-	
+
 	@Autowired
 	private GoogleGeoCodingClient googleGeoCodingClient;
+
+	@Autowired
+	private AuthoritiesRepository authRepo;
 	
 	@Override
-	public boolean registerBarber(Barber barber) {
-		if(validateBarber(barber) && barberRepository.countByEmail(barber.getEmail())==0){
-			barberRepository.saveAndFlush(barber);
-			return true;
+	public String registerBarber(Barber barber) {
+		if (validateBarber(barber) && barberRepository.countByLoginId(barber.getLoginId()) == 0) {
+			barberRepository.save(barber);
+			addAuthority(barber);
+			return "Registered";
 		}
+
+		throw new DuplicateKeyException("User already Exists");
+	}
+
+	/**
+	 * 
+	 * @param barber
+	 * @return
+	 */
+	private Barber addAuthority(Barber barber) {
+		Authorities authority = new Authorities();
+		authority.setAuthority("USER");
+		authority.setMappingId(barber.getBarberId());
 		
-		return false;
+		authRepo.saveAndFlush(authority);
+		
+		return barber;
 	}
 
 	/**
 	 * Validate the Barber method
+	 * 
 	 * @param barber
 	 */
 	private boolean validateBarber(Barber barber) {
-		if(StringUtils.isEmpty(barber.getLoginId())){
+		if (StringUtils.isEmpty(barber.getLoginId())) {
 			barber.setLoginId(barber.getEmail());
 		}
-		
+
 		barber.setCreateDate(DateUtils.getTodaysDate());
 		barber.setModifyDate(DateUtils.getTodaysDate());
-		//TODO: encrypt password
-		//TODO: validate phone
-		//TODO: validate email
-		if(barber.getAuthCode()!=null &&
-				barber.getAuthCode().equals(12345L)) {
+		// TODO: encrypt password
+		// TODO: validate phone
+		// TODO: validate email
+		if (barber.getAuthCode() != null && barber.getAuthCode().equals(12345L)) {
 			return true;
-		}else
+		} else
 			return false;
 	}
 
@@ -80,7 +102,7 @@ public class BarberFacade implements IBarberFacade {
 	public boolean addBarbersCountToday(Long id, DailyBarbers dailyBarbers) {
 		Optional<Barber> barberOpt = barberRepository.findById(id);
 		validateDailyBarber(dailyBarbers);
-		if(barberOpt.isPresent()) {
+		if (barberOpt.isPresent()) {
 			Barber barber = barberOpt.get();
 			List<DailyBarbers> dailyBarberSet = barber.getDailyBarberSet();
 			dailyBarberSet.add(dailyBarbers);
@@ -93,11 +115,12 @@ public class BarberFacade implements IBarberFacade {
 
 	/**
 	 * Validate DailyBarber Object
+	 * 
 	 * @param dailyBarbers
 	 */
 	private void validateDailyBarber(DailyBarbers dailyBarbers) {
 		dailyBarbers.setCreateTimestamp(DateUtils.getCurrentTimestamp());
-		//TODO: verify that barbers count is more than 0
+		// TODO: verify that barbers count is more than 0
 	}
 
 	@Override
@@ -105,9 +128,9 @@ public class BarberFacade implements IBarberFacade {
 		Optional<Barber> barberOpt = barberRepository.findById(barberId);
 		Optional<Services> servicesOpt = serviceRepo.findById(serviceId);
 		BarberServicesMapping barberServicesMapping = null;
-		if(barberOpt.isPresent() && servicesOpt.isPresent()) {
+		if (barberOpt.isPresent() && servicesOpt.isPresent()) {
 			Barber barber = barberOpt.get();
-			Set<BarberServicesMapping> barberServicesMappingsSet =  barber.getBarberServicesMappingSet();
+			Set<BarberServicesMapping> barberServicesMappingsSet = barber.getBarberServicesMappingSet();
 			barberServicesMapping = new BarberServicesMapping();
 			barberServicesMapping.setBarberId(barberId);
 			barberServicesMapping.setServiceId(serviceId);
@@ -117,12 +140,12 @@ public class BarberFacade implements IBarberFacade {
 
 			barberServicesMappingsSet.add(barberServicesMapping);
 			barber.setBarberServicesMappingSet(barberServicesMappingsSet);
-			
+
 			barberRepository.saveAndFlush(barber);
-			
+
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -130,11 +153,11 @@ public class BarberFacade implements IBarberFacade {
 	public boolean addBarberCalendar(long barberId, BarberCalendar barberCalendar) {
 		validateBarberCalendar(barberCalendar, barberId);
 		Optional<Barber> barberOpt = barberRepository.findById(barberId);
-		if(barberOpt.isPresent()) {
+		if (barberOpt.isPresent()) {
 			Barber barber = barberOpt.get();
 			Set<BarberCalendar> barberCalendarSet = barber.getBarberCalendarSet();
 			barberCalendarSet.add(barberCalendar);
-			
+
 			barberRepository.saveAndFlush(barber);
 			return true;
 		}
@@ -146,31 +169,35 @@ public class BarberFacade implements IBarberFacade {
 		barberCalendar.setSalonOpenTime(DateUtils.getHoursAndMinutes(barberCalendar.getSalonOpensAt()));
 		barberCalendar.setSalonCloseTime(DateUtils.getHoursAndMinutes(barberCalendar.getSalonClosesAt()));
 		barberCalendar.setBarberMappingId(barberId);
-		if(barberCalendar.getCalendayDateString()!=null)
-			barberCalendar.setCalendarDate(DateUtils.getFormattedDate(barberCalendar.getCalendayDateString(), "MM/dd/yyyy"));
+		if (barberCalendar.getCalendayDateString() != null)
+			barberCalendar
+					.setCalendarDate(DateUtils.getFormattedDate(barberCalendar.getCalendayDateString(), "MM/dd/yyyy"));
 	}
 
 	@Override
 	public boolean addBarberAddress(long barberId, Address address) throws ServiceUnavailableException {
 		Optional<Barber> barberOpt = barberRepository.findById(barberId);
 		try {
-			/*GeocodingResult[] results =  GeocodingApi.geocode(context,
-				    address.getAddress()).await();*/
-			
-			GeocodingResult[] results = googleGeoCodingClient.findGeocodingResult(URLEncoder.encode(address.getAddress(), "UTF-8"));
-			
+			/*
+			 * GeocodingResult[] results = GeocodingApi.geocode(context,
+			 * address.getAddress()).await();
+			 */
+
+			GeocodingResult[] results = googleGeoCodingClient
+					.findGeocodingResult(URLEncoder.encode(address.getAddress(), "UTF-8"));
+
 			validateAddress(address, barberId, results);
 		} catch (IOException e1) {
 			e1.printStackTrace();
-			throw new ServiceUnavailableException("Google api not available"); 
+			throw new ServiceUnavailableException("Google api not available");
 		}
-		
-		if(barberOpt.isPresent()) {
+
+		if (barberOpt.isPresent()) {
 			Barber barber = barberOpt.get();
 			Set<Address> barberAddresses = barber.getAddressSet();
 			barberAddresses.add(address);
 			barber.setAddressSet(barberAddresses);
-			
+
 			barberRepository.saveAndFlush(barber);
 			return true;
 		}
@@ -187,8 +214,8 @@ public class BarberFacade implements IBarberFacade {
 		address.setMappingId(barberId);
 		address.setCreateDate(DateUtils.getTodaysDate());
 		address.setModifyDate(DateUtils.getTodaysDate());
-		logger.debug("longitude "+ results[0].geometry.location.lng);
-		logger.debug("latitude "+ results[0].geometry.location.lat);
+		logger.debug("longitude " + results[0].geometry.location.lng);
+		logger.debug("latitude " + results[0].geometry.location.lat);
 		address.setLongitude(results[0].geometry.location.lng);
 		address.setLatitude(results[0].geometry.location.lat);
 	}

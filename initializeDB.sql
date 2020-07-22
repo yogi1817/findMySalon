@@ -8,7 +8,7 @@ create table usa.barber(
 	store_name varchar(255),
 	email varchar(255),
 	phone varchar(255),
-	login_id varchar(255),
+	login_id varchar(255) UNIQUE,
 	password varchar(255),
 	create_date DATE,
 	modify_date DATE);
@@ -18,12 +18,19 @@ create table usa.user(
 	first_name varchar(255),
 	last_name varchar(255),
 	middle_name varchar(255),
-	email varchar(255),
+	email varchar(255) UNIQUE,
 	phone varchar(255),
 	login_type varchar(255),
 	create_date DATE,
 	modify_date DATE,
 	favourite_salon_id int8 REFERENCES usa.barber(barber_id));
+
+create table usa.authorities
+(
+    authority_id BIGSERIAL PRIMARY KEY,
+    mapping_id int8  not null,
+    authority varchar(50) not null
+);
 
 create table usa.services(
 	service_id BIGSERIAL PRIMARY KEY,

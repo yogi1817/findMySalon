@@ -3,7 +3,6 @@ package com.spj.salon;
 import java.util.Collections;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -12,9 +11,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.web.client.RestTemplate;
 
-import com.spj.salon.config.ServiceConfig;
 import com.spj.salon.utils.UserContextInterceptor;
 
 
@@ -24,10 +26,12 @@ import com.spj.salon.utils.UserContextInterceptor;
 		"com.spj.salon.services.repository", "com.spj.salon.checkin.repository"})
 @EntityScan(basePackages = {"com.spj.salon.barber.model", "com.spj.salon.user.model", 
 		"com.spj.salon.services.model", "com.spj.salon.checkin.model"})
+@EnableAuthorizationServer
+@EnableResourceServer
 public class FindMySalonApplication {
 
-	@Autowired
-	ServiceConfig serviceConfig;
+	/*@Autowired
+	private ServiceConfig serviceConfig;*/
 	
 	public static void main(String[] args) {
 		SpringApplication.run(FindMySalonApplication.class, args);
@@ -51,6 +55,11 @@ public class FindMySalonApplication {
 		}
 		return template;
 	}
+	
+	@Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 	
 	//Uncomment below code if you want to use goofle api for location
 	/*@Bean

@@ -1,5 +1,5 @@
 info: 
-  description: This is a dind my salon spring boot roject
+  description: This is a find my salon spring boot roject
   
 server:
   port: 8081
@@ -24,11 +24,22 @@ spring:
       hibernate.format_sql: true
       hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
       hibernate.jdbc.lob.non_contextual_creation: true
-     
+  application:
+    name: findMySalon
+  profiles:
+    active: default
+
   http:
     converters:
       preferred-json-mapper: gson
-
+      
+  mail:    host: smtp.gmail.com
+    port: 587
+    username: findmybarber.spj
+    password: spjadmin123
+    properties:      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      
 management:
   endpoint:
     health:
@@ -41,3 +52,8 @@ logging:
 spj:
   variables:
     googleapikey: AIzaSyCqZGm-UrRv3ir52SIWKCVzEA7WqDmB91M
+  jwt:
+    signingkey: "345345fsdgsf5345"
+  twiliootp:
+    sid: ACfdf9d7f1025b3516178ac7ee35da5297
+    authtoken: cab97db988d7da6416aa78b64ec8d4e2
