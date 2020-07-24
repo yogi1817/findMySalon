@@ -35,7 +35,7 @@ Configuration:
           - ref: LogToRollingFile
           
       - name: org.springframework.security.
-        level: debug
+        level: error
         additivity: false
         AppenderRef:
           - ref: LogToConsole

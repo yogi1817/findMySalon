@@ -52,11 +52,14 @@ public class BarberFacade implements IBarberFacade {
 	private AuthoritiesRepository authRepo;
 	
 	@Override
-	public String registerBarber(Barber barber) {
+	public Barber registerBarber(Barber barber) {
 		if (validateBarber(barber) && barberRepository.countByLoginId(barber.getLoginId()) == 0) {
 			barberRepository.save(barber);
 			addAuthority(barber);
-			return "Registered";
+			
+			//JSONIgnore us not working to setting it to null before returning to user
+			barber.setPassword(null);
+			return barber;
 		}
 
 		throw new DuplicateKeyException("User already Exists");

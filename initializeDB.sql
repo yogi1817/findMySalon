@@ -6,7 +6,7 @@ create table usa.barber(
 	last_name varchar(255),
 	middle_name varchar(255),
 	store_name varchar(255),
-	email varchar(255),
+	email varchar(255) UNIQUE,
 	phone varchar(255),
 	login_id varchar(255) UNIQUE,
 	password varchar(255),

@@ -42,7 +42,7 @@ public class BarberController {
     private PasswordEncoder passwordEncoder;
 	
 	@PostMapping(value = "register", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> registerBarber(@RequestBody Barber barber) {
+	public ResponseEntity<Barber> registerBarber(@RequestBody Barber barber) {
 		barber.setPassword(passwordEncoder.encode(barber.getPassword()));
 		return new ResponseEntity<>(barberFacade.registerBarber(barber), HttpStatus.OK);
 	}
