@@ -32,7 +32,7 @@ public interface AddressRepository extends JpaRepository<Address, Long>{
 	 * @return
 	 */
 	@Query(value = "select t2.address_id, t2.distance from( "
-							+"SELECT a.mapping_id, a.address_id, "
+							+"SELECT a.user_id, a.address_id, "
 							+"10000 * "
 							+ "ASIN"
 							+ "(SQRT"

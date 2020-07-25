@@ -3,9 +3,9 @@ package com.spj.salon.barber.facade;
 import javax.naming.ServiceUnavailableException;
 
 import com.spj.salon.barber.model.Address;
-import com.spj.salon.barber.model.Barber;
 import com.spj.salon.barber.model.BarberCalendar;
 import com.spj.salon.barber.model.DailyBarbers;
+import com.spj.salon.user.model.User;
 
 /**
  * 
@@ -14,13 +14,13 @@ import com.spj.salon.barber.model.DailyBarbers;
  */
 public interface IBarberFacade {
 
-	public Barber registerBarber(Barber barber);
+	public User register(User barber, String userType);
 
-	public boolean addBarbersCountToday(Long id, DailyBarbers dailyBarbers);
+	public boolean addBarbersCountToday(DailyBarbers dailyBarbers);
 
-	public boolean addServices(long barberId, long serviceId, int cost, int time);
+	public boolean addServices(long serviceId, int cost, int time);
 
-	public boolean addBarberCalendar(long barberId, BarberCalendar barberCalendar);
+	public boolean addBarberCalendar(BarberCalendar barberCalendar);
 
-	public boolean addBarberAddress(long barberId, Address address) throws ServiceUnavailableException ;
+	public boolean addBarberAddress(Address address) throws ServiceUnavailableException ;
 }

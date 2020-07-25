@@ -27,4 +27,11 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 				request.getDescription(false), UserContextHolder.getContext().getCorrelationId());
 	  return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+	
+	@ExceptionHandler(NotFoundCustomException.class)
+	public final ResponseEntity<ErrorDetails> handleCustomExceptions(Exception ex, WebRequest request) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(),
+				request.getDescription(false), UserContextHolder.getContext().getCorrelationId());
+	  return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+	}
 }

@@ -36,15 +36,11 @@ public class Authorities implements Serializable{
 	
 	private String authority;
 	
-	@Column(name = "mapping_id")
-	private Long mappingId;
+	@Column(name = "user_id")
+	private Long userId;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="mapping_Id", referencedColumnName = "barber_id", insertable = false, updatable = false) 
-    private Barber barber;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="mapping_Id", referencedColumnName = "user_id", insertable = false, updatable = false) 
+	@JoinColumn(name="user_Id", referencedColumnName = "user_id", insertable = false, updatable = false) 
     private User user;
 
 	/**
@@ -76,31 +72,17 @@ public class Authorities implements Serializable{
 	}
 
 	/**
-	 * @return the mappingId
+	 * @return the userId
 	 */
-	public Long getMappingId() {
-		return mappingId;
+	public Long getUserId() {
+		return userId;
 	}
 
 	/**
-	 * @param mappingId the mappingId to set
+	 * @param userId the userId to set
 	 */
-	public void setMappingId(Long mappingId) {
-		this.mappingId = mappingId;
-	}
-
-	/**
-	 * @return the barber
-	 */
-	public Barber getBarber() {
-		return barber;
-	}
-
-	/**
-	 * @param barber the barber to set
-	 */
-	public void setBarber(Barber barber) {
-		this.barber = barber;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 	/**
@@ -119,7 +101,7 @@ public class Authorities implements Serializable{
 
 	@Override
 	public String toString() {
-		return "Authorities [authorityId=" + authorityId + ", authority=" + authority + ", mappingId=" + mappingId
-				+ ", barber=" + barber + ", user=" + user + "]";
+		return "Authorities [authorityId=" + authorityId + ", authority=" + authority + ", userId=" + userId
+				+ ", user=" + user + "]";
 	}
 }

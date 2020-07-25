@@ -9,7 +9,8 @@ import com.spj.salon.barber.dto.BarberAddressDTO;
 public interface ICheckinFacade {
 
 	public String waitTimeEstimate(long barberId);
-	public boolean checkIn(long barberId, Long userId, String time) ;
+	public String checkInUser(long barberId, String time) ;
+	public String checkInBarber(long barberId, String time) ;
 	public boolean checkOut(long userId);
 	public List<BarberAddressDTO> findBarbersAtZip(String zipCode, String distance) throws ServiceUnavailableException ;
 }

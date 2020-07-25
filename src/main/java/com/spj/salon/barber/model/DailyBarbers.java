@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.spj.salon.utils.DateUtils;
+
 /**
  * 
  * @author Yogesh Sharma
@@ -35,8 +37,8 @@ public class DailyBarbers implements Serializable{
 	private int barbersCount;
 	private LocalDateTime createTimestamp;
 	
-	@Column(name = "barber_mapping_id")
-	private Long barbersMappingId;
+	@Column(name = "user_id")
+	private Long userId;
 	
 	/**
 	 * @return the dailyId
@@ -84,26 +86,28 @@ public class DailyBarbers implements Serializable{
 	 * @param createTimestamp the createTimestamp to set
 	 */
 	public void setCreateTimestamp(LocalDateTime createTimestamp) {
+		if(createTimestamp==null) {
+			this.createTimestamp= DateUtils.getCurrentTimestamp();
+		}
 		this.createTimestamp = createTimestamp;
 	}
 	
 	/**
-	 * @return the barbersMappingId
+	 * @return the userId
 	 */
-	public Long getBarbersMappingId() {
-		return barbersMappingId;
+	public Long getUserId() {
+		return userId;
 	}
 	/**
-	 * @param barbersMappingId the barbersMappingId to set
+	 * @param userId the userId to set
 	 */
-	public void setBarbersMappingId(Long barbersMappingId) {
-		this.barbersMappingId = barbersMappingId;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
-	
 	@Override
 	public String toString() {
 		return "DailyBarbers [dailyId=" + dailyId + ", barbersDescription=" + barbersDescription + ", barbersCount="
-				+ barbersCount + ", createTimestamp=" + createTimestamp + ", barbersMappingId=" + barbersMappingId
+				+ barbersCount + ", createTimestamp=" + createTimestamp + ", userId=" + userId
 				+ "]";
 	}
 }

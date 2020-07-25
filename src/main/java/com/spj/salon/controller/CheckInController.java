@@ -34,10 +34,16 @@ public class CheckInController {
 	@Autowired
 	private ICheckinFacade checkInFacade;
 
+	//User is checking in at barber
 	@PostMapping(value = "barber/{barberId}/time/{time}", consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-	public ResponseEntity<Boolean> checkIn(@PathVariable long barberId, @PathVariable String time,
-				@RequestHeader Map<String, String> headers) {
-		return new ResponseEntity<>(checkInFacade.checkIn(barberId, Long.parseLong(headers.get("userid")), time), HttpStatus.OK);
+	public ResponseEntity<String> checkInByUser(@PathVariable long barberId, @PathVariable String time) {
+		return new ResponseEntity<>(checkInFacade.checkInUser(barberId, time), HttpStatus.OK);
+	}
+	
+	//Barber is checking in for user
+	@PostMapping(value = "user/{userId}/time/{time}", consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	public ResponseEntity<String> checkInByBarber(@PathVariable long userId, @PathVariable String time) {
+		return new ResponseEntity<>(checkInFacade.checkInBarber(userId, time), HttpStatus.OK);
 	}
 	
 	@GetMapping(value = "barber/{barberId}/waittime")

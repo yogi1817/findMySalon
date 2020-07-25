@@ -4,6 +4,11 @@ import org.springframework.security.core.userdetails.User;
 
 import com.spj.salon.utils.AuthorityUtils;
 
+/**
+ * 
+ * @author Yogesh Sharma
+ *
+ */
 public class CustomUser extends User {
 
 	private static final long serialVersionUID = 1L;
@@ -11,17 +16,19 @@ public class CustomUser extends User {
 	private String first_name;
 	private String last_name;
 	private String mobile;
-	private String loginType;
-	private Long favouriteSalonId;
+	private String storeName;
+	private String loginId;
+	private String email;
 	
 	public CustomUser(com.spj.salon.user.model.User user) {
-		super(user.getEmail(), user.getPassword(), AuthorityUtils.getUserAuthorities());
+		super(user.getLoginId(), user.getPassword(), AuthorityUtils.getUserAuthorities(user));
 		this.id = user.getUserId();
 		this.first_name = user.getFirstName();
 		this.last_name = user.getLastName();
 		this.mobile = user.getPhone();
-		this.loginType = user.getLoginType();
-		this.favouriteSalonId = user.getFavouriteSalonId();
+		this.storeName = user.getStoreName();
+		this.loginId = user.getLoginId();
+		this.email = user.getEmail();
 	}
 
 	/**
@@ -81,30 +88,44 @@ public class CustomUser extends User {
 	}
 
 	/**
-	 * @return the loginType
+	 * @return the storeName
 	 */
-	public String getLoginType() {
-		return loginType;
+	public String getStoreName() {
+		return storeName;
 	}
 
 	/**
-	 * @param loginType the loginType to set
+	 * @param storeName the storeName to set
 	 */
-	public void setLoginType(String loginType) {
-		this.loginType = loginType;
+	public void setStoreName(String storeName) {
+		this.storeName = storeName;
 	}
 
 	/**
-	 * @return the favouriteSalonId
+	 * @return the loginId
 	 */
-	public Long getFavouriteSalonId() {
-		return favouriteSalonId;
+	public String getLoginId() {
+		return loginId;
 	}
 
 	/**
-	 * @param favouriteSalonId the favouriteSalonId to set
+	 * @param loginId the loginId to set
 	 */
-	public void setFavouriteSalonId(Long favouriteSalonId) {
-		this.favouriteSalonId = favouriteSalonId;
+	public void setLoginId(String loginId) {
+		this.loginId = loginId;
+	}
+
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
+	}
+
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
 	}
 }

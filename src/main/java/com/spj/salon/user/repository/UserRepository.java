@@ -13,6 +13,8 @@ import com.spj.salon.user.model.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>{
 
-	long countByEmail(String email);
-	long countByPhone(String phone);
+	public long countByEmail(String email);
+	public long countByPhone(String phone);
+	public User findByEmail(String email);
+	public User findByLoginId(String loginId);
 }

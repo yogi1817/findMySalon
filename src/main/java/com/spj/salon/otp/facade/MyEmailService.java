@@ -9,8 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.spj.salon.barber.model.Barber;
-import com.spj.salon.barber.repository.BarberRepository;
+import com.spj.salon.user.model.User;
+import com.spj.salon.user.repository.UserRepository;
 
 /**
  * 
@@ -29,18 +29,27 @@ public class MyEmailService implements IMyOtpService{
 	public OtpService otpService;
 	
 	@Autowired
-	private BarberRepository barberRepository;
+	private UserRepository userRepository;
 	
 	public void sendOtpMessage() {
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String loginId = (String) auth.getPrincipal();
 		
-		Barber barber = barberRepository.findByLoginId(loginId);
+		User user = userRepository.findByLoginId(loginId);
+		sendEMail(user);
+	}
+	
+	public void sendOtpMessage(String loginId) {
+		
+		User user = userRepository.findByLoginId(loginId);
+		sendEMail(user);
+	}
+	
+	private void sendEMail(User user) {
+		int otp = otpService.generateOTP(user.getLoginId());
 
-		int otp = otpService.generateOTP(barber.getLoginId());
-
-		logger.info("barber.getEmail() "+barber.getEmail());
+		logger.info("barber.getEmail() "+user.getEmail());
 		logger.info("OTP : " + otp);
 
 		//Generate The Template to send OTP 
@@ -49,11 +58,11 @@ public class MyEmailService implements IMyOtpService{
 		//String message = template.getTemplate(replacements);
 		
 		SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-		simpleMailMessage.setTo(barber.getEmail());
+		simpleMailMessage.setTo(user.getEmail());
 		simpleMailMessage.setSubject("Welcome to find my barber - OTP");
 		simpleMailMessage.setText("Your OTP is "+otp+ " .OTP will expire in 30 mins");
 
-		logger.info("barber.getEmail() "+barber.getEmail());
+		logger.info("barber.getEmail() "+user.getEmail());
 
 		// Uncomment to send mail
 		javaMailSender.send(simpleMailMessage);

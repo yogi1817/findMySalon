@@ -1,7 +1,5 @@
 package com.spj.salon.user.facade;
 
-import com.spj.salon.user.model.User;
-
 /**
  * 
  * @author Yogesh Sharma
@@ -9,7 +7,6 @@ import com.spj.salon.user.model.User;
  */
 public interface IUserFacade {
 
-	public boolean registerUser(User user);
-
-	public boolean addFavouriteSalon(Long userId, Long barberId);
+	public boolean addFavouriteSalon(Long userId);
+	public boolean updateVerifiedFlag(String loginId);
 }

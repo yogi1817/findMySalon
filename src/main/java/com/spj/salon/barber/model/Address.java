@@ -16,6 +16,8 @@ import javax.persistence.UniqueConstraint;
 
 import org.springframework.util.StringUtils;
 
+import com.spj.salon.user.model.User;
+
 /**
  * 
  * @author Yogesh Sharma
@@ -47,11 +49,11 @@ public class Address implements Serializable{
 	private double latitude;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="mapping_Id", referencedColumnName = "barber_id", insertable = false, updatable = false) 
-    private Barber barber;
+	@JoinColumn(name="user_Id", referencedColumnName = "user_id", insertable = false, updatable = false) 
+    private User user;
 	
-	@Column(name = "mapping_id")
-	private Long mappingId;
+	@Column(name = "user_id")
+	private Long userId;
 	/**
 	 * @return the addressId
 	 */
@@ -161,19 +163,19 @@ public class Address implements Serializable{
 	public void setModifyDate(Date modifyDate) {
 		this.modifyDate = modifyDate;
 	}
-	/**
-	 * @return the mappingId
-	 */
-	public Long getMappingId() {
-		return mappingId;
-	}
-	/**
-	 * @param mappingId the mappingId to set
-	 */
-	public void setMappingId(Long mappingId) {
-		this.mappingId = mappingId;
-	}
 	
+	/**
+	 * @return the userId
+	 */
+	public Long getUserId() {
+		return userId;
+	}
+	/**
+	 * @param userId the userId to set
+	 */
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
 	/**
 	 * @return the longitude
 	 */
@@ -204,23 +206,21 @@ public class Address implements Serializable{
 		return "Address [addressId=" + addressId + ", addressLineOne=" + addressLineOne + ", addressLineTwo="
 				+ addressLineTwo + ", city=" + city + ", state=" + state + ", zip=" + zip + ", country=" + country
 				+ ", createDate=" + createDate + ", modifyDate=" + modifyDate + ", longitude=" + longitude
-				+ ", latitude=" + latitude + ", mappingId=" + mappingId + "]";
-	}
-	
-	/**
-	 * @return the barber
-	 */
-	public Barber getBarber() {
-		return barber;
-	}
-	
-	/**
-	 * @param barber the barber to set
-	 */
-	public void setBarber(Barber barber) {
-		this.barber = barber;
+				+ ", latitude=" + latitude + ", userId=" + userId + "]";
 	}
     
+	/**
+	 * @return the user
+	 */
+	public User getUser() {
+		return user;
+	}
+	/**
+	 * @param user the user to set
+	 */
+	public void setUser(User user) {
+		this.user = user;
+	}
 	/**
 	 * 
 	 * @return

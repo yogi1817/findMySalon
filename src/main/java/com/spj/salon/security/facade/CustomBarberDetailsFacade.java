@@ -6,23 +6,23 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.spj.salon.barber.model.Barber;
-import com.spj.salon.barber.repository.BarberRepository;
-import com.spj.salon.security.pojo.CustomBarber;
+import com.spj.salon.security.pojo.CustomUser;
+import com.spj.salon.user.model.User;
+import com.spj.salon.user.repository.UserRepository;
 
 @Service
-public class CustomUserBarberDetailsFacade implements UserDetailsService{
+public class CustomBarberDetailsFacade implements UserDetailsService{
 
 	@Autowired
-	private BarberRepository barberRepository;
+	private UserRepository userRepository;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Barber barber = null;
+		User user = null;
 		try {
-			barber = barberRepository.findByLoginId(username);
-			if (barber != null) {
-				CustomBarber customUser = new CustomBarber(barber);
+			user = userRepository.findByLoginId(username);
+			if (user != null) {
+				CustomUser customUser = new CustomUser(user);
 				return customUser;
 			} else {
 				throw new UsernameNotFoundException("User " + username + " was not found in the database");

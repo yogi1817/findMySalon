@@ -8,7 +8,7 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 
-import com.spj.salon.security.pojo.CustomBarber;
+import com.spj.salon.security.pojo.CustomUser;
 
 /**
  * 
@@ -21,19 +21,19 @@ public class JWTTokenEnhancer implements TokenEnhancer {
     public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
     	Map<String, Object> info = new HashMap<>();
         
-    	CustomBarber barber = (CustomBarber) authentication.getPrincipal();
-		if (barber.getId() != null)
-			info.put("id", barber.getId());
-		if (barber.getFirst_name() != null)
-			info.put("first_name", barber.getFirst_name());
-		if (barber.getLast_name() != null)
-			info.put("last_name", barber.getLast_name());
-		if (barber.getStoreName() != null)
-			info.put("email", barber.getEmail());
-		if (barber.getMobile() != null)
-			info.put("mobile", barber.getMobile());
-		if (barber.getLoginId() != null)
-			info.put("loginId", barber.getLoginId());
+    	CustomUser user = (CustomUser) authentication.getPrincipal();
+		if (user.getId() != null)
+			info.put("id", user.getId());
+		if (user.getFirst_name() != null)
+			info.put("first_name", user.getFirst_name());
+		if (user.getLast_name() != null)
+			info.put("last_name", user.getLast_name());
+		if (user.getStoreName() != null)
+			info.put("email", user.getEmail());
+		if (user.getMobile() != null)
+			info.put("mobile", user.getMobile());
+		if (user.getLoginId() != null)
+			info.put("loginId", user.getLoginId());
 		
 		((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(info);
         return accessToken;

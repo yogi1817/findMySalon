@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.spj.salon.security.facade.CustomUserBarberDetailsFacade;
+import com.spj.salon.security.facade.CustomBarberDetailsFacade;
 
 /**
  * 
@@ -26,7 +26,7 @@ public class AuthenticationWebSecurityConfigurer extends WebSecurityConfigurerAd
 	private PasswordEncoder passwordEncoder;
 	
 	@Autowired
-	private CustomUserBarberDetailsFacade userbarberFacade;
+	private CustomBarberDetailsFacade userbarberFacade;
 	
 	@Override
 	@Autowired

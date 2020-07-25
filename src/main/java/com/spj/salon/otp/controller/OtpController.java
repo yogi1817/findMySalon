@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.spj.salon.otp.facade.IMyOtpService;
 import com.spj.salon.otp.facade.OtpService;
+import com.spj.salon.user.facade.IUserFacade;
 
 /**
  * 
@@ -40,6 +41,9 @@ public class OtpController {
 	@Autowired
 	private OtpService otpService;
 	
+	@Autowired
+	private IUserFacade userFacade;
+	
 	private final String SUCCESS = "Entered Otp is valid";
 	private final String FAIL = "Entered Otp is NOT valid. Please Retry!";
 	
@@ -61,26 +65,23 @@ public class OtpController {
 	public @ResponseBody String validateOtp(@RequestParam("otpnum") int otpnum) {
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String username = (String) auth.getPrincipal();
+		String loginId = (String) auth.getPrincipal();
 
 		logger.info(" Otp Number : " + otpnum);
 
 		//Validate the Otp 
 		if (otpnum >= 0) {
-			int serverOtp = otpService.getOtp(username);
+			int serverOtp = otpService.getOtp(loginId);
 
 			if (serverOtp > 0) {
 				if (otpnum == serverOtp) {
-					otpService.clearOTP(username);
-					return ("Entered Otp is valid");
-				} else {
-					return SUCCESS;
+					if(userFacade.updateVerifiedFlag(loginId)) {
+						otpService.clearOTP(loginId);
+						return SUCCESS;
+					}
 				}
-			} else {
-				return FAIL;
-			}
-		} else {
-			return FAIL;
+			} 
 		}
+		return FAIL;
 	}
 }

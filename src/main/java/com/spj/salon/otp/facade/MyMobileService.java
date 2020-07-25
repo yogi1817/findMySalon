@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
-import com.spj.salon.barber.model.Barber;
-import com.spj.salon.barber.repository.BarberRepository;
 import com.spj.salon.config.ServiceConfig;
+import com.spj.salon.exception.NotFoundCustomException;
+import com.spj.salon.user.model.User;
+import com.spj.salon.user.repository.UserRepository;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
@@ -26,7 +28,7 @@ public class MyMobileService implements IMyOtpService{
 	private ServiceConfig serviceConfig;
 	
 	@Autowired
-	private BarberRepository barberRepository;
+	private UserRepository userRepository;
 	
 	@Autowired
 	private OtpService otpService;
@@ -38,17 +40,21 @@ public class MyMobileService implements IMyOtpService{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String loginId = (String) auth.getPrincipal();
 		
-		Barber barber = barberRepository.findByLoginId(loginId);
+		User user = userRepository.findByLoginId(loginId);
 
-		int otp = otpService.generateOTP(barber.getLoginId());
+		if(StringUtils.isEmpty(user.getPhone())) {
+			throw new NotFoundCustomException("No phone number found for user "+user.getLoginId(), "Please add valid phone number");
+		}
+		
+		int otp = otpService.generateOTP(user.getLoginId());
 
-		logger.info("barber.getPhone() "+barber.getPhone());
+		logger.info("barber.getPhone() "+user.getPhone());
 		logger.info("OTP : " + otp);
-
+		
 		Twilio.init(serviceConfig.getTwilioSid(), serviceConfig.getTwilioAuthToken());
 
         Message textMessage = Message
-                .creator(new PhoneNumber(barber.getPhone()), // to
+                .creator(new PhoneNumber(user.getPhone()), // to
                         new PhoneNumber("+14126153338"), // from
                         "Welcome to find my barber, your OTP is "+otp+" .Its valid for 30 minutes.")
                 .create();

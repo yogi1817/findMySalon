@@ -31,8 +31,8 @@ public class BarberCalendar implements Serializable{
 	@Column(name = "barber_calendar_id", unique = true, nullable = false, columnDefinition = "serial")
 	private Long barberCalendarId;
 	
-	@Column(name="barber_mapping_id")
-	private Long barberMappingId;
+	@Column(name="user_id")
+	private Long userId;
 
 	private Date salonOpenTime;
 	private Date salonCloseTime;
@@ -62,16 +62,16 @@ public class BarberCalendar implements Serializable{
 		this.barberCalendarId = barberCalendarId;
 	}
 	/**
-	 * @return the barberMappingId
+	 * @return the userId
 	 */
-	public Long getBarberMappingId() {
-		return barberMappingId;
+	public Long getUserId() {
+		return userId;
 	}
 	/**
-	 * @param barberMappingId the barberMappingId to set
+	 * @param userId the userId to set
 	 */
-	public void setBarberMappingId(Long barberMappingId) {
-		this.barberMappingId = barberMappingId;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 	/**
 	 * @return the salonOpenTime
@@ -172,7 +172,7 @@ public class BarberCalendar implements Serializable{
 	}
 	@Override
 	public String toString() {
-		return "BarberCalendar [barberCalendarId=" + barberCalendarId + ", barberMappingId=" + barberMappingId
+		return "BarberCalendar [barberCalendarId=" + barberCalendarId + ", userId=" + userId
 				+ ", salonOpenTime=" + salonOpenTime + ", salonCloseTime=" + salonCloseTime + ", calendarDay="
 				+ calendarDay + ", calendayDateString=" + calendayDateString + ", calendarDate=" + calendarDate
 				+ ", modifyDate=" + modifyDate + ", salonOpensAt=" + salonOpensAt + ", salonClosesAt=" + salonClosesAt

@@ -15,22 +15,24 @@ import javax.naming.ServiceUnavailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import com.google.maps.model.GeocodingResult;
 import com.spj.salon.barber.dto.BarberAddressDTO;
 import com.spj.salon.barber.model.Address;
-import com.spj.salon.barber.model.Barber;
 import com.spj.salon.barber.model.BarberCalendar;
 import com.spj.salon.barber.model.DailyBarbers;
 import com.spj.salon.barber.model.ZipCodeLookup;
 import com.spj.salon.barber.repository.AddressRepository;
-import com.spj.salon.barber.repository.BarberRepository;
 import com.spj.salon.barber.repository.ZipCodeRepository;
 import com.spj.salon.checkin.model.CheckIn;
 import com.spj.salon.checkin.repository.CheckInRepository;
 import com.spj.salon.client.GoogleGeoCodingClient;
+import com.spj.salon.user.model.User;
+import com.spj.salon.user.repository.UserRepository;
 import com.spj.salon.utils.DateUtils;
 
 /**
@@ -42,7 +44,7 @@ import com.spj.salon.utils.DateUtils;
 public class CheckInFacade implements ICheckinFacade {
 
 	@Autowired
-	private BarberRepository barberRepository;
+	private UserRepository userRepository;
 	
 	@Autowired
 	private CheckInRepository checkInRepository;
@@ -59,14 +61,13 @@ public class CheckInFacade implements ICheckinFacade {
 	@Autowired 
 	private GoogleGeoCodingClient googleGeoCodingClient;
 	
-	
 	private static final Logger logger = LoggerFactory.getLogger(CheckInFacade.class.getName());
 	
 	@Override
 	public String waitTimeEstimate(long barberId) {
-		Optional<Barber> barberOpt = barberRepository.findById(barberId);
+		Optional<User> barberOpt = userRepository.findById(barberId);
 		if(barberOpt.isPresent()) {
-			Barber barber = barberOpt.get();
+			User barber = barberOpt.get();
 			Set<BarberCalendar> barberCalSet = barber.getBarberCalendarSet();
 			List<DailyBarbers> dailyBarberList = barber.getDailyBarberSet();
 			Set<CheckIn> checkInSet = barber.getCheckInSet();
@@ -95,7 +96,7 @@ public class CheckInFacade implements ICheckinFacade {
 			return "No Barbers Available";
 		}
 		
-		if(todaysBarberCal.getSalonCloseTime().before(DateUtils.getNowTimePlus60Mins1970())){ 
+		if(todaysBarberCal==null || todaysBarberCal.getSalonCloseTime().before(DateUtils.getNowTimePlus60Mins1970())){ 
 			return "No open appointments Today"; 
 		}
 		 
@@ -137,21 +138,59 @@ public class CheckInFacade implements ICheckinFacade {
 	}
 
 	@Override
-	public boolean checkIn(long barberId, Long userId, String time) {
-		Optional<Barber> barberOpt = barberRepository.findById(barberId);
+	public String checkInUser(long barberId, String time) {
+		boolean checkInAvailable = true;
+		String waitTimeEstimate = null;
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String loginId = (String) auth.getPrincipal();
+		User user = userRepository.findByLoginId(loginId);
+		
+		Optional<User> barberOpt = userRepository.findById(barberId);
+		
 		if(barberOpt.isPresent()) {
-			Barber barber = barberOpt.get();
-			//TODO: Find current wait time
-			Set<CheckIn> checkInSet = barber.getCheckInSet();
-			CheckIn checkIn = new CheckIn(barberId, userId, Integer.parseInt(time));
-			checkInSet.add(checkIn);
-			
-			barberRepository.saveAndFlush(barber);
-			return true;
+			User barber = barberOpt.get();
+			waitTimeEstimate = waitTimeEstimate(barber.getUserId());
+			int waitTime = 0;
+			try {
+				waitTime = Integer.parseInt(waitTimeEstimate);
+			}catch(NumberFormatException ne) {
+				checkInAvailable = false;
+			}
+			if(checkInAvailable) {
+				CheckIn checkIn = new CheckIn(barberId, user.getUserId(), Integer.parseInt(time));
+				checkInRepository.saveAndFlush(checkIn);
+				return "Check in with waitTime "+waitTime;
+			}
 		}
-		return false;
+		return waitTimeEstimate;
 	}
 
+	@Override
+	public String checkInBarber(long userId, String time) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String loginId = (String) auth.getPrincipal();
+		User barber = userRepository.findByLoginId(loginId);
+		boolean checkInAvailable = true;
+		
+		String waitTimeEstimate = null;
+		if(barber!=null) {
+			waitTimeEstimate = waitTimeEstimate(barber.getUserId());
+			int waitTime = 0;
+			try {
+				waitTime = Integer.parseInt(waitTimeEstimate);
+			}catch(NumberFormatException ne) {
+				checkInAvailable = false;
+			}
+			if(checkInAvailable) {
+				CheckIn checkIn = new CheckIn(barber.getUserId(), userId, Integer.parseInt(time));
+				checkInRepository.saveAndFlush(checkIn);
+				return "Check in with waitTime "+waitTime;
+			}
+		}
+		return waitTimeEstimate;
+	}
+	
 	@Override
 	public boolean checkOut(long userId) {
 		List<CheckIn> checkInList = checkInRepository.findByUserMappingIdAndCheckedOut(userId, false);
@@ -237,12 +276,12 @@ public class CheckInFacade implements ICheckinFacade {
 				barberAddressDTO.setCity(barbersAddress.get().getCity());
 				barberAddressDTO.setState(barbersAddress.get().getState());
 				barberAddressDTO.setZip(barbersAddress.get().getZip());
-				barberAddressDTO.setEmail(barbersAddress.get().getBarber().getEmail());
-				barberAddressDTO.setFirstName(barbersAddress.get().getBarber().getFirstName());
-				barberAddressDTO.setLastName(barbersAddress.get().getBarber().getLastName());
-				barberAddressDTO.setMiddleName(barbersAddress.get().getBarber().getMiddleName());
-				barberAddressDTO.setPhone(barbersAddress.get().getBarber().getPhone());
-				barberAddressDTO.setStoreName(barbersAddress.get().getBarber().getStoreName());
+				barberAddressDTO.setEmail(barbersAddress.get().getUser().getEmail());
+				barberAddressDTO.setFirstName(barbersAddress.get().getUser().getFirstName());
+				barberAddressDTO.setLastName(barbersAddress.get().getUser().getLastName());
+				barberAddressDTO.setMiddleName(barbersAddress.get().getUser().getMiddleName());
+				barberAddressDTO.setPhone(barbersAddress.get().getUser().getPhone());
+				barberAddressDTO.setStoreName(barbersAddress.get().getUser().getStoreName());
 				barberAddressDTO.setDistance((Double) map.get("distance"));
 				barbersddressDTOList.add(barberAddressDTO);
 			}
