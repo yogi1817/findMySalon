@@ -30,7 +30,8 @@ spring:
     converters:
       preferred-json-mapper: gson
       
-  mail:    host: smtp.gmail.com
+  mail:
+    host: smtp.gmail.com
     port: 587
     properties:
       mail.smtp.auth: true
