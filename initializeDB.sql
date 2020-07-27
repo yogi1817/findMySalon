@@ -1,5 +1,13 @@
 create schema usa;
 
+create table usa.authorities(
+    authority_id BIGSERIAL PRIMARY KEY,
+    authority varchar(50) not null);
+
+insert into usa.authorities values (1, 'USER');
+insert into usa.authorities values (2, 'BARBER');
+insert into usa.authorities values (3, 'SUPERUSER');
+
 create table usa.user(
 	user_id BIGSERIAL PRIMARY KEY,
 	first_name varchar(255),
@@ -14,14 +22,8 @@ create table usa.user(
 	store_name varchar(255),
 	login_source varchar(255),
 	favourite_salon_id int8,
-	verified BOOLEAN);
-
-create table usa.authorities
-(
-    authority_id BIGSERIAL PRIMARY KEY,
-    user_id int8 REFERENCES usa.user(user_id),
-    authority varchar(50) not null
-);
+	verified BOOLEAN,
+	authority_id int8 REFERENCES usa.authorities(authority_id));
 
 create table usa.services(
 	service_id BIGSERIAL PRIMARY KEY,

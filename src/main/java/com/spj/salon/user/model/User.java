@@ -16,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -64,11 +65,12 @@ public class User implements Serializable{
 	private String storeName;
 	private String loginSource;
 	private Long favouriteSalonId;	
-	private boolean verified = false;;
+	private boolean verified = false;
+	private long authorityId;
 	
-	@OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-	@JoinColumn(name = "user_id", referencedColumnName = "user_id")
-	private List<Authorities> authorities;
+	@OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+	@JoinColumn(name = "user_id", referencedColumnName = "authority_id")
+	private Authorities authority;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", referencedColumnName = "user_id")
@@ -315,20 +317,31 @@ public class User implements Serializable{
 	public void setAddressSet(Set<Address> addressSet) {
 		this.addressSet = addressSet;
 	}
-
-	/**
-	 * @return the authorities
-	 */
-	public List<Authorities> getAuthorities() {
-		return authorities==null? new ArrayList<>() : authorities;
-	}
-	/**
-	 * @param authorities the authorities to set
-	 */
-	public void setAuthorities(List<Authorities> authorities) {
-		this.authorities = authorities;
-	}
 	
+	/**
+	 * @return the authorityId
+	 */
+	public long getAuthorityId() {
+		return authorityId;
+	}
+	/**
+	 * @param authorityId the authorityId to set
+	 */
+	public void setAuthorityId(long authorityId) {
+		this.authorityId = authorityId;
+	}
+	/**
+	 * @return the authority
+	 */
+	public Authorities getAuthority() {
+		return authority;
+	}
+	/**
+	 * @param authority the authority to set
+	 */
+	public void setAuthority(Authorities authority) {
+		this.authority = authority;
+	}
 	/**
 	 * @return the verified
 	 */
@@ -347,8 +360,8 @@ public class User implements Serializable{
 				+ middleName + ", email=" + email + ", phone=" + phone + ", loginId=" + loginId + ", password="
 				+ password + ", createDate=" + createDate + ", modifyDate=" + modifyDate + ", storeName=" + storeName
 				+ ", loginSource=" + loginSource + ", favouriteSalonId=" + favouriteSalonId + ", verified=" + verified
-				+ ", authorities=" + authorities + ", dailyBarberSet=" + dailyBarberSet + ", barberServicesMappingSet="
-				+ barberServicesMappingSet + ", barberCalendarSet=" + barberCalendarSet + ", checkInSet=" + checkInSet
-				+ ", addressSet=" + addressSet + "]";
+				+ ", authorityId=" + authorityId + ", authority=" + authority + ", dailyBarberSet=" + dailyBarberSet
+				+ ", barberServicesMappingSet=" + barberServicesMappingSet + ", barberCalendarSet=" + barberCalendarSet
+				+ ", checkInSet=" + checkInSet + ", addressSet=" + addressSet + "]";
 	}
 }

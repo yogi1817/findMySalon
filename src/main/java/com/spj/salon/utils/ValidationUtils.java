@@ -2,6 +2,7 @@ package com.spj.salon.utils;
 
 import org.springframework.util.StringUtils;
 
+import com.spj.salon.barber.model.Authorities;
 import com.spj.salon.barber.model.BarberCalendar;
 import com.spj.salon.exception.NotFoundCustomException;
 import com.spj.salon.user.model.User;
@@ -22,7 +23,7 @@ public class ValidationUtils {
 	 * @param user
 	 * @return
 	 */
-	public static User validateUser(User user) {
+	public static User validateUser(User user, Authorities authotities) {
 		
 		if(StringUtils.isEmpty(user.getEmail()))
 			throw new NotFoundCustomException("Email Cannot be blank", "Please add email id to your request");
@@ -36,6 +37,7 @@ public class ValidationUtils {
 			user.setLoginId(user.getEmail());
 		}
 		
+		user.setAuthorityId(authotities.getAuthorityId());
 		return user;
 	}
 

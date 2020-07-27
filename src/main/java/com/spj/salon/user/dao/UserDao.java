@@ -28,7 +28,7 @@ public class UserDao implements IUserDao{
         CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
         
         Root<User> user = criteriaQuery.from(User.class);
-        Join<User, Authorities> authorityJoin = user.join("authorities");
+        Join<User, Authorities> authorityJoin = user.join("authority");
  
         Predicate loginIdPredicate = criteriaBuilder.equal(user.get("loginId"), loginId);
         Predicate authorityPredicate = criteriaBuilder.equal(authorityJoin.get("authority"), authority);

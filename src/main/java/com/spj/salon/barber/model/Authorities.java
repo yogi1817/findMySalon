@@ -9,7 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -35,12 +35,9 @@ public class Authorities implements Serializable{
 	private Long authorityId;
 	
 	private String authority;
-	
-	@Column(name = "user_id")
-	private Long userId;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="user_Id", referencedColumnName = "user_id", insertable = false, updatable = false) 
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="authority_id", referencedColumnName = "authority_id", insertable = false, updatable = false) 
     private User user;
 
 	/**
@@ -72,20 +69,6 @@ public class Authorities implements Serializable{
 	}
 
 	/**
-	 * @return the userId
-	 */
-	public Long getUserId() {
-		return userId;
-	}
-
-	/**
-	 * @param userId the userId to set
-	 */
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
-
-	/**
 	 * @return the user
 	 */
 	public User getUser() {
@@ -101,7 +84,6 @@ public class Authorities implements Serializable{
 
 	@Override
 	public String toString() {
-		return "Authorities [authorityId=" + authorityId + ", authority=" + authority + ", userId=" + userId
-				+ ", user=" + user + "]";
+		return "Authorities [authorityId=" + authorityId + ", authority=" + authority + ", user=" + user + "]";
 	}
 }

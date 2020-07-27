@@ -26,6 +26,7 @@ import com.spj.salon.barber.model.DailyBarbers;
 import com.spj.salon.barber.repository.AuthoritiesRepository;
 import com.spj.salon.client.GoogleGeoCodingClient;
 import com.spj.salon.otp.facade.MyEmailService;
+import com.spj.salon.security.pojo.UserType;
 import com.spj.salon.services.model.Services;
 import com.spj.salon.services.repository.ServicesRepository;
 import com.spj.salon.user.dao.IUserDao;
@@ -58,16 +59,17 @@ public class BarberFacade implements IBarberFacade {
 	
 	@Autowired
 	private MyEmailService myEmailService;
-
+	
 	@Autowired
-	private AuthoritiesRepository authRepo;
+	private AuthoritiesRepository authoritiesRepository;
 	
 	@Override
-	public User register(User user, String userType) {
-		if (CollectionUtils.isEmpty(userDao.searchUserWithLoginIdAuthority(user.getLoginId(), userType))) {
-			user = ValidationUtils.validateUser(user);
+	public User register(User user, UserType userType) {
+		if (CollectionUtils.isEmpty(userDao.searchUserWithLoginIdAuthority(user.getLoginId(), userType.getResponse()))) {
+			
+			Authorities  auth = authoritiesRepository.findByAuthority(userType.getResponse());
+			user = ValidationUtils.validateUser(user, auth);
 			userRepository.saveAndFlush(user);
-			addAuthority(user, userType);
 			
 			myEmailService.sendOtpMessage(user.getLoginId());
 			
@@ -77,21 +79,6 @@ public class BarberFacade implements IBarberFacade {
 		}
 
 		throw new DuplicateKeyException("User already Exists");
-	}
-
-	/**
-	 * 
-	 * @param barber
-	 * @return
-	 */
-	private User addAuthority(User user, String userType) {
-		Authorities authority = new Authorities();
-		authority.setAuthority(userType);
-		authority.setUserId(user.getUserId());
-		
-		authRepo.saveAndFlush(authority);
-		
-		return user;
 	}
 
 	@Override

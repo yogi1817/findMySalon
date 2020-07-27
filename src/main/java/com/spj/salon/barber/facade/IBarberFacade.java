@@ -5,6 +5,7 @@ import javax.naming.ServiceUnavailableException;
 import com.spj.salon.barber.model.Address;
 import com.spj.salon.barber.model.BarberCalendar;
 import com.spj.salon.barber.model.DailyBarbers;
+import com.spj.salon.security.pojo.UserType;
 import com.spj.salon.user.model.User;
 
 /**
@@ -14,7 +15,7 @@ import com.spj.salon.user.model.User;
  */
 public interface IBarberFacade {
 
-	public User register(User barber, String userType);
+	public User register(User barber, UserType userType);
 
 	public boolean addBarbersCountToday(DailyBarbers dailyBarbers);
 

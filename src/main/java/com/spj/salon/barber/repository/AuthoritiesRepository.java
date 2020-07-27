@@ -14,4 +14,5 @@ import com.spj.salon.barber.model.Authorities;
 @Repository
 public interface AuthoritiesRepository extends JpaRepository<Authorities, Long>{
 
+	public Authorities findByAuthority(String authority);
 }

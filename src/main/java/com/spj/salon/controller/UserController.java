@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.spj.salon.barber.facade.IBarberFacade;
+import com.spj.salon.security.pojo.UserType;
 import com.spj.salon.user.facade.IUserFacade;
 import com.spj.salon.user.model.User;
-import com.spj.salon.utils.Constants;
 
 /**
  * 
@@ -41,7 +41,7 @@ public class UserController {
 	@PostMapping(value = "register", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<User> registerBarber(@RequestBody User user){
 		user.setPassword(passwordEncoder.encode(StringUtils.isEmpty(user.getPassword())?"defaultpassword":user.getPassword()));
-		return new ResponseEntity<>(barberFacade.register(user, Constants.USER), HttpStatus.OK);
+		return new ResponseEntity<>(barberFacade.register(user, UserType.USER), HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "favourite", consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)

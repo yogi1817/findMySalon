@@ -21,8 +21,8 @@ import com.spj.salon.barber.facade.IBarberFacade;
 import com.spj.salon.barber.model.Address;
 import com.spj.salon.barber.model.BarberCalendar;
 import com.spj.salon.barber.model.DailyBarbers;
+import com.spj.salon.security.pojo.UserType;
 import com.spj.salon.user.model.User;
-import com.spj.salon.utils.Constants;
 import com.spj.salon.utils.UserContextHolder;
 
 /**
@@ -44,7 +44,7 @@ public class BarberController {
 	@PostMapping(value = "register", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<User> registerBarber(@RequestBody User barber) {
 		barber.setPassword(passwordEncoder.encode(barber.getPassword()));
-		return new ResponseEntity<>(barberFacade.register(barber, Constants.BARBER), HttpStatus.OK);
+		return new ResponseEntity<>(barberFacade.register(barber, UserType.BARBER), HttpStatus.OK);
 	}
 
 	@PostMapping(value = "barbersCount", consumes = MediaType.APPLICATION_JSON_VALUE)

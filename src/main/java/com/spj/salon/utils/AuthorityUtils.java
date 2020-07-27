@@ -13,11 +13,11 @@ public class AuthorityUtils {
 
 	public static Collection<GrantedAuthority> getUserAuthorities(User user) {
 		Collection<GrantedAuthority> grantedAuthoritiesList = new ArrayList<>();
-		GrantedAuthority grantedAuthority = null;
-		for (Authorities authority : user.getAuthorities()) {
-			grantedAuthority = new SimpleGrantedAuthority(authority.getAuthority());
-			grantedAuthoritiesList.add(grantedAuthority);
-		}
+		
+		Authorities authority = user.getAuthority();
+		GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(authority.getAuthority());
+		grantedAuthoritiesList.add(grantedAuthority);
+		
 		return grantedAuthoritiesList;
 	}
 }
