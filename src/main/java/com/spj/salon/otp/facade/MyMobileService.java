@@ -8,7 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.spj.salon.config.ServiceConfig;
+import com.spj.salon.config.EnvironmentConfig;
 import com.spj.salon.exception.NotFoundCustomException;
 import com.spj.salon.user.model.User;
 import com.spj.salon.user.repository.UserRepository;
@@ -25,7 +25,7 @@ import com.twilio.type.PhoneNumber;
 public class MyMobileService implements IMyOtpService{
 	
 	@Autowired
-	private ServiceConfig serviceConfig;
+	private EnvironmentConfig envConfig;
 	
 	@Autowired
 	private UserRepository userRepository;
@@ -51,7 +51,7 @@ public class MyMobileService implements IMyOtpService{
 		logger.info("barber.getPhone() "+user.getPhone());
 		logger.info("OTP : " + otp);
 		
-		Twilio.init(serviceConfig.getTwilioSid(), serviceConfig.getTwilioAuthToken());
+		Twilio.init(envConfig.getTwilioOtpSid(), envConfig.getTwilioOtpAuthToken());
 
         Message textMessage = Message
                 .creator(new PhoneNumber(user.getPhone()), // to

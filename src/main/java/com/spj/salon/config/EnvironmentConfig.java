@@ -22,7 +22,7 @@ public class EnvironmentConfig {
      * @return
      */
     public String getPort() {
-        if (port == null) port = environment.getProperty("local.server.port");
+        if (port == null) port = System.getenv("local.server.port");
         return port;
     }
 
@@ -49,4 +49,67 @@ public class EnvironmentConfig {
     public String getServerUrlPrefi() throws UnknownHostException {
         return "http://" + getHostname() + ":" + getPort();
     }
+
+	/**
+	 * @return the environment
+	 */
+	public Environment getEnvironment() {
+		return environment;
+	}
+
+	/**
+	 * @return the twilioOtpSid
+	 */
+	public String getTwilioOtpSid() {
+		return System.getenv("twiliootp-sid");
+	}
+
+	/**
+	 * @return the twilioOtpAuthToken
+	 */
+	public String getTwilioOtpAuthToken() {
+		return System.getenv("twiliootp-authtoken");
+	}
+
+	/**
+	 * @return the jwtSigningKey
+	 */
+	public String getJwtSigningKey() {
+		return System.getenv("jwt-signingkey");
+	}
+
+	/**
+	 * @return the googleApiKey
+	 */
+	public String getGoogleApiKey() {
+		return System.getenv("googleapikey");
+	}
+
+	/**
+	 * @return the mailUsername
+	 */
+	public String getMailUsername() {
+		return System.getenv("mail-username");
+	}
+
+	/**
+	 * @return the mailPassword
+	 */
+	public String getMailPassword() {
+		return System.getenv("mail-password");
+	}
+
+	/**
+	 * @return the datasourceUsername
+	 */
+	public String getDatasourceUsername() {
+		return System.getenv("datasource-username");
+	}
+
+	/**
+	 * @return the datasourcePassword
+	 */
+	public String getDatasourcePassword() {
+		return System.getenv("datasource-password");
+	}
 }

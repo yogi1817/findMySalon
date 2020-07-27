@@ -10,7 +10,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
-import com.spj.salon.config.ServiceConfig;
+import com.spj.salon.config.EnvironmentConfig;
 
 /**
  * 
@@ -21,7 +21,7 @@ import com.spj.salon.config.ServiceConfig;
 public class JWTTokenStoreConfig {
 
 	@Autowired
-	private ServiceConfig serviceConfig;
+	private EnvironmentConfig envConfig;
 	
 	@Bean
 	public TokenStore tokenStore() {
@@ -40,7 +40,7 @@ public class JWTTokenStoreConfig {
 	@Bean
 	public JwtAccessTokenConverter jwtAccessTokenConverter() {
 		JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-		converter.setSigningKey(serviceConfig.getJwtSigningKey());
+		converter.setSigningKey(envConfig.getJwtSigningKey());
 		return converter;
 	}
 	

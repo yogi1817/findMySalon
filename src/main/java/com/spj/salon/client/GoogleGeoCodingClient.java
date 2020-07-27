@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import com.google.gson.Gson;
 import com.google.maps.GeocodingApi.Response;
 import com.google.maps.model.GeocodingResult;
-import com.spj.salon.config.ServiceConfig;
+import com.spj.salon.config.EnvironmentConfig;
 import com.spj.salon.utils.UserContextHolder;
 
 /**
@@ -29,7 +29,7 @@ import com.spj.salon.utils.UserContextHolder;
 public class GoogleGeoCodingClient{
 
 	@Autowired
-	private ServiceConfig serviceConfig;
+	private EnvironmentConfig envConfig;
 	
 	@Autowired
 	private Gson gson;
@@ -42,7 +42,7 @@ public class GoogleGeoCodingClient{
 				addessOrZip;
 		if("localhost".equals(UserContextHolder.getContext().getHost())) {
 			logger.debug("Inside If in  GoogleGeoCodingClient");
-			geoCodingUrl+="&key="+serviceConfig.getGoogleApiKey();
+			geoCodingUrl+="&key="+envConfig.getGoogleApiKey();
 			logger.debug("geoCodingUrl --> {}", geoCodingUrl);
 		}else {
 			logger.debug("Inside else in  GoogleGeoCodingClient");

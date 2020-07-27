@@ -10,9 +10,6 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/postgres
-    ##username: spjadmin
-    username: postgres
-    password: spjsecret
     platform: postgres
   jpa:
     database: POSTGRESQL
@@ -35,8 +32,6 @@ spring:
       
   mail:    host: smtp.gmail.com
     port: 587
-    username: findmybarber.spj
-    password: spjadmin123
     properties:      mail.smtp.auth: true
       mail.smtp.starttls.enable: true
       
@@ -48,12 +43,3 @@ management:
 logging:
   level:
     com.spg.salon: DEBUG
-
-spj:
-  variables:
-    googleapikey: AIzaSyCqZGm-UrRv3ir52SIWKCVzEA7WqDmB91M
-  jwt:
-    signingkey: "345345fsdgsf5345"
-  twiliootp:
-    sid: ACfdf9d7f1025b3516178ac7ee35da5297
-    authtoken: cab97db988d7da6416aa78b64ec8d4e2
