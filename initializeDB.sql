@@ -108,3 +108,4 @@ create table usa.zip_code_lookup(
 	longitude DOUBLE PRECISION,
 	latitude DOUBLE PRECISION,
 	create_date date);
+	
