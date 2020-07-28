@@ -14,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import com.google.maps.model.GeocodingResult;
 import com.spj.salon.barber.model.Address;
@@ -25,6 +27,7 @@ import com.spj.salon.barber.model.BarberServicesMapping;
 import com.spj.salon.barber.model.DailyBarbers;
 import com.spj.salon.barber.repository.AuthoritiesRepository;
 import com.spj.salon.client.GoogleGeoCodingClient;
+import com.spj.salon.client.OAuthClient;
 import com.spj.salon.otp.facade.MyEmailService;
 import com.spj.salon.security.pojo.UserType;
 import com.spj.salon.services.model.Services;
@@ -63,18 +66,31 @@ public class BarberFacade implements IBarberFacade {
 	@Autowired
 	private AuthoritiesRepository authoritiesRepository;
 	
+	@Autowired
+    private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private OAuthClient oAuthClient;
 	@Override
-	public User register(User user, UserType userType) {
+	public User register(User user, UserType userType, String clientHost) {
 		if (CollectionUtils.isEmpty(userDao.searchUserWithLoginIdAuthority(user.getLoginId(), userType.getResponse()))) {
 			
 			Authorities  auth = authoritiesRepository.findByAuthority(userType.getResponse());
 			user = ValidationUtils.validateUser(user, auth);
+			
+			//userCopy is needed to get the jwt before we encrypt the password
+			User userCopy = new User(user.getLoginId()==null?user.getEmail():user.getLoginId(), user.getPassword());
+			
+			user.setPassword(passwordEncoder.encode(StringUtils.isEmpty(user.getPassword())?"defaultpassword":user.getPassword()));
 			userRepository.saveAndFlush(user);
 			
 			myEmailService.sendOtpMessage(user.getLoginId());
 			
+			user.setJwtToken(oAuthClient.getJwtToken(userCopy, clientHost).getJwtToken());
+			
 			//JSONIgnore us not working to setting it to null before returning to user
 			user.setPassword(null);
+			
 			return user;
 		}
 

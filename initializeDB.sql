@@ -1,7 +1,7 @@
 create schema usa;
 
 create table usa.authorities(
-    authority_id BIGSERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     authority varchar(50) not null);
 
 insert into usa.authorities values (1, 'USER');

@@ -19,7 +19,7 @@ import com.spj.salon.services.model.Services;
  *
  */
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(value = "services", 
 		produces = MediaType.APPLICATION_JSON_VALUE)
 public class ServicesController {

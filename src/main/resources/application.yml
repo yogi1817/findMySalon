@@ -42,3 +42,10 @@ management:
 logging:
   level:
     com.spg.salon: DEBUG
+    
+spj:
+  application:
+    id: spj
+    password: thisissecret
+  services:
+    authenticate: /findmysalon/oauth/token

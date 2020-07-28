@@ -22,6 +22,15 @@ public class ServiceConfig {
 	
 	@Value("${spring.mail.port}")
 	private int mailPort;
+	
+	@Value("${spj.services.authenticate}")
+	private String authenticateService;
+	
+	@Value("${spj.application.id}")
+	private String applicationId;
+	
+	@Value("${spj.application.password}")
+	private String applicationPassword;
 
 	/**
 	 * @return the databaseUrl
@@ -49,5 +58,26 @@ public class ServiceConfig {
 	 */
 	public int getMailPort() {
 		return mailPort;
+	}
+
+	/**
+	 * @return the authenticateService
+	 */
+	public String getAuthenticateService() {
+		return authenticateService;
+	}
+
+	/**
+	 * @return the applicationId
+	 */
+	public String getApplicationId() {
+		return applicationId;
+	}
+
+	/**
+	 * @return the applicationPassword
+	 */
+	public String getApplicationPassword() {
+		return applicationPassword;
 	}
 }

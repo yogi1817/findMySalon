@@ -15,6 +15,8 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
+import com.spj.salon.config.ServiceConfig;
+
 /**
  * 
  * @author Yogesh Sharma
@@ -41,6 +43,9 @@ public class JWTOAuth2Config extends AuthorizationServerConfigurerAdapter {
 	@Autowired
 	private TokenEnhancer jwtTokenEnhancer;
 	
+	@Autowired
+	private ServiceConfig serviceConfig;
+	
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
 		TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
@@ -56,8 +61,8 @@ public class JWTOAuth2Config extends AuthorizationServerConfigurerAdapter {
 	@Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
-        		.withClient("spj")
-                .secret(passwordEncoder.encode("thisissecret"))
+        		.withClient(serviceConfig.getApplicationId())
+                .secret(passwordEncoder.encode(serviceConfig.getApplicationPassword()))
                 .authorizedGrantTypes("refresh_token", "password")
                 .accessTokenValiditySeconds(18000)
                 .refreshTokenValiditySeconds(18000);

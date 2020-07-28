@@ -19,6 +19,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.codehaus.jackson.annotate.JsonSetter;
@@ -67,11 +68,14 @@ public class User implements Serializable{
 	private Long favouriteSalonId;	
 	private boolean verified = false;
 	
-	@Column(name="authority_id", insertable=false, updatable = false)
+	@Transient
+	private String jwtToken;
+	
+	@Column(name = "authority_id")
 	private long authorityId;
 	
 	@OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-	@JoinColumn(name = "authority_id", referencedColumnName = "authority_id")
+	@JoinColumn(name = "authority_id", referencedColumnName = "authority_id", insertable = false, updatable = false)
 	private Authorities authority;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -94,6 +98,14 @@ public class User implements Serializable{
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", referencedColumnName = "user_id")
 	private Set<Address> addressSet;
+	
+	public User(String loginId, String password) {
+		this.loginId = loginId;
+		this.password = password;
+	}
+	
+	public User() {
+	}
 	
 	/**
 	 * @return the userId
@@ -365,5 +377,17 @@ public class User implements Serializable{
 				+ ", authorityId=" + authorityId + ", authority=" + authority + ", dailyBarberSet=" + dailyBarberSet
 				+ ", barberServicesMappingSet=" + barberServicesMappingSet + ", barberCalendarSet=" + barberCalendarSet
 				+ ", checkInSet=" + checkInSet + ", addressSet=" + addressSet + "]";
+	}
+	/**
+	 * @return the jwtToken
+	 */
+	public String getJwtToken() {
+		return jwtToken;
+	}
+	/**
+	 * @param jwtToken the jwtToken to set
+	 */
+	public void setJwtToken(String jwtToken) {
+		this.jwtToken = jwtToken;
 	}
 }

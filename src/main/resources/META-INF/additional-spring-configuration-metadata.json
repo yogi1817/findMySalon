@@ -1,32 +1,17 @@
 {"properties": [
   {
-    "name": "spj.variables.googleapikey",
+    "name": "spj.services.authenticate",
     "type": "java.lang.String",
-    "description": "A description for 'spj.variables.googleapikey'"
+    "description": "A description for 'spj.services.authenticate'"
   },
   {
-    "name": "security.jwt.token.secret-key",
+    "name": "spj.application.id",
     "type": "java.lang.String",
-    "description": "A description for 'security.jwt.token.secret-key'"
+    "description": "A description for 'spj.application.id'"
   },
   {
-    "name": "security.jwt.token.expire-length",
+    "name": "spj.application.password",
     "type": "java.lang.String",
-    "description": "A description for 'security.jwt.token.expire-length'"
-  },
-  {
-    "name": "spj.jwt.signingkey",
-    "type": "java.lang.String",
-    "description": "A description for 'spj.jwt.signingkey'"
-  },
-  {
-    "name": "spj.twiliootp.sid",
-    "type": "java.lang.String",
-    "description": "A description for 'spj.twiliootp.sid'"
-  },
-  {
-    "name": "spj.twiliootp.authtoken",
-    "type": "java.lang.String",
-    "description": "A description for 'spj.twiliootp.authtoken'"
+    "description": "A description for 'spj.application.password'"
   }
 ]}

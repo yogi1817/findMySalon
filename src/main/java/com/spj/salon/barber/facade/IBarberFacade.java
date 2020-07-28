@@ -15,7 +15,7 @@ import com.spj.salon.user.model.User;
  */
 public interface IBarberFacade {
 
-	public User register(User barber, UserType userType);
+	public User register(User barber, UserType userType, String clientHost);
 
 	public boolean addBarbersCountToday(DailyBarbers dailyBarbers);
 
