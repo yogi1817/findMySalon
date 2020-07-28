@@ -62,8 +62,6 @@ public class MyEmailService implements IMyOtpService{
 		simpleMailMessage.setSubject("Welcome to find my barber - OTP");
 		simpleMailMessage.setText("Your OTP is "+otp+ " .OTP will expire in 30 mins");
 
-		logger.info("barber.getEmail() "+user.getEmail());
-
 		// Uncomment to send mail
 		javaMailSender.send(simpleMailMessage);
 	}

@@ -12,6 +12,11 @@ import org.springframework.context.annotation.Configuration;
 import com.spj.salon.config.EnvironmentConfig;
 import com.spj.salon.config.ServiceConfig;
 
+/**
+ * 
+ * @author Yogesh Sharma
+ *
+ */
 @Configuration
 public class DataSourceConfig {
 

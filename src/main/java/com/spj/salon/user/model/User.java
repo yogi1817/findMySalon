@@ -66,10 +66,12 @@ public class User implements Serializable{
 	private String loginSource;
 	private Long favouriteSalonId;	
 	private boolean verified = false;
+	
+	@Column(name="authority_id", insertable=false, updatable = false)
 	private long authorityId;
 	
 	@OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-	@JoinColumn(name = "user_id", referencedColumnName = "authority_id")
+	@JoinColumn(name = "authority_id", referencedColumnName = "authority_id")
 	private Authorities authority;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
