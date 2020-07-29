@@ -26,7 +26,7 @@ import com.spj.salon.user.model.User;
  *
  */
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @RequestMapping(value = "user",
 					produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {

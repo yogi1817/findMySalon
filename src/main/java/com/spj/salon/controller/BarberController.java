@@ -30,7 +30,7 @@ import com.spj.salon.utils.UserContextHolder;
  *
  */
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @RequestMapping(value = "barber", produces = MediaType.APPLICATION_JSON_VALUE)
 public class BarberController {
 

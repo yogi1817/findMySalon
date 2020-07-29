@@ -17,7 +17,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
     	registry.addMapping("/findmysalon/**")
-		.allowedOrigins("http://localhost:4200")
+		.allowedOrigins("*")
 		.allowedMethods("PUT", "DELETE", "POST", "GET", "OPTIONS")
 		//.allowedHeaders("header1", "header2", "header3")
 		//.exposedHeaders("header1", "header2")
