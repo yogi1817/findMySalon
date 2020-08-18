@@ -7,8 +7,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
@@ -37,10 +38,18 @@ public class OAuthClient{
 	@Autowired
 	private ServiceConfig serviceConfig;
 	
-	private static final Logger logger = LoggerFactory.getLogger(OAuthClient.class.getName());
+	private static final Logger logger = LogManager.getLogger(OAuthClient.class.getName());
 	
+	/**
+	 * This method calls the oauth service with login id and password and
+	 * generates the jwt token. 
+	 * This is needed because the UI(angular) was not able to call the OAUTh service provided by spring security
+	 * @param user
+	 * @param clientHost
+	 * @return
+	 */
 	public User getJwtToken(User user, String clientHost) {
-		String authentitcateClient = clientHost + serviceConfig.getAuthenticateService();
+		String authenticateClient = clientHost + serviceConfig.getAuthenticateService();
 
 		String authString = serviceConfig.getApplicationId() + ":" + serviceConfig.getApplicationPassword();
 		byte[] authEncBytes = Base64.encodeBase64(authString.getBytes());
@@ -57,7 +66,7 @@ public class OAuthClient{
 				  .build();
 		
 		Request request = new Request.Builder()
-				  .url(authentitcateClient)
+				  .url(authenticateClient)
 				  .method("POST", body)
 				  .addHeader("Authorization", "Basic "+authStringEnc)
 				  .build();
@@ -79,10 +88,10 @@ public class OAuthClient{
 			
 		} catch (Exception e) {
 			logger.error("Error calling auth service "+e.getMessage());
+			throw new ServiceException("Failed to call oauth service");
 		}
 		
-		
-		logger.debug("response "+ token);
+		logger.info("response "+ token);
 		user.setPassword("");
 		user.setJwtToken((String) token.get("access_token"));
 		return user;

@@ -25,7 +25,6 @@ import com.spj.salon.config.EnvironmentConfig;
 import com.spj.salon.config.ServiceConfig;
 import com.spj.salon.utils.UserContextInterceptor;
 
-
 @SpringBootApplication
 @ComponentScan(basePackages = "com.spj.salon")
 @EnableJpaRepositories(basePackages =  {"com.spj.salon.barber.repository", "com.spj.salon.user.repository",

@@ -9,9 +9,11 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 import org.springframework.stereotype.Component;
 
 /**
@@ -22,13 +24,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserContextFilter implements Filter{
 
-	private static final Logger logger = LoggerFactory.getLogger(UserContextFilter.class);
+	private static final Logger logger = LogManager.getLogger(UserContextFilter.class);
 	
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-
+		HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+		
 		if(httpServletRequest.getHeader(UserContext.CORRELATION_ID)!=null)
 			UserContextHolder.getContext().setCorrelationId(httpServletRequest.getHeader(UserContext.CORRELATION_ID));
 		else
@@ -38,8 +41,12 @@ public class UserContextFilter implements Filter{
         //UserContextHolder.getContext().setOrgId(httpServletRequest.getHeader(UserContext.ORG_ID));
 
         logger.debug("Find MySalon Service Incoming Correlation id: {}", UserContextHolder.getContext().getCorrelationId());
-
+        httpServletResponse.setHeader(UserContext.CORRELATION_ID, UserContextHolder.getContext().getCorrelationId());
+        
+        //This is like MDC and is used for logging
+        ThreadContext.clearAll();
+        ThreadContext.put(UserContext.CORRELATION_ID, UserContextHolder.getContext().getCorrelationId());
+        
         chain.doFilter(httpServletRequest, response);
 	}
-
 }

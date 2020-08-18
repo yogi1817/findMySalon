@@ -16,6 +16,11 @@ import org.springframework.stereotype.Repository;
 import com.spj.salon.barber.model.Authorities;
 import com.spj.salon.user.model.User;
 
+/**
+ * 
+ * @author Yogesh Sharma
+ *
+ */
 @Repository
 public class UserDao implements IUserDao{
 

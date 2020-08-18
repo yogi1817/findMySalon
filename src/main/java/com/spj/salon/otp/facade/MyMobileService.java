@@ -1,7 +1,7 @@
 package com.spj.salon.otp.facade;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,16 +33,20 @@ public class MyMobileService implements IMyOtpService{
 	@Autowired
 	private OtpService otpService;
 	
-	private static final Logger logger = LoggerFactory.getLogger(MyMobileService.class.getName());
-    
+	private static final Logger logger = LogManager.getLogger(MyMobileService.class.getName());
+	
+	/**
+	 * This method will send OTP on the mobile number of registered user
+	 */
 	public void sendOtpMessage() {
-
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String loginId = (String) auth.getPrincipal();
 		
+		logger.info("User found in jwt security {}", loginId);
 		User user = userRepository.findByLoginId(loginId);
 
 		if(StringUtils.isEmpty(user.getPhone())) {
+			logger.error("Cannot send OTP, no phone number founf for user {}", loginId);
 			throw new NotFoundCustomException("No phone number found for user "+user.getLoginId(), "Please add valid phone number");
 		}
 		
@@ -59,6 +63,6 @@ public class MyMobileService implements IMyOtpService{
                         "Welcome to find my barber, your OTP is "+otp+" .Its valid for 30 minutes.")
                 .create();
         
-        logger.debug(textMessage.getSid());
+        logger.debug("message sent {}",textMessage.getSid());
 	}
 }

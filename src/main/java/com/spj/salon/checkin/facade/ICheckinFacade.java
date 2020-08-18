@@ -1,10 +1,9 @@
 package com.spj.salon.checkin.facade;
 
-import java.util.List;
-
 import javax.naming.ServiceUnavailableException;
 
-import com.spj.salon.barber.dto.BarberAddressDTO;
+import com.spj.salon.barber.dto.BarberCheckInRequest;
+import com.spj.salon.barber.dto.BarberCheckInResponse;
 
 public interface ICheckinFacade {
 
@@ -12,5 +11,5 @@ public interface ICheckinFacade {
 	public String checkInUser(long barberId, String time) ;
 	public String checkInBarber(long barberId, String time) ;
 	public boolean checkOut(long userId);
-	public List<BarberAddressDTO> findBarbersAtZip(String zipCode, String distance) throws ServiceUnavailableException ;
+	public BarberCheckInResponse findBarbersAtZip(BarberCheckInRequest barberCheckInRequest) throws ServiceUnavailableException ;
 }

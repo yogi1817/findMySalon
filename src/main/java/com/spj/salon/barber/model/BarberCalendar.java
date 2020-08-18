@@ -12,6 +12,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import lombok.Data;
+
 /**
  * 
  * @author Yogesh Sharma
@@ -19,6 +21,7 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(name = "barber_calendar", schema = "usa", uniqueConstraints = @UniqueConstraint(columnNames = "barber_calendar_id"))
+@Data
 public class BarberCalendar implements Serializable{
 
 	/**
@@ -48,134 +51,4 @@ public class BarberCalendar implements Serializable{
 	private String salonOpensAt;
 	@Transient
 	private String salonClosesAt;
-	
-	/**
-	 * @return the barberCalendarId
-	 */
-	public Long getBarberCalendarId() {
-		return barberCalendarId;
-	}
-	/**
-	 * @param barberCalendarId the barberCalendarId to set
-	 */
-	public void setBarberCalendarId(Long barberCalendarId) {
-		this.barberCalendarId = barberCalendarId;
-	}
-	/**
-	 * @return the userId
-	 */
-	public Long getUserId() {
-		return userId;
-	}
-	/**
-	 * @param userId the userId to set
-	 */
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
-	/**
-	 * @return the salonOpenTime
-	 */
-	public Date getSalonOpenTime() {
-		return salonOpenTime;
-	}
-	/**
-	 * @param salonOpenTime the salonOpenTime to set
-	 */
-	public void setSalonOpenTime(Date salonOpenTime) {
-		this.salonOpenTime = salonOpenTime;
-	}
-	/**
-	 * @return the salonCloseTime
-	 */
-	public Date getSalonCloseTime() {
-		return salonCloseTime;
-	}
-	/**
-	 * @param salonCloseTime the salonCloseTime to set
-	 */
-	public void setSalonCloseTime(Date salonCloseTime) {
-		this.salonCloseTime = salonCloseTime;
-	}
-	/**
-	 * @return the calendarDay
-	 */
-	public String getCalendarDay() {
-		return calendarDay;
-	}
-	/**
-	 * @param calendarDay the calendarDay to set
-	 */
-	public void setCalendarDay(String calendarDay) {
-		this.calendarDay = calendarDay;
-	}
-	/**
-	 * @return the calendarDate
-	 */
-	public Date getCalendarDate() {
-		return calendarDate;
-	}
-	/**
-	 * @param calendarDate the calendarDate to set
-	 */
-	public void setCalendarDate(Date calendarDate) {
-		this.calendarDate = calendarDate;
-	}
-	/**
-	 * @return the modifyDate
-	 */
-	public Date getModifyDate() {
-		return modifyDate;
-	}
-	/**
-	 * @param modifyDate the modifyDate to set
-	 */
-	public void setModifyDate(Date modifyDate) {
-		this.modifyDate = modifyDate;
-	}
-	/**
-	 * @return the salonOpensAt
-	 */
-	public String getSalonOpensAt() {
-		return salonOpensAt;
-	}
-	/**
-	 * @param salonOpensAt the salonOpensAt to set
-	 */
-	public void setSalonOpensAt(String salonOpensAt) {
-		this.salonOpensAt = salonOpensAt;
-	}
-	/**
-	 * @return the salonClosesAt
-	 */
-	public String getSalonClosesAt() {
-		return salonClosesAt;
-	}
-	/**
-	 * @param salonClosesAt the salonClosesAt to set
-	 */
-	public void setSalonClosesAt(String salonClosesAt) {
-		this.salonClosesAt = salonClosesAt;
-	}
-	
-	/**
-	 * @return the calendayDateString
-	 */
-	public String getCalendayDateString() {
-		return calendayDateString;
-	}
-	/**
-	 * @param calendayDateString the calendayDateString to set
-	 */
-	public void setCalendayDateString(String calendayDateString) {
-		this.calendayDateString = calendayDateString;
-	}
-	@Override
-	public String toString() {
-		return "BarberCalendar [barberCalendarId=" + barberCalendarId + ", userId=" + userId
-				+ ", salonOpenTime=" + salonOpenTime + ", salonCloseTime=" + salonCloseTime + ", calendarDay="
-				+ calendarDay + ", calendayDateString=" + calendayDateString + ", calendarDate=" + calendarDate
-				+ ", modifyDate=" + modifyDate + ", salonOpensAt=" + salonOpensAt + ", salonClosesAt=" + salonClosesAt
-				+ "]";
-	}
 }

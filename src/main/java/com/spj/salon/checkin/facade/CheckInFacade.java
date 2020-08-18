@@ -12,8 +12,8 @@ import java.util.concurrent.CompletableFuture;
 
 import javax.naming.ServiceUnavailableException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +22,8 @@ import org.springframework.util.CollectionUtils;
 
 import com.google.maps.model.GeocodingResult;
 import com.spj.salon.barber.dto.BarberAddressDTO;
+import com.spj.salon.barber.dto.BarberCheckInRequest;
+import com.spj.salon.barber.dto.BarberCheckInResponse;
 import com.spj.salon.barber.model.Address;
 import com.spj.salon.barber.model.BarberCalendar;
 import com.spj.salon.barber.model.DailyBarbers;
@@ -61,7 +63,7 @@ public class CheckInFacade implements ICheckinFacade {
 	@Autowired 
 	private GoogleGeoCodingClient googleGeoCodingClient;
 	
-	private static final Logger logger = LoggerFactory.getLogger(CheckInFacade.class.getName());
+	private static final Logger logger = LogManager.getLogger(CheckInFacade.class.getName());
 	
 	@Override
 	public String waitTimeEstimate(long barberId) {
@@ -210,28 +212,40 @@ public class CheckInFacade implements ICheckinFacade {
 	 * 
 	 */
 	@Override
-	public List<BarberAddressDTO> findBarbersAtZip(String zipCode, String distance) throws ServiceUnavailableException {
+	public BarberCheckInResponse findBarbersAtZip(BarberCheckInRequest barberCheckInRequest) throws ServiceUnavailableException {
 		double longitude = 0;
 		double latitude = 0;
 		
-		ZipCodeLookup zipCodeLookUp = zipCodeRepo.findByZipCode(Long.parseLong(zipCode));
-		if(zipCodeLookUp!=null) {
-			longitude = zipCodeLookUp.getLongitude();
-			latitude = zipCodeLookUp.getLatitude();
-		}else if(longitude==0 || latitude==0){
+		if(barberCheckInRequest.getZipCode()==null &&
+				barberCheckInRequest.getLatitude()==null &&
+				barberCheckInRequest.getLongitude()==null) {
+			
+			longitude = barberCheckInRequest.getLongitude();
+			latitude = barberCheckInRequest.getLatitude();
+		}else {
+			longitude = 0;
+			latitude = 0;
+			
+			ZipCodeLookup zipCodeLookUp = zipCodeRepo.findByZipCode(Long.parseLong(barberCheckInRequest.getZipCode()));
+			if(zipCodeLookUp!=null) {
+				longitude = zipCodeLookUp.getLongitude();
+				latitude = zipCodeLookUp.getLatitude();
+			}
+		}
+		
+		if(longitude==0 || latitude==0){
 			/*try {
 				//This is how we do it using goodle api
 				GeocodingResult[] results = GeocodingApi.geocode(context, zipCode).await();
 				*/
-				
 				try {
-					GeocodingResult[] results = googleGeoCodingClient.findGeocodingResult(zipCode);
+					GeocodingResult[] results = googleGeoCodingClient.findGeocodingResult(barberCheckInRequest.getZipCode());
 					longitude = results[0].geometry.location.lng;
 					latitude = results[0].geometry.location.lat;
 					
 					//This will update zip code table async
 					CompletableFuture.runAsync(() -> {
-						saveZipCode(zipCode, results);
+						saveZipCode(barberCheckInRequest.getZipCode(), results);
 					});
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -242,7 +256,7 @@ public class CheckInFacade implements ICheckinFacade {
 				logger.debug("latitude "+ latitude);
 		}
 		
-		return findBarbersWithinXMiles(longitude, latitude, Double.parseDouble(distance));
+		return findBarbersWithinXMiles(longitude, latitude, barberCheckInRequest.getDistance());
 	}
 	
 	/**
@@ -252,9 +266,10 @@ public class CheckInFacade implements ICheckinFacade {
 	 * @param latitude
 	 * @param distance
 	 */
-	private List<BarberAddressDTO> findBarbersWithinXMiles(double longitude, double latitude, Double distance) {
-		List<BarberAddressDTO> barbersddressDTOList = new ArrayList<>();
+	private BarberCheckInResponse findBarbersWithinXMiles(double longitude, double latitude, Double distance) {
+		List<BarberAddressDTO> barbersaddressDTOList = new ArrayList<>();
 		BarberAddressDTO barberAddressDTO = new BarberAddressDTO();
+		BarberCheckInResponse response = new BarberCheckInResponse();
 		
 		double long1 = longitude - distance/Math.abs(Math.cos(Math.toRadians(latitude))*69);
 		double long2 = longitude + distance/Math.abs(Math.cos(Math.toRadians(latitude))*69);
@@ -283,11 +298,18 @@ public class CheckInFacade implements ICheckinFacade {
 				barberAddressDTO.setPhone(barbersAddress.get().getUser().getPhone());
 				barberAddressDTO.setStoreName(barbersAddress.get().getUser().getStoreName());
 				barberAddressDTO.setDistance((Double) map.get("distance"));
-				barbersddressDTOList.add(barberAddressDTO);
+				barberAddressDTO.setWaitTime(waitTimeEstimate(barbersAddress.get().getUserId()));
+				barbersaddressDTOList.add(barberAddressDTO);
 			}
 		}
 		
-		return barbersddressDTOList;
+		if(CollectionUtils.isEmpty(barbersaddressDTOList)) {
+			response.setMessage("No Barbers Found within the range");
+		}else {
+			response.setMessage(barbersaddressDTOList.size()+" Barbers Found");
+		}
+		response.setBarberAddressDTO(barbersaddressDTOList);
+		return response;
 	}
 
 	/**

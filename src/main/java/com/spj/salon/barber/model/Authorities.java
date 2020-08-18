@@ -15,6 +15,8 @@ import javax.persistence.UniqueConstraint;
 
 import com.spj.salon.user.model.User;
 
+import lombok.Data;
+
 /**
  * 
  * @author Yogesh Sharma
@@ -22,6 +24,7 @@ import com.spj.salon.user.model.User;
  */
 @Entity
 @Table(name = "authorities", schema = "usa", uniqueConstraints = @UniqueConstraint(columnNames = "authority_id"))
+@Data
 public class Authorities implements Serializable{
 
 	/**
@@ -39,51 +42,4 @@ public class Authorities implements Serializable{
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="authority_id", referencedColumnName = "authority_id", insertable = false, updatable = false) 
     private User user;
-
-	/**
-	 * @return the authorityId
-	 */
-	public Long getAuthorityId() {
-		return authorityId;
-	}
-
-	/**
-	 * @param authorityId the authorityId to set
-	 */
-	public void setAuthorityId(Long authorityId) {
-		this.authorityId = authorityId;
-	}
-
-	/**
-	 * @return the authority
-	 */
-	public String getAuthority() {
-		return authority;
-	}
-
-	/**
-	 * @param authority the authority to set
-	 */
-	public void setAuthority(String authority) {
-		this.authority = authority;
-	}
-
-	/**
-	 * @return the user
-	 */
-	public User getUser() {
-		return user;
-	}
-
-	/**
-	 * @param user the user to set
-	 */
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	@Override
-	public String toString() {
-		return "Authorities [authorityId=" + authorityId + ", authority=" + authority + ", user=" + user + "]";
-	}
 }

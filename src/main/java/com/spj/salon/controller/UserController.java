@@ -2,6 +2,8 @@ package com.spj.salon.controller;
 
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -40,19 +42,24 @@ public class UserController {
 	@Autowired
 	private OAuthClient oAuthClient;
 	
+	private static final Logger logger = LogManager.getLogger(UserController.class.getName());
+	
 	@PostMapping(value = "register", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<User> registerBarber(@RequestBody User user, @RequestHeader Map<String, String> headers){
+		logger.info("Inside UserController registerBarber service");
 		return new ResponseEntity<>(barberFacade.register(user, UserType.USER, headers.get("clienthost")), HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "favourite", consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
 	public ResponseEntity<Boolean> addFavouriteSalon( 
 			@RequestParam Long barberId){
+		logger.info("Inside UserController addFavouriteSalon service");
 		return new ResponseEntity<>(userFacade.addFavouriteSalon(barberId), HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "authenticate", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<User> authenticate(@RequestBody User user, @RequestHeader Map<String, String> headers) {
+		logger.info("Inside UserController authenticate service");
 		return new ResponseEntity<>(oAuthClient.getJwtToken(user, headers.get("clienthost")), HttpStatus.OK);
 	}
 }

@@ -9,6 +9,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import com.spj.salon.barber.model.Authorities;
 import com.spj.salon.user.model.User;
 
+/**
+ * 
+ * @author Yogesh Sharma
+ *
+ */
 public class AuthorityUtils {
 
 	public static Collection<GrantedAuthority> getUserAuthorities(User user) {

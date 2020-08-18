@@ -1,7 +1,7 @@
 package com.spj.salon.otp.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,7 @@ import com.spj.salon.user.facade.IUserFacade;
 @RequestMapping(value = "generateOtp", produces = MediaType.APPLICATION_JSON_VALUE)
 public class OtpController {
 
-	private static final Logger logger = LoggerFactory.getLogger(OtpController.class.getName());
+	private static final Logger logger = LogManager.getLogger(OtpController.class.getName());
 
 	@Autowired
 	@Qualifier("emailOtp")
@@ -47,27 +47,35 @@ public class OtpController {
 	private final String SUCCESS = "Entered Otp is valid";
 	private final String FAIL = "Entered Otp is NOT valid. Please Retry!";
 	
+	/**
+	 * This method will call OTP on an email of registered user
+	 * @return
+	 */
 	@GetMapping("email")
 	public ResponseEntity<String> generateOtpEmail() {
-
+		logger.info("Inside OtpController calling generateOtpEmail");
 		myEmailService.sendOtpMessage();
 		return new ResponseEntity<>("Otp Send", HttpStatus.OK);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	@GetMapping("mobile")
 	public ResponseEntity<String> generateOtpMobile() {
-
+		logger.info("Inside OtpController calling generateOtpMobile");
 		myMobileService.sendOtpMessage();
 		return new ResponseEntity<>("Otp Send", HttpStatus.OK);
 	}
 	
 	@GetMapping("validateOtp")
 	public @ResponseBody String validateOtp(@RequestParam("otpnum") int otpnum) {
-
+		logger.info("Inside OtpController calling validateOtp");
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String loginId = (String) auth.getPrincipal();
 
-		logger.info(" Otp Number : " + otpnum);
+		logger.info("Otp Number : " + otpnum);
 
 		//Validate the Otp 
 		if (otpnum >= 0) {

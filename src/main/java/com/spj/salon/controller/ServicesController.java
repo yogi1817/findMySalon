@@ -1,5 +1,7 @@
 package com.spj.salon.controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,9 +29,12 @@ public class ServicesController {
 	@Autowired
 	private IServicesFacade servicesFacade;
 	
+	private static final Logger logger = LogManager.getLogger(ServicesController.class.getName());
+	
 	@PostMapping(value = "register", 
 			consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> addService(@RequestBody Services services){
+		logger.info("Inside ServicesController addService service");
 		return new ResponseEntity<>(servicesFacade.addService(services), HttpStatus.OK);
 	}
 }
