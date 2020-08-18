@@ -217,8 +217,8 @@ public class CheckInFacade implements ICheckinFacade {
 		double latitude = 0;
 		
 		if(barberCheckInRequest.getZipCode()==null &&
-				barberCheckInRequest.getLatitude()==null &&
-				barberCheckInRequest.getLongitude()==null) {
+				barberCheckInRequest.getLatitude()!=null &&
+				barberCheckInRequest.getLongitude()!=null) {
 			
 			longitude = barberCheckInRequest.getLongitude();
 			latitude = barberCheckInRequest.getLatitude();
