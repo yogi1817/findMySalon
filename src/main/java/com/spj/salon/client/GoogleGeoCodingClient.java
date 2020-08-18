@@ -50,10 +50,12 @@ public class GoogleGeoCodingClient{
 				addessOrZip+"&key="+envConfig.getGoogleApiKey();
 		logger.info("geoCodingUrl --> {}", geoCodingUrl);
 				
+		URL url = new URL(geoCodingUrl);
+		URLConnection conn = null;
 		if(!"localhost".equals(UserContextHolder.getContext().getHost())) {
 			logger.info("Inside else in  GoogleGeoCodingClient");
 		
-			URL proxyUrl = new URL(envConfig.getQuotoGuardURL());
+			URL proxyUrl = new URL(envConfig.getQuotoGuardShieldURL());
 			logger.info("proxyUrl --> {}",proxyUrl);
 			
 	        String userInfo = proxyUrl.getUserInfo();
@@ -75,8 +77,7 @@ public class GoogleGeoCodingClient{
 	        logger.info("authentcation set");
 		}
 		
-		URL url = new URL(geoCodingUrl);
-		URLConnection conn = url.openConnection();
+		conn = url.openConnection();
 		logger.info("google api connection stablished");
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
