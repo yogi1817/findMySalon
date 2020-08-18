@@ -2,10 +2,6 @@ plugins {
 	id 'org.springframework.boot' version '2.2.2.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 	id 'java'
-	id 'groovy'
-	id 'org.springframework.cloud.contract' version '2.2.2.RELEASE'
-	id 'maven'
-	id 'maven-publish'
 }
 
 group = 'com.spj.find.salon'
@@ -14,7 +10,6 @@ sourceCompatibility = '1.8'
 
 repositories {
 	mavenCentral()
-	mavenLocal()
 }
 
 configurations {
@@ -44,8 +39,6 @@ dependencies {
 	compile 'com.google.guava:guava:29.0-jre'
 	compile 'com.twilio.sdk:twilio:7.54.0'
 	compile 'org.projectlombok:lombok:1.18.12'
-	compile 'org.codehaus.groovy:groovy-all:2.2.2'
-	compile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
 	
 	annotationProcessor 'org.projectlombok:lombok:1.18.12'
 	
@@ -61,24 +54,6 @@ dependencyManagement {
 	}
 }
 
-contracts {
-  packageWithBaseClasses = 'findMySalon'
-  baseClassMappings {
-    baseClassMapping(".*findMySalon.*", "findMySalon.BaseClass")
-  }
-}
-
 test {
 	useJUnitPlatform()
-}
-
-publishing {
-	publications {
-		myLibrary(MavenPublication) {
-			groupId 'com.spj.find.salon'
-			artifactId = 'findMySalon'
-			version '1.1'
-			from components.java
-		}
-	}
 }
