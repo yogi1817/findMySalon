@@ -72,15 +72,17 @@ public class GoogleGeoCodingClient{
 	                    return new PasswordAuthentication(user, password.toCharArray());
 	                }
 	        });
+	        logger.info("authentcation set");
 		}
 		URL url = new URL(geoCodingUrl);
 		URLConnection conn = url.openConnection();
+		logger.info("google api connection stablished");
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
         String responseBody = new BufferedReader(in)
                 .lines()
                 .collect(Collectors.joining("\n"));
-        logger.debug("responseBody -->{}", responseBody);
+        logger.info("responseBody -->{}", responseBody);
 		Response response = gson.fromJson(responseBody , Response.class);
 		GeocodingResult[] results = response.results;
 		
