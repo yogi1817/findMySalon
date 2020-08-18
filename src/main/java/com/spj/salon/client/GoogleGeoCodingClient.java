@@ -53,20 +53,20 @@ public class GoogleGeoCodingClient{
 			geoCodingUrl+="&key="+envConfig.getGoogleApiKey();
 			logger.info("geoCodingUrl --> {}", geoCodingUrl);
 		}else {
-			logger.debug("Inside else in  GoogleGeoCodingClient");
+			logger.info("Inside else in  GoogleGeoCodingClient");
 			geoCodingUrl+="&sensor=false";
-			logger.debug("geoCodingUrl --> {}", geoCodingUrl);
+			logger.info("geoCodingUrl --> {}", geoCodingUrl);
 			URL proxyUrl = new URL(System.getenv("QUOTAGUARD_URL"));
-			logger.debug("proxyUrl --> {}",proxyUrl);
+			logger.info("proxyUrl --> {}",proxyUrl);
 	        String userInfo = proxyUrl.getUserInfo();
 	        String user = userInfo.substring(0, userInfo.indexOf(':'));
 	        String password = userInfo.substring(userInfo.indexOf(':') + 1);
 
-	        logger.debug("user --> {}",user);
+	        logger.info("user --> {}",user);
 	        System.setProperty("http.proxyHost", proxyUrl.getHost());
 	        System.setProperty("http.proxyPort", Integer.toString(proxyUrl.getPort()));
-	        logger.debug("proxyUrl.getHost() --> {}",proxyUrl.getHost());
-	        logger.debug("proxyUrl.getPort() --> {}",proxyUrl.getPort());
+	        logger.info("proxyUrl.getHost() --> {}",proxyUrl.getHost());
+	        logger.info("proxyUrl.getPort() --> {}",proxyUrl.getPort());
 	        Authenticator.setDefault(new Authenticator() {
 	                protected PasswordAuthentication getPasswordAuthentication() {
 	                    return new PasswordAuthentication(user, password.toCharArray());
