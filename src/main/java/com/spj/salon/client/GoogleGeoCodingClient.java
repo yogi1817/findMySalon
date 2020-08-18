@@ -3,8 +3,6 @@ package com.spj.salon.client;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.stream.Collectors;
@@ -18,7 +16,6 @@ import com.google.gson.Gson;
 import com.google.maps.GeocodingApi.Response;
 import com.google.maps.model.GeocodingResult;
 import com.spj.salon.config.EnvironmentConfig;
-import com.spj.salon.utils.UserContextHolder;
 
 /**
  * 
@@ -48,11 +45,11 @@ public class GoogleGeoCodingClient{
 		
 		String geoCodingUrl = "https://maps.googleapis.com/maps/api/geocode/json?address="+
 				addessOrZip;
-		if("localhost".equals(UserContextHolder.getContext().getHost())) {
+		/*if("localhost".equals(UserContextHolder.getContext().getHost())) {*/
 			logger.info("Inside If in  GoogleGeoCodingClient");
 			geoCodingUrl+="&key="+envConfig.getGoogleApiKey();
 			logger.info("geoCodingUrl --> {}", geoCodingUrl);
-		}else {
+		/*}else {
 			logger.info("Inside else in  GoogleGeoCodingClient");
 			geoCodingUrl+="&sensor=false";
 			logger.info("geoCodingUrl --> {}", geoCodingUrl);
@@ -73,7 +70,7 @@ public class GoogleGeoCodingClient{
 	                }
 	        });
 	        logger.info("authentcation set");
-		}
+		}*/
 		URL url = new URL(geoCodingUrl);
 		URLConnection conn = url.openConnection();
 		logger.info("google api connection stablished");
