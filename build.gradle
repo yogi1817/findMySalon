@@ -72,3 +72,13 @@ test {
 	useJUnitPlatform()
 }
 
+publishing {
+	publications {
+		myLibrary(MavenPublication) {
+			groupId 'com.spj.find.salon'
+			artifactId = 'findMySalon'
+			version '1.1'
+			from components.java
+		}
+	}
+}
