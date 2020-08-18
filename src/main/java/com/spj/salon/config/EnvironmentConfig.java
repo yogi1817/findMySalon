@@ -112,4 +112,12 @@ public class EnvironmentConfig {
 	public String getDatasourcePassword() {
 		return System.getenv("datasource-password");
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getQuotoGuardURL() {
+		return System.getenv("QUOTAGUARDSTATIC_URL");
+	}
 }

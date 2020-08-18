@@ -3,6 +3,8 @@ package com.spj.salon.client;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.stream.Collectors;
@@ -16,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.maps.GeocodingApi.Response;
 import com.google.maps.model.GeocodingResult;
 import com.spj.salon.config.EnvironmentConfig;
+import com.spj.salon.utils.UserContextHolder;
 
 /**
  * 
@@ -44,33 +47,34 @@ public class GoogleGeoCodingClient{
 	public GeocodingResult[] findGeocodingResult(String addessOrZip) throws IOException {
 		
 		String geoCodingUrl = "https://maps.googleapis.com/maps/api/geocode/json?address="+
-				addessOrZip;
-		/*if("localhost".equals(UserContextHolder.getContext().getHost())) {*/
-			logger.info("Inside If in  GoogleGeoCodingClient");
-			geoCodingUrl+="&key="+envConfig.getGoogleApiKey();
-			logger.info("geoCodingUrl --> {}", geoCodingUrl);
-		/*}else {
+				addessOrZip+"&key="+envConfig.getGoogleApiKey();
+		logger.info("geoCodingUrl --> {}", geoCodingUrl);
+				
+		if(!"localhost".equals(UserContextHolder.getContext().getHost())) {
 			logger.info("Inside else in  GoogleGeoCodingClient");
-			geoCodingUrl+="&sensor=false";
-			logger.info("geoCodingUrl --> {}", geoCodingUrl);
-			URL proxyUrl = new URL(System.getenv("QUOTAGUARD_URL"));
+		
+			URL proxyUrl = new URL(envConfig.getQuotoGuardURL());
 			logger.info("proxyUrl --> {}",proxyUrl);
+			
 	        String userInfo = proxyUrl.getUserInfo();
 	        String user = userInfo.substring(0, userInfo.indexOf(':'));
 	        String password = userInfo.substring(userInfo.indexOf(':') + 1);
-
 	        logger.info("user --> {}",user);
+	        
 	        System.setProperty("http.proxyHost", proxyUrl.getHost());
 	        System.setProperty("http.proxyPort", Integer.toString(proxyUrl.getPort()));
+	        
 	        logger.info("proxyUrl.getHost() --> {}",proxyUrl.getHost());
 	        logger.info("proxyUrl.getPort() --> {}",proxyUrl.getPort());
+	        
 	        Authenticator.setDefault(new Authenticator() {
 	                protected PasswordAuthentication getPasswordAuthentication() {
 	                    return new PasswordAuthentication(user, password.toCharArray());
 	                }
 	        });
 	        logger.info("authentcation set");
-		}*/
+		}
+		
 		URL url = new URL(geoCodingUrl);
 		URLConnection conn = url.openConnection();
 		logger.info("google api connection stablished");
