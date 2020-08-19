@@ -3,6 +3,8 @@ package com.spj.salon.client;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.stream.Collectors;
@@ -43,14 +45,28 @@ public class GoogleGeoCodingClient {
 	 * @throws IOException
 	 */
 	public GeocodingResult[] findGeocodingResult(String addessOrZip) throws IOException {
+		URL proxyUrl = new URL(System.getenv("QUOTAGUARDSHIELD_URL"));
+        String userInfo = proxyUrl.getUserInfo();
+        String user = userInfo.substring(0, userInfo.indexOf(':'));
+        String password = userInfo.substring(userInfo.indexOf(':') + 1);
 
-		String geoCodingUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + addessOrZip + "&key="
+        URLConnection conn = null;
+        System.setProperty("http.proxyHost", proxyUrl.getHost());
+        System.setProperty("http.proxyPort", Integer.toString(proxyUrl.getPort()));
+
+        Authenticator.setDefault(new Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(user, password.toCharArray());
+                }
+            });
+
+        String geoCodingUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + addessOrZip + "&key="
 				+ envConfig.getGoogleApiKey();
 		logger.info("geoCodingUrl --> {}", geoCodingUrl);
-
+        
 		URL url = new URL(geoCodingUrl);
-		URLConnection conn = url.openConnection();
-		BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        conn = url.openConnection();
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
 		String responseBody = new BufferedReader(in).lines().collect(Collectors.joining("\n"));
 

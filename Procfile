@@ -1,0 +1,1 @@
+web: bin\qgpass java -jar build/libs/findMySalon-1.1.jar

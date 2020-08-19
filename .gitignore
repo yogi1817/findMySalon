@@ -31,7 +31,6 @@ out/
 ### VS Code ###
 .vscode/
 *.class
-bin
 logs
 .env
 build
