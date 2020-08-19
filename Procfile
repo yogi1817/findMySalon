@@ -1,1 +1,1 @@
-worker: bin/qgpass java -jar build/libs/findMySalon-1.1.jar
+web: java -jar build/libs/findMySalon-1.1.jar
