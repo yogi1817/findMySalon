@@ -4,9 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Authenticator;
-import java.net.PasswordAuthentication;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,7 +17,6 @@ import com.google.gson.Gson;
 import com.google.maps.GeocodingApi.Response;
 import com.google.maps.model.GeocodingResult;
 import com.spj.salon.config.EnvironmentConfig;
-import com.spj.salon.utils.UserContextHolder;
 
 /**
  * 
@@ -33,6 +31,9 @@ public class GoogleGeoCodingClient{
 	
 	@Autowired
 	private Gson gson;
+	
+	@Autowired
+	private StaticaProxyAuthenticator proxy;
 	
 	private static final Logger logger = LogManager.getLogger(GoogleGeoCodingClient.class.getName());
 	
@@ -50,8 +51,7 @@ public class GoogleGeoCodingClient{
 				addessOrZip+"&key="+envConfig.getGoogleApiKey();
 		logger.info("geoCodingUrl --> {}", geoCodingUrl);
 				
-		URL url = new URL(geoCodingUrl);
-		URLConnection conn = null;
+		/*URLConnection conn = null;
 		if(!"localhost".equals(UserContextHolder.getContext().getHost())) {
 			logger.info("Inside else in  GoogleGeoCodingClient");
 		
@@ -65,7 +65,10 @@ public class GoogleGeoCodingClient{
 	        
 	        System.setProperty("http.proxyHost", proxyUrl.getHost());
 	        System.setProperty("http.proxyPort", Integer.toString(proxyUrl.getPort()));
-	        
+	        //System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
+	        //System.setProperty("java.net.useSystemProxies", "true");
+	        System.setProperty("https.proxyHost", proxyUrl.getHost());
+			System.setProperty("https.proxyPort", Integer.toString(proxyUrl.getPort()));
 	        logger.info("proxyUrl.getHost() --> {}",proxyUrl.getHost());
 	        logger.info("proxyUrl.getPort() --> {}",proxyUrl.getPort());
 	        
@@ -77,13 +80,26 @@ public class GoogleGeoCodingClient{
 	        logger.info("authentcation set");
 		}
 		
+		URL url = new URL(geoCodingUrl);
 		conn = url.openConnection();
-		logger.info("google api connection stablished");
+		//conn.setConnectTimeout(30000);
+		logger.info("google api connection stablished");*/
+		
+		 URL url = new URL(geoCodingUrl);
+         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+         conn.setRequestProperty("Proxy-Authorization", "Basic " + proxy.getEncodedAuth());
+         Authenticator.setDefault(proxy.getAuth());
+         conn.setRequestMethod("GET");
+         
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
         String responseBody = new BufferedReader(in)
                 .lines()
                 .collect(Collectors.joining("\n"));
+        
+        in.close();
+        System.clearProperty("http.proxyHost");
+        
         logger.info("responseBody -->{}", responseBody);
 		Response response = gson.fromJson(responseBody , Response.class);
 		GeocodingResult[] results = response.results;
