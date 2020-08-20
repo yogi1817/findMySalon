@@ -78,12 +78,14 @@ public class GoogleGeoCodingClient {
 	        logger.info("Created Buffer Reader");
 			responseBody = new BufferedReader(in).lines().collect(Collectors.joining("\n"));
         }catch(Exception e) {
-        	logger.error(e.getMessage());
+        	logger.info(e.getMessage());
         	e.printStackTrace();
         }
-		logger.debug("responseBody -->{}", responseBody);
+		logger.info("responseBody -->{}", responseBody);
 		Response response = gson.fromJson(responseBody, Response.class);
 		GeocodingResult[] results = response.results;
+		
+		logger.info("results -->{}", results);
 
 		return results;
 	}
