@@ -50,6 +50,10 @@ public class GoogleGeoCodingClient {
         String user = userInfo.substring(0, userInfo.indexOf(':'));
         String password = userInfo.substring(userInfo.indexOf(':') + 1);
 
+        logger.info("user --> {}", user);
+        logger.info("proxyUrl.getHost() --> {}", proxyUrl.getHost());
+        logger.info("proxyUrl.getPort() --> {}", Integer.toString(proxyUrl.getPort()));
+        
         URLConnection conn = null;
         System.setProperty("http.proxyHost", proxyUrl.getHost());
         System.setProperty("http.proxyPort", Integer.toString(proxyUrl.getPort()));
@@ -58,18 +62,25 @@ public class GoogleGeoCodingClient {
                 protected PasswordAuthentication getPasswordAuthentication() {
                     return new PasswordAuthentication(user, password.toCharArray());
                 }
-            });
+        });
 
         String geoCodingUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + addessOrZip + "&key="
 				+ envConfig.getGoogleApiKey();
 		logger.info("geoCodingUrl --> {}", geoCodingUrl);
-        
-		URL url = new URL(geoCodingUrl);
-        conn = url.openConnection();
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-		String responseBody = new BufferedReader(in).lines().collect(Collectors.joining("\n"));
-
+		String responseBody = null;
+		
+        try {
+			URL url = new URL(geoCodingUrl);
+	        conn = url.openConnection();
+	        logger.info("Open Connection");
+	        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+	
+	        logger.info("Created Buffer Reader");
+			responseBody = new BufferedReader(in).lines().collect(Collectors.joining("\n"));
+        }catch(Exception e) {
+        	logger.error(e.getMessage());
+        	e.printStackTrace();
+        }
 		logger.debug("responseBody -->{}", responseBody);
 		Response response = gson.fromJson(responseBody, Response.class);
 		GeocodingResult[] results = response.results;
