@@ -27,75 +27,70 @@ import com.spj.salon.utils.UserContextInterceptor;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "com.spj.salon")
-@EnableJpaRepositories(basePackages =  {"com.spj.salon.barber.repository", "com.spj.salon.user.repository",
-		"com.spj.salon.services.repository", "com.spj.salon.checkin.repository"})
-@EntityScan(basePackages = {"com.spj.salon.barber.model", "com.spj.salon.user.model", 
-		"com.spj.salon.services.model", "com.spj.salon.checkin.model"})
+@EnableJpaRepositories(basePackages = { "com.spj.salon.barber.repository", "com.spj.salon.user.repository",
+		"com.spj.salon.services.repository", "com.spj.salon.checkin.repository" })
+@EntityScan(basePackages = { "com.spj.salon.barber.model", "com.spj.salon.user.model", "com.spj.salon.services.model",
+		"com.spj.salon.checkin.model" })
 @EnableAuthorizationServer
 @EnableResourceServer
 public class FindMySalonApplication {
 
 	@Autowired
 	private ServiceConfig serviceConfig;
-	
+
 	@Autowired
 	private EnvironmentConfig envConfig;
-	
+
 	public static void main(String[] args) {
 		SpringApplication.run(FindMySalonApplication.class, args);
 	}
-	
+
 	@Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-	
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
+	}
+
 	@Primary
 	@Bean
 	public RestTemplate getCustomRestTemplete() {
 		RestTemplate template = new RestTemplate();
 		List<ClientHttpRequestInterceptor> interceptors = template.getInterceptors();
-		if(interceptors == null) {
+		if (interceptors == null) {
 			template.setInterceptors(Collections.singletonList(new UserContextInterceptor()));
-		}else {
+		} else {
 			interceptors.add(new UserContextInterceptor());
 			template.setInterceptors(interceptors);
 		}
 		return template;
 	}
-	
+
 	@Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-	
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
 	@Bean
 	public JavaMailSender getJavaMailSender() {
-	    JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-	    mailSender.setHost(serviceConfig.getMailHost());
-	    mailSender.setPort(serviceConfig.getMailPort());
-	    
-	    mailSender.setUsername(envConfig.getMailUsername());
-	    mailSender.setPassword(envConfig.getMailPassword());
-	    
-	    Properties props = mailSender.getJavaMailProperties();
-	    props.put("mail.smtp.auth", "true");
-	    props.put("mail.smtp.starttls.enable", "true");
-	    
-	    return mailSender;
+		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+		mailSender.setHost(serviceConfig.getMailHost());
+		mailSender.setPort(serviceConfig.getMailPort());
+
+		mailSender.setUsername(envConfig.getMailUsername());
+		mailSender.setPassword(envConfig.getMailPassword());
+
+		Properties props = mailSender.getJavaMailProperties();
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+
+		return mailSender;
 	}
-	
-	//Uncomment below code if you want to use goofle api for location
-	/*@Bean
-	public GeoApiContext getGeoApiContext() {
-		return new GeoApiContext.Builder()
-			    .apiKey(serviceConfig.getGoogleApiKey())
-			    .build();
-	}
-	
-	@PreDestroy
-    public void preDestroy() {
-		getGeoApiContext().shutdown();
-    }*/
-	
+
+	// Uncomment below code if you want to use goofle api for location
+	/*
+	 * @Bean public GeoApiContext getGeoApiContext() { return new
+	 * GeoApiContext.Builder() .apiKey(serviceConfig.getGoogleApiKey()) .build(); }
+	 * 
+	 * @PreDestroy public void preDestroy() { getGeoApiContext().shutdown(); }
+	 */
+
 }
