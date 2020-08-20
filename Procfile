@@ -1,1 +1,0 @@
-web: java -jar build/libs/findMySalon-1.1.jar
