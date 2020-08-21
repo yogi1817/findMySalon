@@ -45,7 +45,7 @@ public class GoogleGeoCodingClient {
 	 * @throws IOException
 	 */
 	public GeocodingResult[] findGeocodingResult(String addessOrZip) throws IOException {
-		URL proxyUrl = new URL("localhost:8080");
+		URL proxyUrl = new URL("http://localhost:8080");
 
         URLConnection conn = null;
         System.setProperty("http.proxyHost", proxyUrl.getHost());
