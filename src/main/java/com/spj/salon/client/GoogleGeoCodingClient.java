@@ -45,7 +45,13 @@ public class GoogleGeoCodingClient {
 	 * @throws IOException
 	 */
 	public GeocodingResult[] findGeocodingResult(String addessOrZip) throws IOException {
-		URL proxyUrl = new URL(System.getenv("QUOTAGUARDSHIELD_URL"));
+		URL proxyUrl = new URL("localhost:8080");
+
+        URLConnection conn = null;
+        System.setProperty("http.proxyHost", proxyUrl.getHost());
+        System.setProperty("http.proxyPort", Integer.toString(proxyUrl.getPort()));
+		
+		proxyUrl = new URL(System.getenv("QUOTAGUARDSHIELD_URL"));
         String userInfo = proxyUrl.getUserInfo();
         String user = userInfo.substring(0, userInfo.indexOf(':'));
         String password = userInfo.substring(userInfo.indexOf(':') + 1);
@@ -54,7 +60,7 @@ public class GoogleGeoCodingClient {
         logger.info("proxyUrl.getHost() --> {}", proxyUrl.getHost());
         logger.info("proxyUrl.getPort() --> {}", Integer.toString(proxyUrl.getPort()));
         
-        URLConnection conn = null;
+        conn = null;
         System.setProperty("http.proxyHost", proxyUrl.getHost());
         System.setProperty("http.proxyPort", Integer.toString(proxyUrl.getPort()));
 
@@ -85,8 +91,6 @@ public class GoogleGeoCodingClient {
 		Response response = gson.fromJson(responseBody, Response.class);
 		GeocodingResult[] results = response.results;
 		
-		logger.info("results -->{}", results);
-
 		return results;
 	}
 }
