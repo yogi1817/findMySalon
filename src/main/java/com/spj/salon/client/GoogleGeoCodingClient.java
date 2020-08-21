@@ -51,7 +51,7 @@ public class GoogleGeoCodingClient {
         System.setProperty("http.proxyHost", proxyUrl.getHost());
         System.setProperty("http.proxyPort", Integer.toString(proxyUrl.getPort()));
 		
-		proxyUrl = new URL(System.getenv("QUOTAGUARDSHIELD_URL"));
+		/*proxyUrl = new URL(System.getenv("QUOTAGUARDSHIELD_URL"));
         String userInfo = proxyUrl.getUserInfo();
         String user = userInfo.substring(0, userInfo.indexOf(':'));
         String password = userInfo.substring(userInfo.indexOf(':') + 1);
@@ -68,7 +68,7 @@ public class GoogleGeoCodingClient {
                 protected PasswordAuthentication getPasswordAuthentication() {
                     return new PasswordAuthentication(user, password.toCharArray());
                 }
-        });
+        });*/
 
         String geoCodingUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + addessOrZip + "&key="
 				+ envConfig.getGoogleApiKey();
