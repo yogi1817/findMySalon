@@ -25,6 +25,9 @@ import com.spj.salon.config.EnvironmentConfig;
 import com.spj.salon.config.ServiceConfig;
 import com.spj.salon.utils.UserContextInterceptor;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+
 @SpringBootApplication
 @ComponentScan(basePackages = "com.spj.salon")
 @EnableJpaRepositories(basePackages = { "com.spj.salon.barber.repository", "com.spj.salon.user.repository",
@@ -33,6 +36,7 @@ import com.spj.salon.utils.UserContextInterceptor;
 		"com.spj.salon.checkin.model" })
 @EnableAuthorizationServer
 @EnableResourceServer
+@OpenAPIDefinition(info = @Info(title = "FindMySalon API", description = "Java microservice project", version = "3.0.0"))
 public class FindMySalonApplication {
 
 	@Autowired
