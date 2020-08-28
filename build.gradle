@@ -28,24 +28,26 @@ ext {
 }
 
 dependencies {
-	compile 'org.springframework.boot:spring-boot-starter-web'
-	compile 'org.springframework.boot:spring-boot-devtools'
-	compile 'org.springframework.boot:spring-boot-starter-data-jpa'
-	compile 'org.postgresql:postgresql:42.2.6'
-	compile 'org.springframework.boot:spring-boot-starter-actuator'
-	compile 'org.springframework.boot:spring-boot-starter-log4j2'
-	compile 'com.google.code.gson:gson:2.8.5'
-	compile 'com.google.maps:google-maps-services:0.14.0'
-	compile 'org.springframework.boot:spring-boot-starter-mail'
-	compile 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
-	compile 'org.springframework.cloud:spring-cloud-starter-oauth2'
-	compile 'org.springframework.cloud:spring-cloud-starter-security'
-	compile 'org.springframework.security:spring-security-jwt:1.1.0.RELEASE'
-	compile 'com.google.guava:guava:29.0-jre'
-	compile 'com.twilio.sdk:twilio:7.54.0'
-	compile 'org.projectlombok:lombok:1.18.12'
-	compile 'org.codehaus.groovy:groovy-all:2.2.2'
-	compile 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-devtools'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.postgresql:postgresql:42.2.6'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-log4j2'
+	implementation 'com.google.code.gson:gson:2.8.5'
+	implementation 'com.google.maps:google-maps-services:0.14.0'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+	implementation 'org.springframework.cloud:spring-cloud-starter-oauth2'
+	implementation 'org.springframework.cloud:spring-cloud-starter-security'
+	implementation 'org.springframework.security:spring-security-jwt:1.1.0.RELEASE'
+	implementation 'com.google.guava:guava:29.0-jre'
+	implementation 'com.twilio.sdk:twilio:7.54.0'
+	implementation 'org.projectlombok:lombok:1.18.12'
+	implementation 'org.codehaus.groovy:groovy-all:2.2.2'
+	implementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+	implementation 'org.springframework.cloud:spring-cloud-stream'
+	implementation 'org.springframework.cloud:spring-cloud-stream-binder-rabbit'
 	
 	annotationProcessor 'org.projectlombok:lombok:1.18.12'
 	
@@ -53,6 +55,7 @@ dependencies {
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
+	testImplementation 'org.springframework.cloud:spring-cloud-stream-test-support'
 }
 
 dependencyManagement {

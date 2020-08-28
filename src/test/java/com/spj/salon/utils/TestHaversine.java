@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class TestHaversine {
+class TestHaversine {
 
 	private static final Logger logger = LogManager.getLogger(TestHaversine.class.getName());
 	/*

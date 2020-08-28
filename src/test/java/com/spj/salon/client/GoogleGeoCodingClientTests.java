@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.spj.salon.barber.model.Address;
 
 @SpringBootTest
-public class GoogleGeoCodingClientTests {
+class GoogleGeoCodingClientTests {
 
 	/*
 	 * @Autowired private RestTemplateClient client;

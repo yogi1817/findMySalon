@@ -32,7 +32,9 @@ spring:
       
   mail:
     host: smtp.gmail.com
-    port: 587
+    port: 587  cloud:    stream:      bindings:        output:
+          destination: spring-boot-exchange
+          content-type: application/json
       
 management:
   endpoint:
@@ -49,3 +51,4 @@ spj:
     password: thisissecret
   services:
     authenticate: /findmysalon/oauth/token
+    

@@ -24,6 +24,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 		.antMatchers("/checkin/barbers/waittime/forlocation").permitAll()
 		.antMatchers("/oauth/user").permitAll()
 		.antMatchers("/barber/validate/prime-number").permitAll()
+		.antMatchers("/barber/message").permitAll()
 		.antMatchers("/user/favourite").hasAnyAuthority("USER")
 		.antMatchers("/barber/barbersCount").hasAnyAuthority("BARBER")
 		.antMatchers("/services/register").hasAnyAuthority("SUPERUSER")

@@ -7,11 +7,10 @@ import java.util.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -26,13 +25,9 @@ import com.spj.salon.config.ServiceConfig;
 import com.spj.salon.utils.UserContextInterceptor;
 
 @SpringBootApplication
-@ComponentScan(basePackages = "com.spj.salon")
-@EnableJpaRepositories(basePackages =  {"com.spj.salon.barber.repository", "com.spj.salon.user.repository",
-		"com.spj.salon.services.repository", "com.spj.salon.checkin.repository"})
-@EntityScan(basePackages = {"com.spj.salon.barber.model", "com.spj.salon.user.model", 
-		"com.spj.salon.services.model", "com.spj.salon.checkin.model"})
 @EnableAuthorizationServer
 @EnableResourceServer
+@EnableBinding(Source.class)
 public class FindMySalonApplication {
 
 	@Autowired
