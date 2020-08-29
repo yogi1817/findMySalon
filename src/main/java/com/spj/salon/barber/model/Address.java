@@ -31,7 +31,7 @@ import lombok.Data;
 public class Address implements Serializable{
 
 	/**
-	 * 
+	 *  
 	 */
 	private static final long serialVersionUID = 5833513921844126261L;
 	

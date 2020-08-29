@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -27,7 +28,7 @@ import com.spj.salon.utils.UserContextInterceptor;
 @SpringBootApplication
 @EnableAuthorizationServer
 @EnableResourceServer
-@EnableBinding(Source.class)
+@EnableBinding({Source.class, Sink.class})
 public class FindMySalonApplication {
 
 	@Autowired

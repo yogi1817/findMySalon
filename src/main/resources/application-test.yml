@@ -36,7 +36,7 @@ spring:
           destination: spring-boot-exchange
           content-type: application/json
         input:
-          destination: spring-boot-exchange
+          destination: spring-boot-exchange1
           content-type: application/json
       
 management:
