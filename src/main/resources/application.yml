@@ -32,9 +32,13 @@ spring:
       
   mail:
     host: smtp.gmail.com
-    port: 587  cloud:    stream:      bindings:        output:
+    port: 587
+  cloud:
+    stream:
+      bindings:
+        output:
           destination: spring-boot-exchange
-          content-type: application/json
+          content-type: application/jsos
         input:
           destination: spring-boot-exchange
           content-type: application/json

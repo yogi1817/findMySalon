@@ -1,12 +1,10 @@
-info: 
+info:
   description: This is a find my salon spring boot roject
-  
 server:
   port: 8081
   servlet:
     context-path: /findmysalon
-  
-spring: 
+spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/postgres
@@ -25,33 +23,31 @@ spring:
     name: findMySalon
   profiles:
     active: default
-
   http:
     converters:
       preferred-json-mapper: gson
-      
   mail:
     host: smtp.gmail.com
-    port: 587  cloud:    stream:      bindings:        output:
+    port: 587
+  cloud:
+    stream:
+      bindings:
+        output:
           destination: spring-boot-exchange
           content-type: application/json
         input:
           destination: spring-boot-exchange1
           content-type: application/json
-      
 management:
   endpoint:
     health:
       show-details: always
-
 logging:
   level:
     com.spg.salon: DEBUG
-    
 spj:
   application:
     id: spj
     password: thisissecret
   services:
     authenticate: /findmysalon/oauth/token
-    
