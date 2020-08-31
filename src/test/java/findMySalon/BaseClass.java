@@ -33,7 +33,7 @@ import io.restassured.module.mockmvc.RestAssuredMockMvc;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = FindMySalonApplication.class)
 @AutoConfigureMessageVerifier
-@ActiveProfiles("test")
+//@ActiveProfiles("test")
 public abstract class BaseClass {
 
 	@Autowired
