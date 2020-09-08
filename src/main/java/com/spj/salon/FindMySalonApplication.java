@@ -3,13 +3,11 @@ package com.spj.salon;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.messaging.Sink;
-import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -21,6 +19,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.web.client.RestTemplate;
 
+import com.spj.salon.barber.model.Address;
 import com.spj.salon.config.EnvironmentConfig;
 import com.spj.salon.config.ServiceConfig;
 import com.spj.salon.utils.UserContextInterceptor;
@@ -28,7 +27,6 @@ import com.spj.salon.utils.UserContextInterceptor;
 @SpringBootApplication
 @EnableAuthorizationServer
 @EnableResourceServer
-@EnableBinding({Source.class, Sink.class})
 public class FindMySalonApplication {
 
 	@Autowired
@@ -39,6 +37,22 @@ public class FindMySalonApplication {
 	
 	public static void main(String[] args) {
 		SpringApplication.run(FindMySalonApplication.class, args);
+	}
+	
+	/*@Bean
+	public Consumer<Address> output() {
+	    return address -> {
+	    	RabbitMQListener.onAddressListener(address);
+	    };
+	}*/
+	
+	@Bean
+	public Function<Address, Address> uppercase() {
+		return v -> {
+			v.setCity(v.getCity().toUpperCase());
+			System.out.println("Uppercase: " + v);
+			return v;
+		};
 	}
 	
 	@Bean

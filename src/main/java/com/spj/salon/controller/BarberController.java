@@ -7,11 +7,9 @@ import javax.naming.ServiceUnavailableException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.integration.support.MessageBuilder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,9 +39,6 @@ import com.spj.salon.utils.UserContextHolder;
 public class BarberController {
 
 	private static final Logger logger = LogManager.getLogger(BarberController.class.getName());
-
-	@Autowired
-	private Source source;
 	
 	@Autowired
 	private IBarberFacade barberFacade;
@@ -89,9 +84,10 @@ public class BarberController {
 	}
 	
 	@PostMapping("/message")
-	public void message() {
+	public ResponseEntity<String> message() {
 		Address address = new Address();
 		address.setCity("Pittsburgh");
-		source.output().send(MessageBuilder.withPayload(address).build());
+		//source.output().send(MessageBuilder.withPayload(address).build());
+		return new ResponseEntity<>("Value added to the queue", HttpStatus.OK);
 	}
 }

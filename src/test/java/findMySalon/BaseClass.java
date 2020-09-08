@@ -13,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.contract.verifier.messaging.boot.AutoConfigureMessageVerifier;
 import org.springframework.cloud.stream.messaging.Sink;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder;
@@ -33,7 +32,7 @@ import io.restassured.module.mockmvc.RestAssuredMockMvc;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = FindMySalonApplication.class)
 @AutoConfigureMessageVerifier
-@ActiveProfiles("test")
+//@ActiveProfiles("test")
 public abstract class BaseClass {
 
 	@Autowired

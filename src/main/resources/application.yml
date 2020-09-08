@@ -36,12 +36,13 @@ spring:
   cloud:
     stream:
       bindings:
-        output:
-          destination: spring-boot-exchange
-          content-type: application/jsos
-        input:
-          destination: spring-boot-exchange
+        uppercase-in-0:
+          destination: spring-boot-exchange-input
           content-type: application/json
+        uppercase-out-0::
+          destination: spring-boot-exchange-output
+          content-type: application/json
+            function:      definition: uppercase
       
 management:
   endpoint:
