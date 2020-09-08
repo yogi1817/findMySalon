@@ -43,9 +43,6 @@ public abstract class BaseClass {
 
 	@MockBean
 	private CheckInFacade checkInFacade;
-
-	@Autowired
-	private Sink sink;
 	
 	@Before
 	public void setup() {
