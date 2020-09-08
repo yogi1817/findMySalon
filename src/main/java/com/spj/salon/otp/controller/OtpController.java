@@ -57,6 +57,17 @@ public class OtpController {
 		myEmailService.sendOtpMessage();
 		return new ResponseEntity<>("Otp Send", HttpStatus.OK);
 	}
+	
+	/**
+	 * This method will call OTP on an email of user who forgot his password
+	 * @return
+	 */
+	@GetMapping("forgotpassword/email")
+	public ResponseEntity<String> generateOtpEmail(@RequestParam String email) {
+		logger.info("Inside OtpController calling generateOtpEmail");
+		myEmailService.sendOtpMessage(email);
+		return new ResponseEntity<>("Otp Send", HttpStatus.OK);
+	}
 
 	/**
 	 * 
@@ -66,6 +77,17 @@ public class OtpController {
 	public ResponseEntity<String> generateOtpMobile() {
 		logger.info("Inside OtpController calling generateOtpMobile");
 		myMobileService.sendOtpMessage();
+		return new ResponseEntity<>("Otp Send", HttpStatus.OK);
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	@GetMapping("forgotpassword/mobile")
+	public ResponseEntity<String> generateOtpMobile(@RequestParam String phoneNumber) {
+		logger.info("Inside OtpController calling generateOtpMobile");
+		myMobileService.sendOtpMessage(phoneNumber);
 		return new ResponseEntity<>("Otp Send", HttpStatus.OK);
 	}
 	
@@ -92,4 +114,31 @@ public class OtpController {
 		}
 		return FAIL;
 	}
+	
+	/**
+	 * This method is moved in userController
+	 * @param email
+	 * @param otpnum
+	 * @return
+	 
+	@GetMapping("forgotpassword/validateOtp")
+	public @ResponseBody String validateOtp(@RequestParam String email, @RequestParam("otpnum") int otpnum) {
+		logger.info("Otp Number : " + otpnum);
+
+		//Validate the Otp 
+		if (otpnum >= 0) {
+			int serverOtp = otpService.getOtp(email);
+
+			if (serverOtp > 0) {
+				if (otpnum == serverOtp) {
+					if(userFacade.updateVerifiedFlag(email)) {
+						otpService.clearOTP(email);
+						return SUCCESS;
+					}
+				}
+			} 
+		}
+		return FAIL;
+	}
+	*/
 }

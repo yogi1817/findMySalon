@@ -20,7 +20,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 		.antMatchers("/user/register").permitAll()
 		.antMatchers("/user/authenticate").permitAll()
 		.antMatchers("/oauth/token").permitAll()
-		.antMatchers("barber/*/waittime").permitAll()
+		.antMatchers("/barber/*/waittime").permitAll()
 		.antMatchers("/checkin/barbers/waittime/forlocation").permitAll()
 		.antMatchers("/oauth/user").permitAll()
 		.antMatchers("/barber/validate/prime-number").permitAll()
@@ -38,6 +38,13 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 		.antMatchers("/checkin/user/*/time/*").hasAnyAuthority("BARBER")
 		.antMatchers("/checkin/user/checkout").hasAnyAuthority("BARBER")
 		.antMatchers("/barber/address").hasAnyAuthority("BARBER")
+		.antMatchers("/generateOtp/email").hasAnyAuthority("USER")
+		.antMatchers("/generateOtp/mobile").hasAnyAuthority("USER")
+		.antMatchers("/generateOtp/forgotpassword/email").permitAll()
+		.antMatchers("/generateOtp/forgotpassword/mobile").permitAll()
+		.antMatchers("/generateOtp/validateOtp").hasAnyAuthority("USER")
+		//.antMatchers("/generateOtp/forgotpassword/validateOtp").permitAll()
+		.antMatchers("/user/updatepassword").permitAll()
 		.anyRequest()
 		.authenticated();
 	}

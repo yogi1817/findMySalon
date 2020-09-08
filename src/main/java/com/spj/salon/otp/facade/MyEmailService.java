@@ -56,6 +56,8 @@ public class MyEmailService implements IMyOtpService{
 	 */
 	public void sendOtpMessage(String loginId) {
 		User user = userRepository.findByLoginId(loginId);
+		if(user==null)
+			throw new NotFoundCustomException("User not found", loginId);
 		sendEMail(user);
 	}
 	

@@ -62,4 +62,10 @@ public class UserController {
 		logger.info("Inside UserController authenticate service");
 		return new ResponseEntity<>(oAuthClient.getJwtToken(user, headers.get("clienthost")), HttpStatus.OK);
 	}
+	
+	@PostMapping(value = "updatepassword", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<User> updatePassword(@RequestBody User user, @RequestHeader Map<String, String> headers) {
+		logger.info("Inside UserController authenticate service");
+		return new ResponseEntity<>(userFacade.updatePassword(user, headers.get("clienthost")), HttpStatus.OK);
+	}
 }

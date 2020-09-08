@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -48,7 +49,14 @@ public class OAuthClient{
 	 * @param clientHost
 	 * @return
 	 */
-	public User getJwtToken(User user, String clientHost) {
+	public User getJwtToken(User user, String clientHost) throws OAuth2Exception{
+		String loginId = user.getLoginId()==null?user.getEmail():user.getLoginId();
+		user.setJwtToken(getJwtToken(loginId, user.getPassword(), clientHost));
+		user.setPassword("");
+		return user;
+	}
+	
+	public String getJwtToken(String loginId, String password, String clientHost) throws OAuth2Exception{
 		String authenticateClient = clientHost + serviceConfig.getAuthenticateService();
 
 		String authString = serviceConfig.getApplicationId() + ":" + serviceConfig.getApplicationPassword();
@@ -61,8 +69,8 @@ public class OAuthClient{
 		RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
 				  .addFormDataPart("grant_type", "password")
 				  .addFormDataPart("scope", "webclient")
-				  .addFormDataPart("username", user.getLoginId()==null?user.getEmail():user.getLoginId())
-				  .addFormDataPart("password", user.getPassword())
+				  .addFormDataPart("username", loginId)
+				  .addFormDataPart("password", password)
 				  .build();
 		
 		Request request = new Request.Builder()
@@ -71,8 +79,8 @@ public class OAuthClient{
 				  .addHeader("Authorization", "Basic "+authStringEnc)
 				  .build();
 		
-		Map<String, Object> token = null;
-		Type empMapType = new TypeToken<Map<String, Object>>(){
+		Map<String, String> token = null;
+		Type empMapType = new TypeToken<Map<String, String>>(){
 					private static final long serialVersionUID = 1L;}
 			.getType();
 		try {
@@ -92,8 +100,10 @@ public class OAuthClient{
 		}
 		
 		logger.info("response "+ token);
-		user.setPassword("");
-		user.setJwtToken((String) token.get("access_token"));
-		return user;
+		
+		if(token.get("access_token")==null)
+			throw new OAuth2Exception(token.toString());
+		
+		return token.get("access_token");
 	}
 }

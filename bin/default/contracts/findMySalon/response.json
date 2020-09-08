@@ -1,0 +1,35 @@
+{
+    "barberAddressDTO": [
+        {
+            "firstName": "Yogi",
+            "lastName": "Sharma",
+            "middleName": null,
+            "storeName": "Yogi the barber",
+            "email": "ipec.yogesh@gmail.com",
+            "phone": "+1-412-4787824",
+            "addressLineOne": "2107 Teal Trce",
+            "addressLineTwo": "",
+            "city": "Pittsburgh",
+            "state": "PA",
+            "zip": "15237",
+            "distance": 2.1913932781340915,
+            "waitTime": "No Barbers Data available"
+        },
+        {
+            "firstName": "Peter",
+            "lastName": "Sharma",
+            "middleName": null,
+            "storeName": "peter the barber",
+            "email": "peter.yogesh1234@gmail.com",
+            "phone": "+1-412-4787824",
+            "addressLineOne": "1743 Royal Oak Drive",
+            "addressLineTwo": "",
+            "city": "Pittsburgh",
+            "state": "PA",
+            "zip": "15220",
+            "distance": 14.293933548528882,
+            "waitTime": "No Barbers Data available"
+        }
+    ],
+    "message": "2 Barbers Found"
+}

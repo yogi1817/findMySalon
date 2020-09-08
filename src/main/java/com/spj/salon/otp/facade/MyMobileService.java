@@ -50,6 +50,10 @@ public class MyMobileService implements IMyOtpService{
 			throw new NotFoundCustomException("No phone number found for user "+user.getLoginId(), "Please add valid phone number");
 		}
 		
+		sendOtp(user);
+	}
+
+	private void sendOtp(User user) {
 		int otp = otpService.generateOTP(user.getLoginId());
 
 		logger.info("barber.getPhone() "+user.getPhone());
@@ -64,5 +68,17 @@ public class MyMobileService implements IMyOtpService{
                 .create();
         
         logger.debug("message sent {}",textMessage.getSid());
+		
+	}
+
+	@Override
+	public void sendOtpMessage(String phoneNumber) {
+		User user = userRepository.findByPhone(phoneNumber);
+		logger.info("User {} with phone number {}", user, phoneNumber);
+		
+		if(user==null)
+			throw new NotFoundCustomException("User not found", phoneNumber);
+		
+		sendOtp(user);
 	}
 }

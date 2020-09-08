@@ -66,6 +66,9 @@ public class User implements Serializable{
 	private String storeName;
 	private String loginSource;
 	private Long favouriteSalonId;	
+	@Transient
+	private Integer otpnum;
+	
 	private boolean verified = false;
 	
 	@Transient
