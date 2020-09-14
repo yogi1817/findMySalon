@@ -27,6 +27,12 @@ Configuration:
         AppenderRef:
           - ref: LogToConsole
           - ref: LogToRollingFile
+      - name: org.flywaydb
+        level: debug
+        additivity: false
+        AppenderRef:
+          - ref: LogToConsole
+          - ref: LogToRollingFile
       - name: org.springframework
         level: error
         additivity: false
