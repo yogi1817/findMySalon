@@ -285,18 +285,19 @@ public class CheckInFacade implements ICheckinFacade {
 		for (Map<String, Object> map : addressIds) {
 			Optional<Address> barbersAddress =  addressRepo.findById(((BigInteger) map.get("address_id")).longValue());
 			if(barbersAddress.isPresent()) {
+				Optional<User> user = userRepository.findById(barbersAddress.get().getUserId());
 				barberAddressDTO = new BarberAddressDTO();
 				barberAddressDTO.setAddressLineOne(barbersAddress.get().getAddressLineOne());
 				barberAddressDTO.setAddressLineTwo(barbersAddress.get().getAddressLineTwo());
 				barberAddressDTO.setCity(barbersAddress.get().getCity());
 				barberAddressDTO.setState(barbersAddress.get().getState());
 				barberAddressDTO.setZip(barbersAddress.get().getZip());
-				barberAddressDTO.setEmail(barbersAddress.get().getUser().getEmail());
-				barberAddressDTO.setFirstName(barbersAddress.get().getUser().getFirstName());
-				barberAddressDTO.setLastName(barbersAddress.get().getUser().getLastName());
-				barberAddressDTO.setMiddleName(barbersAddress.get().getUser().getMiddleName());
-				barberAddressDTO.setPhone(barbersAddress.get().getUser().getPhone());
-				barberAddressDTO.setStoreName(barbersAddress.get().getUser().getStoreName());
+				barberAddressDTO.setEmail(user.get().getEmail());
+				barberAddressDTO.setFirstName(user.get().getFirstName());
+				barberAddressDTO.setLastName(user.get().getLastName());
+				barberAddressDTO.setMiddleName(user.get().getMiddleName());
+				barberAddressDTO.setPhone(user.get().getPhone());
+				barberAddressDTO.setStoreName(user.get().getStoreName());
 				barberAddressDTO.setDistance((Double) map.get("distance"));
 				barberAddressDTO.setWaitTime(waitTimeEstimate(barbersAddress.get().getUserId()));
 				barbersaddressDTOList.add(barberAddressDTO);

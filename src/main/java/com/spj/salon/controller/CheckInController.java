@@ -6,7 +6,6 @@ import javax.naming.ServiceUnavailableException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +23,8 @@ import com.spj.salon.barber.dto.BarberCheckInResponse;
 import com.spj.salon.checkin.facade.ICheckinFacade;
 import com.spj.salon.utils.UserContextHolder;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * 
  * @author Yogesh Sharma
@@ -32,10 +33,10 @@ import com.spj.salon.utils.UserContextHolder;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping(value = "checkin", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequiredArgsConstructor
 public class CheckInController {
 
-	@Autowired
-	private ICheckinFacade checkInFacade;
+	private final ICheckinFacade checkInFacade;
 
 	private static final Logger logger = LogManager.getLogger(CheckInController.class.getName());
 	

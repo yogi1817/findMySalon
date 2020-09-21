@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -22,6 +23,7 @@ import lombok.Data;
 @Entity
 @Table(name = "barber_calendar", schema = "usa", uniqueConstraints = @UniqueConstraint(columnNames = "barber_calendar_id"))
 @Data
+@Builder(toBuilder = true)
 public class BarberCalendar implements Serializable{
 
 	/**

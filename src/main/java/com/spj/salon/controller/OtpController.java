@@ -1,4 +1,4 @@
-package com.spj.salon.otp.controller;
+package com.spj.salon.controller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.spj.salon.otp.facade.IMyOtpService;
 import com.spj.salon.otp.facade.OtpService;
@@ -68,7 +67,7 @@ public class OtpController {
 	public ResponseEntity<String> generateOtpEmail(@RequestParam String email) {
 		logger.info("Inside OtpController calling generateOtpEmail");
 		myEmailService.sendOtpMessage(email);
-		return new ResponseEntity<>("Otp Send", HttpStatus.OK);
+		return new ResponseEntity<>("{\"Message\": \"Otp Send\"}", HttpStatus.OK);
 	}
 
 	/**
@@ -94,7 +93,7 @@ public class OtpController {
 	}
 	
 	@GetMapping("validateOtp")
-	public @ResponseBody String validateOtp(@RequestParam("otpnum") int otpnum) {
+	public ResponseEntity<String> validateOtp(@RequestParam("otpnum") int otpnum) {
 		logger.info("Inside OtpController calling validateOtp");
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String loginId = (String) auth.getPrincipal();
@@ -109,12 +108,12 @@ public class OtpController {
 				if (otpnum == serverOtp) {
 					if(userFacade.updateVerifiedFlag(loginId)) {
 						otpService.clearOTP(loginId);
-						return SUCCESS;
+						return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
 					}
 				}
 			} 
 		}
-		return FAIL;
+		return new ResponseEntity<>(FAIL, HttpStatus.OK);
 	}
 	
 	/**

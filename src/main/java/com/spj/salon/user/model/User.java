@@ -30,7 +30,10 @@ import com.spj.salon.barber.model.BarberServicesMapping;
 import com.spj.salon.barber.model.DailyBarbers;
 import com.spj.salon.checkin.model.CheckIn;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 
@@ -39,8 +42,11 @@ import lombok.Data;
  */
 @Entity
 @Table(name = "user", schema = "usa", uniqueConstraints = @UniqueConstraint(columnNames = "user_id"))
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "addressSet"})
 @Data
+@Builder(toBuilder = true)
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "addressSet"})
 public class User implements Serializable{
 
 	/**
@@ -69,6 +75,7 @@ public class User implements Serializable{
 	@Transient
 	private Integer otpnum;
 	
+	@Builder.Default
 	private boolean verified = false;
 	
 	@Transient
@@ -105,9 +112,6 @@ public class User implements Serializable{
 	public User(String loginId, String password) {
 		this.loginId = loginId;
 		this.password = password;
-	}
-	
-	public User() {
 	}
 	
 	/**

@@ -10,7 +10,6 @@ import javax.naming.ServiceUnavailableException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,39 +38,26 @@ import com.spj.salon.user.repository.UserRepository;
 import com.spj.salon.utils.DateUtils;
 import com.spj.salon.utils.ValidationUtils;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * 
  * @author Yogesh Sharma
  *
  */
 @Service
+@RequiredArgsConstructor
 public class BarberFacade implements IBarberFacade {
 
 	private static final Logger logger = LogManager.getLogger(BarberFacade.class.getName());
-
-	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private IUserDao userDao;
-	
-	@Autowired
-	private ServicesRepository serviceRepo;
-
-	@Autowired
-	private GoogleGeoCodingClient googleGeoCodingClient;
-	
-	@Autowired
-	private MyEmailService myEmailService;
-	
-	@Autowired
-	private AuthoritiesRepository authoritiesRepository;
-	
-	@Autowired
-    private PasswordEncoder passwordEncoder;
-	
-	@Autowired
-	private OAuthClient oAuthClient;
+	private final UserRepository userRepository;
+	private final IUserDao userDao;
+	private final ServicesRepository serviceRepo;
+	private final GoogleGeoCodingClient googleGeoCodingClient;
+	private final MyEmailService myEmailService;
+	private final AuthoritiesRepository authoritiesRepository;
+    private final PasswordEncoder passwordEncoder;
+	private final OAuthClient oAuthClient;
 	
 	/**
 	 * This method registers all types of users available in userType

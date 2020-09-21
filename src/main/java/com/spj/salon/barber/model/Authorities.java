@@ -15,7 +15,10 @@ import javax.persistence.UniqueConstraint;
 
 import com.spj.salon.user.model.User;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 
@@ -25,6 +28,9 @@ import lombok.Data;
 @Entity
 @Table(name = "authorities", schema = "usa", uniqueConstraints = @UniqueConstraint(columnNames = "authority_id"))
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Authorities implements Serializable{
 
 	/**

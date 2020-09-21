@@ -6,18 +6,15 @@ import javax.naming.ServiceUnavailableException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.spj.salon.barber.facade.IBarberFacade;
@@ -28,6 +25,8 @@ import com.spj.salon.security.pojo.UserType;
 import com.spj.salon.user.model.User;
 import com.spj.salon.utils.UserContextHolder;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * 
  * @author Yogesh Sharma
@@ -36,12 +35,12 @@ import com.spj.salon.utils.UserContextHolder;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping(value = "barber", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequiredArgsConstructor
 public class BarberController {
 
 	private static final Logger logger = LogManager.getLogger(BarberController.class.getName());
 
-	@Autowired
-	private IBarberFacade barberFacade;
+	private final IBarberFacade barberFacade;
 
 	@PostMapping(value = "register", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<User> registerBarber(@RequestBody User barber, @RequestHeader Map<String, String> headers) {
@@ -78,8 +77,8 @@ public class BarberController {
 		return new ResponseEntity<>(barberFacade.addBarberAddress(address), HttpStatus.OK);
 	}
 
-	@GetMapping("/validate/prime-number")
+	/*@GetMapping("/validate/prime-number")
 	public String isNumberPrime(@RequestParam("number") String number) {
 		return Integer.parseInt(number) % 2 == 0 ? "Even" : "Odd";
-	}
+	}*/
 }

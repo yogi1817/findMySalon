@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +21,8 @@ import com.spj.salon.security.pojo.UserType;
 import com.spj.salon.user.facade.IUserFacade;
 import com.spj.salon.user.model.User;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * 
  * @author ipecy
@@ -31,16 +32,12 @@ import com.spj.salon.user.model.User;
 @CrossOrigin(origins = "*")
 @RequestMapping(value = "user",
 					produces = MediaType.APPLICATION_JSON_VALUE)
+@RequiredArgsConstructor
 public class UserController {
 
-	@Autowired
-	private IUserFacade userFacade;
-	
-	@Autowired
-	private IBarberFacade barberFacade;
-	
-	@Autowired
-	private OAuthClient oAuthClient;
+	private final IUserFacade userFacade;
+	private final IBarberFacade barberFacade;
+	private final OAuthClient oAuthClient;
 	
 	private static final Logger logger = LogManager.getLogger(UserController.class.getName());
 	

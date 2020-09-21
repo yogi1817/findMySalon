@@ -5,20 +5,18 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.springframework.util.StringUtils;
 
-import com.spj.salon.user.model.User;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 
@@ -28,6 +26,9 @@ import lombok.Data;
 @Entity
 @Table(name = "address", schema = "usa", uniqueConstraints = @UniqueConstraint(columnNames = "address_id"))
 @Data
+@Builder(toBuilder = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class Address implements Serializable{
 
 	/**
@@ -51,9 +52,9 @@ public class Address implements Serializable{
 	private double longitude;
 	private double latitude;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	/*@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="user_Id", referencedColumnName = "user_id", insertable = false, updatable = false) 
-    private User user;
+    private User user;*/
 	
 	@Column(name = "user_id")
 	private Long userId;

@@ -13,6 +13,7 @@ import javax.persistence.UniqueConstraint;
 
 import com.spj.salon.utils.DateUtils;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -24,6 +25,7 @@ import lombok.Data;
 @Table(name = "daily_barbers", schema = "usa", 
 	uniqueConstraints = @UniqueConstraint(columnNames = "daily_id"))
 @Data
+@Builder(toBuilder = true)
 public class DailyBarbers implements Serializable{
 
 	/**

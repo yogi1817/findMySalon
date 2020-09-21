@@ -1,6 +1,5 @@
 package com.spj.salon.security.facade;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -10,11 +9,13 @@ import com.spj.salon.security.pojo.CustomUser;
 import com.spj.salon.user.model.User;
 import com.spj.salon.user.repository.UserRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class CustomBarberDetailsFacade implements UserDetailsService{
 
-	@Autowired
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
