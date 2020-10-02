@@ -34,4 +34,8 @@ out/
 logs
 .env
 build
-bin/main
+bin
+generated-sources
+.idea
+.settings
+src/generatedContract

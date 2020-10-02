@@ -3,6 +3,7 @@ package com.spj.salon.otp.facade;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import com.google.common.cache.CacheBuilder;
@@ -19,7 +20,7 @@ public class OtpService {
 
 	private static final Integer EXPIRE_MINS = 30;
 
-	private LoadingCache<String, Integer> otpCache;
+	private final LoadingCache<String, Integer> otpCache;
 	
 	/**
 	 * This method will cache the OTP for 30 mins
@@ -28,7 +29,7 @@ public class OtpService {
 		super();
 		otpCache = CacheBuilder.newBuilder().expireAfterWrite(EXPIRE_MINS, TimeUnit.MINUTES)
 				.build(new CacheLoader<String, Integer>() {
-					public Integer load(String key) {
+					public Integer load(@NotNull String key) {
 						return 0;
 					}
 				});

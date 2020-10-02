@@ -7,9 +7,9 @@ import com.spj.salon.barber.dto.BarberCheckInResponse;
 
 public interface ICheckinFacade {
 
-	public String waitTimeEstimate(long barberId);
-	public String checkInUser(long barberId, String time) ;
-	public String checkInBarber(long barberId, String time) ;
-	public boolean checkOut(long userId);
-	public BarberCheckInResponse findBarbersAtZip(BarberCheckInRequest barberCheckInRequest) throws ServiceUnavailableException ;
+	String waitTimeEstimate(long barberId);
+	String checkInUser(long barberId, String time) ;
+	String checkInBarber(long barberId, String time) ;
+	boolean checkOut(long userId);
+	BarberCheckInResponse findBarbersAtZip(BarberCheckInRequest barberCheckInRequest) throws ServiceUnavailableException ;
 }

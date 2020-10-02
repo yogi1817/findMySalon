@@ -6,6 +6,6 @@ package com.spj.salon.otp.facade;
  *
  */
 public interface IMyOtpService {
-	public void sendOtpMessage();
-	public void sendOtpMessage(String emailOrPhoneNo);
+	void sendOtpMessage();
+	void sendOtpMessage(String emailOrPhoneNo);
 }

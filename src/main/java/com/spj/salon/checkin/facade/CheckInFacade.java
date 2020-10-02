@@ -1,41 +1,33 @@
 package com.spj.salon.checkin.facade;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-
-import javax.naming.ServiceUnavailableException;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.google.maps.model.GeocodingResult;
+import com.spj.salon.barber.dto.BarberAddressDTO;
+import com.spj.salon.barber.dto.BarberCheckInRequest;
+import com.spj.salon.barber.dto.BarberCheckInResponse;
+import com.spj.salon.barber.entities.Address;
+import com.spj.salon.barber.entities.BarberCalendar;
+import com.spj.salon.barber.entities.DailyBarbers;
+import com.spj.salon.barber.entities.ZipCodeLookup;
+import com.spj.salon.barber.repository.AddressRepository;
+import com.spj.salon.barber.repository.ZipCodeRepository;
+import com.spj.salon.checkin.model.CheckIn;
+import com.spj.salon.checkin.repository.CheckInRepository;
+import com.spj.salon.client.GoogleGeoCodingClient;
+import com.spj.salon.customer.model.User;
+import com.spj.salon.customer.repository.UserRepository;
+import com.spj.salon.utils.DateUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.google.maps.model.GeocodingResult;
-import com.spj.salon.barber.dto.BarberAddressDTO;
-import com.spj.salon.barber.dto.BarberCheckInRequest;
-import com.spj.salon.barber.dto.BarberCheckInResponse;
-import com.spj.salon.barber.model.Address;
-import com.spj.salon.barber.model.BarberCalendar;
-import com.spj.salon.barber.model.DailyBarbers;
-import com.spj.salon.barber.model.ZipCodeLookup;
-import com.spj.salon.barber.repository.AddressRepository;
-import com.spj.salon.barber.repository.ZipCodeRepository;
-import com.spj.salon.checkin.model.CheckIn;
-import com.spj.salon.checkin.repository.CheckInRepository;
-import com.spj.salon.client.GoogleGeoCodingClient;
-import com.spj.salon.user.model.User;
-import com.spj.salon.user.repository.UserRepository;
-import com.spj.salon.utils.DateUtils;
+import javax.naming.ServiceUnavailableException;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 
@@ -43,6 +35,7 @@ import com.spj.salon.utils.DateUtils;
  *
  */
 @Service
+@Slf4j
 public class CheckInFacade implements ICheckinFacade {
 
 	@Autowired
@@ -62,9 +55,7 @@ public class CheckInFacade implements ICheckinFacade {
 	
 	@Autowired 
 	private GoogleGeoCodingClient googleGeoCodingClient;
-	
-	private static final Logger logger = LogManager.getLogger(CheckInFacade.class.getName());
-	
+
 	@Override
 	public String waitTimeEstimate(long barberId) {
 		Optional<User> barberOpt = userRepository.findById(barberId);
@@ -82,8 +73,8 @@ public class CheckInFacade implements ICheckinFacade {
 	/**
 	 * This method will calculate the checkin time available for a given service
 	 * @param barberCalSet
-	 * @param dailyBarberSet
-	 * @param checkin
+	 * @param dailyBarberList
+	 * @param checkInSet
 	 * @return
 	 */
 	private String getEstimateWaitTime(Set<BarberCalendar> barberCalSet, List<DailyBarbers> dailyBarberList,
@@ -145,8 +136,8 @@ public class CheckInFacade implements ICheckinFacade {
 		String waitTimeEstimate = null;
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String loginId = (String) auth.getPrincipal();
-		User user = userRepository.findByLoginId(loginId);
+		String email = (String) auth.getPrincipal();
+		User user = userRepository.findByEmail(email);
 		
 		Optional<User> barberOpt = userRepository.findById(barberId);
 		
@@ -171,8 +162,8 @@ public class CheckInFacade implements ICheckinFacade {
 	@Override
 	public String checkInBarber(long userId, String time) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String loginId = (String) auth.getPrincipal();
-		User barber = userRepository.findByLoginId(loginId);
+		String email = (String) auth.getPrincipal();
+		User barber = userRepository.findByEmail(email);
 		boolean checkInAvailable = true;
 		
 		String waitTimeEstimate = null;
@@ -244,16 +235,14 @@ public class CheckInFacade implements ICheckinFacade {
 					latitude = results[0].geometry.location.lat;
 					
 					//This will update zip code table async
-					CompletableFuture.runAsync(() -> {
-						saveZipCode(barberCheckInRequest.getZipCode(), results);
-					});
+					CompletableFuture.runAsync(() -> saveZipCode(barberCheckInRequest.getZipCode(), results));
 				} catch (IOException e) {
 					e.printStackTrace();
 					throw new ServiceUnavailableException("Google service unavailable");
 				}
 						
-				logger.debug("longitude "+ longitude);
-				logger.debug("latitude "+ latitude);
+				log.debug("longitude "+ longitude);
+				log.debug("latitude "+ latitude);
 		}
 		
 		return findBarbersWithinXMiles(longitude, latitude, barberCheckInRequest.getDistance());
@@ -276,9 +265,9 @@ public class CheckInFacade implements ICheckinFacade {
 		double lat1 = latitude - (distance/69); 
 		double lat2 = latitude+(distance/69);
 		
-		logger.debug("long1 --> {}, long2 --> {}, lat1 --> {}. lat2 --> {}", long1, long2, lat1, lat2);
+		log.debug("long1 --> {}, long2 --> {}, lat1 --> {}. lat2 --> {}", long1, long2, lat1, lat2);
 
-		logger.debug("longitude --> {}, latitude --> {}", longitude, latitude);
+		log.debug("longitude --> {}, latitude --> {}", longitude, latitude);
 		List<Map<String, Object>> addressIds = 
 				addressRepo.getBarbersId(longitude, latitude, distance, long1, long2, lat1, lat2);
 		
@@ -315,7 +304,6 @@ public class CheckInFacade implements ICheckinFacade {
 
 	/**
 	 * Save zip code from google api to lookuptable
-	 * @param address
 	 * @param results
 	 */
 	private void saveZipCode(String zipCode, GeocodingResult[] results) {

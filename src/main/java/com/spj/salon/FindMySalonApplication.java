@@ -1,10 +1,11 @@
 package com.spj.salon;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.spj.salon.config.EnvironmentConfig;
+import com.spj.salon.config.ServiceConfig;
+import com.spj.salon.utils.UserContextInterceptor;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -18,75 +19,70 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.web.client.RestTemplate;
 
-import com.spj.salon.config.EnvironmentConfig;
-import com.spj.salon.config.ServiceConfig;
-import com.spj.salon.utils.UserContextInterceptor;
-
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
 
 @SpringBootApplication
 @EnableAuthorizationServer
 @EnableResourceServer
-@OpenAPIDefinition(info = @Info(title = "FindMySalon API", description = "Java microservice project", version = "3.0.0"))
+@RequiredArgsConstructor
+@OpenAPIDefinition
 public class FindMySalonApplication {
 
-	@Autowired
-	private ServiceConfig serviceConfig;
+    private final ServiceConfig serviceConfig;
+    private final EnvironmentConfig envConfig;
 
-	@Autowired
-	private EnvironmentConfig envConfig;
+    public static void main(String[] args) {
+        SpringApplication.run(FindMySalonApplication.class, args);
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(FindMySalonApplication.class, args);
-	}
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 
-	@Bean
-	public RestTemplate restTemplate() {
-		return new RestTemplate();
-	}
+    @Primary
+    @Bean
+    public RestTemplate getCustomRestTemplete() {
+        RestTemplate template = new RestTemplate();
+        List<ClientHttpRequestInterceptor> interceptors = template.getInterceptors();
+        if (interceptors == null || interceptors.isEmpty()) {
+            template.setInterceptors(Collections.singletonList(new UserContextInterceptor()));
+        } else {
+            interceptors.add(new UserContextInterceptor());
+            template.setInterceptors(interceptors);
+        }
+        return template;
+    }
 
-	@Primary
-	@Bean
-	public RestTemplate getCustomRestTemplete() {
-		RestTemplate template = new RestTemplate();
-		List<ClientHttpRequestInterceptor> interceptors = template.getInterceptors();
-		if (interceptors == null) {
-			template.setInterceptors(Collections.singletonList(new UserContextInterceptor()));
-		} else {
-			interceptors.add(new UserContextInterceptor());
-			template.setInterceptors(interceptors);
-		}
-		return template;
-	}
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+    @Bean
+    public JavaMailSender getJavaMailSender() {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost(serviceConfig.getMailHost());
+        mailSender.setPort(serviceConfig.getMailPort());
 
-	@Bean
-	public JavaMailSender getJavaMailSender() {
-		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-		mailSender.setHost(serviceConfig.getMailHost());
-		mailSender.setPort(serviceConfig.getMailPort());
+        mailSender.setUsername(envConfig.getMailUsername());
+        mailSender.setPassword(envConfig.getMailPassword());
 
-		mailSender.setUsername(envConfig.getMailUsername());
-		mailSender.setPassword(envConfig.getMailPassword());
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
 
-		Properties props = mailSender.getJavaMailProperties();
-		props.put("mail.smtp.auth", "true");
-		props.put("mail.smtp.starttls.enable", "true");
+        return mailSender;
+    }
 
-		return mailSender;
-	}
-
-	// Uncomment below code if you want to use goofle api for location
-	/*
-	 * @Bean public GeoApiContext getGeoApiContext() { return new
-	 * GeoApiContext.Builder() .apiKey(serviceConfig.getGoogleApiKey()) .build(); }
-	 * 
-	 * @PreDestroy public void preDestroy() { getGeoApiContext().shutdown(); }
-	 */
+    // Uncomment below code if you want to use goofle api for location
+    /*
+     * @Bean public GeoApiContext getGeoApiContext() { return new
+     * GeoApiContext.Builder() .apiKey(serviceConfig.getGoogleApiKey()) .build(); }
+     *
+     * @PreDestroy public void preDestroy() { getGeoApiContext().shutdown(); }
+     */
 
 }

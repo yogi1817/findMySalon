@@ -2,6 +2,7 @@ package com.spj.salon.utils;
 
 import java.io.IOException;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -16,20 +17,20 @@ public class UserContextInterceptor implements ClientHttpRequestInterceptor {
 
 	//private static final Logger logger = LogManager.getLogger(UserContextInterceptor.class.getName());
 	
-	@Override
-	public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
+	@NotNull
+    @Override
+	public ClientHttpResponse intercept(@NotNull HttpRequest request, @NotNull byte[] body, ClientHttpRequestExecution execution)
 			throws IOException {
 		//HttpHeaders headers = request.getHeaders();
 		//headers.add(UserContext.CORRELATION_ID, UserContextHolder.getContext().getCorrelationId());
         //headers.add(UserContext.AUTH_TOKEN, UserContextHolder.getContext().getAuthToken());
-        ClientHttpResponse response = execution.execute(request, body);
-		/*
+        /*
 		 * InputStreamReader isr = new InputStreamReader(response.getBody(),
 		 * StandardCharsets.UTF_8); String responseBody = new BufferedReader(isr)
 		 * .lines() .collect(Collectors.joining("\n"));
 		 * logger.debug("Response body: {}", responseBody);
 		 */
              
-        return response;
+        return execution.execute(request, body);
 	}
 }

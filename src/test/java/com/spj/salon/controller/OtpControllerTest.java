@@ -17,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.spj.salon.otp.facade.IMyOtpService;
 import com.spj.salon.otp.facade.OtpService;
-import com.spj.salon.user.facade.IUserFacade;
+import com.spj.salon.customer.ports.in.ICustomerAdapter;
 
 @ExtendWith(MockitoExtension.class)
 public class OtpControllerTest {
@@ -35,7 +35,7 @@ public class OtpControllerTest {
 	private OtpService otpService;
 	
 	@Spy
-	private IUserFacade userFacade;
+	private ICustomerAdapter userFacade;
 	
 	@BeforeEach
 	void setup() {

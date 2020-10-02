@@ -6,8 +6,8 @@ import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import com.spj.salon.barber.model.Authorities;
-import com.spj.salon.user.model.User;
+import com.spj.salon.barber.entities.Authorities;
+import com.spj.salon.customer.model.User;
 
 /**
  * 

@@ -7,7 +7,7 @@ package com.spj.salon.security.pojo;
  */
 public enum UserType {
 	BARBER("BARBER"), USER("USER"), SUPERUSER("SUPERUSER");
-    private String value;
+    private final String value;
 
     public String getResponse() {
         return value;
