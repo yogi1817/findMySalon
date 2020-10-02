@@ -1,7 +1,10 @@
 package com.spj.salon.customer.ports.in;
 
-import com.spj.salon.customer.model.User;
-import com.spj.salon.openapi.resources.*;
+import com.spj.salon.openapi.resources.AuthenticationRequest;
+import com.spj.salon.openapi.resources.AuthenticationResponse;
+import com.spj.salon.openapi.resources.CustomerFavouriteBarberResponse;
+import com.spj.salon.openapi.resources.UpdatePasswordRequest;
+import com.spj.salon.openapi.resources.UpdatePasswordResponse;
 
 /**
  * 

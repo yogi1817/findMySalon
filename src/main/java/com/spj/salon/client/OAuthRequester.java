@@ -1,26 +1,28 @@
 package com.spj.salon.client;
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import com.spj.salon.barber.ports.out.OAuthClient;
-import com.spj.salon.config.ServiceConfig;
-import com.spj.salon.customer.model.User;
-import com.spj.salon.openapi.resources.AuthenticationRequest;
-import com.spj.salon.openapi.resources.AuthenticationResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import okhttp3.*;
-import org.apache.commons.codec.binary.Base64;
-import org.hibernate.service.spi.ServiceException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.apache.commons.codec.binary.Base64;
+import org.hibernate.service.spi.ServiceException;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
+
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.spj.salon.barber.ports.out.OAuthClient;
+import com.spj.salon.config.ServiceConfig;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * @author Yogesh Sharma
@@ -37,8 +39,8 @@ public class OAuthRequester implements OAuthClient {
      * This method calls the oauth service with login id and password and
      * generates the jwt token.
      * This is needed because the UI(angular) was not able to call the OAUTh service provided by spring security
-     *
-     * @param String
+     * @param email
+     * @param password
      * @param clientHost
      * @return
      */

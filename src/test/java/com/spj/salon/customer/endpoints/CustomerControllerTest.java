@@ -1,9 +1,15 @@
 package com.spj.salon.customer.endpoints;
 
-import com.spj.salon.customer.model.User;
-import com.spj.salon.customer.ports.in.ICustomerAdapter;
-import com.spj.salon.customer.ports.in.IRegisterCustomer;
-import com.spj.salon.openapi.resources.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,12 +17,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import com.spj.salon.customer.ports.in.ICustomerAdapter;
+import com.spj.salon.customer.ports.in.IRegisterCustomer;
+import com.spj.salon.openapi.resources.AuthenticationRequest;
+import com.spj.salon.openapi.resources.AuthenticationResponse;
+import com.spj.salon.openapi.resources.CustomerFavouriteBarberResponse;
+import com.spj.salon.openapi.resources.RegisterCustomerRequest;
+import com.spj.salon.openapi.resources.RegisterCustomerResponse;
+import com.spj.salon.openapi.resources.UpdatePasswordRequest;
+import com.spj.salon.openapi.resources.UpdatePasswordResponse;
 
 @ExtendWith(MockitoExtension.class)
 public class CustomerControllerTest {

@@ -1,11 +1,9 @@
 package com.spj.salon;
 
-import com.spj.salon.config.EnvironmentConfig;
-import com.spj.salon.config.ServiceConfig;
-import com.spj.salon.utils.UserContextInterceptor;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
-import lombok.RequiredArgsConstructor;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -19,9 +17,12 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import com.spj.salon.config.EnvironmentConfig;
+import com.spj.salon.config.ServiceConfig;
+import com.spj.salon.utils.UserContextInterceptor;
+
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import lombok.RequiredArgsConstructor;
 
 @SpringBootApplication
 @EnableAuthorizationServer
