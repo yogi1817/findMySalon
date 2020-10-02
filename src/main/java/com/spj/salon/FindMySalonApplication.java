@@ -23,6 +23,7 @@ import com.spj.salon.utils.UserContextInterceptor;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import lombok.RequiredArgsConstructor;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @EnableAuthorizationServer
