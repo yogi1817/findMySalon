@@ -95,6 +95,8 @@ openApiGenerate {
 	]
 }
 
+compileJava.dependsOn tasks.openApiGenerate
+
 sourceSets.main.java.srcDirs("$rootDir/build/generated/src/main/java","$rootDir/build/generated/sources/annotationProcessor/java/main")
 idea.module.sourceDirs += file("$rootDir/build/generated/src/main/java")
 idea.module.sourceDirs + file("$rootDir/build/generated/sources/annotationProcessor/java/main")
