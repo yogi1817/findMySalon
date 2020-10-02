@@ -32,8 +32,8 @@ public class JWTTokenEnhancer implements TokenEnhancer {
 			info.put("email", user.getEmail());
 		if (user.getMobile() != null)
 			info.put("mobile", user.getMobile());
-		if (user.getLoginId() != null)
-			info.put("loginId", user.getLoginId());
+		if (user.getEmail() != null)
+			info.put("email", user.getEmail());
 		
 		((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(info);
         return accessToken;

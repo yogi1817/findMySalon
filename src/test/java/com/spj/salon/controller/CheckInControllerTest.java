@@ -82,7 +82,7 @@ public class CheckInControllerTest {
 	
 	@Test
 	void shouldCheckOutUserFromBarberAndReturnBoolean() {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("userid", "1");
 		doReturn(true)
 			.when(checkInFacade)
@@ -98,7 +98,7 @@ public class CheckInControllerTest {
 	
 	@Test
 	void shouldFindBarbersAtZipAndReturnListOfBarbers() throws ServiceUnavailableException {
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		headers.put("hostname", "localhost");
 		BarberCheckInRequest barberCheckInRequest = BarberCheckInRequest.builder()
 															.zipCode("15220")
@@ -109,7 +109,7 @@ public class CheckInControllerTest {
 													.lastName("testlast")
 													.distance(123.22332)
 													.build();
-		List<BarberAddressDTO> list = new  ArrayList<BarberAddressDTO>();
+		List<BarberAddressDTO> list = new ArrayList<>();
 		list.add(barberAddressDTO);
 		BarberCheckInResponse barberCheckInResponse = BarberCheckInResponse.builder()
 																.message("1 barber Found")

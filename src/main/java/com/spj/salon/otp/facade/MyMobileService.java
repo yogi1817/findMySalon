@@ -1,84 +1,79 @@
 package com.spj.salon.otp.facade;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.spj.salon.config.EnvironmentConfig;
+import com.spj.salon.customer.model.User;
+import com.spj.salon.customer.repository.UserRepository;
+import com.spj.salon.exception.NotFoundCustomException;
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.spj.salon.config.EnvironmentConfig;
-import com.spj.salon.exception.NotFoundCustomException;
-import com.spj.salon.user.model.User;
-import com.spj.salon.user.repository.UserRepository;
-import com.twilio.Twilio;
-import com.twilio.rest.api.v2010.account.Message;
-import com.twilio.type.PhoneNumber;
-
 /**
- * 
  * @author Yogesh Sharma
- *
  */
 @Service("mobileOtp")
-public class MyMobileService implements IMyOtpService{
-	
-	@Autowired
-	private EnvironmentConfig envConfig;
-	
-	@Autowired
-	private UserRepository userRepository;
-	
-	@Autowired
-	private OtpService otpService;
-	
-	private static final Logger logger = LogManager.getLogger(MyMobileService.class.getName());
-	
-	/**
-	 * This method will send OTP on the mobile number of registered user
-	 */
-	public void sendOtpMessage() {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String loginId = (String) auth.getPrincipal();
-		
-		logger.info("User found in jwt security {}", loginId);
-		User user = userRepository.findByLoginId(loginId);
+@Slf4j
+public class MyMobileService implements IMyOtpService {
 
-		if(StringUtils.isEmpty(user.getPhone())) {
-			logger.error("Cannot send OTP, no phone number founf for user {}", loginId);
-			throw new NotFoundCustomException("No phone number found for user "+user.getLoginId(), "Please add valid phone number");
-		}
-		
-		sendOtp(user);
-	}
+    @Autowired
+    private EnvironmentConfig envConfig;
 
-	private void sendOtp(User user) {
-		int otp = otpService.generateOTP(user.getLoginId());
+    @Autowired
+    private UserRepository userRepository;
 
-		logger.info("barber.getPhone() "+user.getPhone());
-		logger.info("OTP : " + otp);
-		
-		Twilio.init(envConfig.getTwilioOtpSid(), envConfig.getTwilioOtpAuthToken());
+    @Autowired
+    private OtpService otpService;
+
+    /**
+     * This method will send OTP on the mobile number of registered user
+     */
+    public void sendOtpMessage() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = (String) auth.getPrincipal();
+
+        log.info("User found in jwt security {}", email);
+        User user = userRepository.findByEmail(email);
+
+        if (StringUtils.isEmpty(user.getPhone())) {
+            log.error("Cannot send OTP, no phone number founf for user {}", email);
+            throw new NotFoundCustomException("No phone number found for user " + user.getEmail(), "Please add valid phone number");
+        }
+
+        sendOtp(user);
+    }
+
+    private void sendOtp(User user) {
+        int otp = otpService.generateOTP(user.getEmail());
+
+        log.info("barber.getPhone() " + user.getPhone());
+        log.info("OTP : " + otp);
+
+        Twilio.init(envConfig.getTwilioOtpSid(), envConfig.getTwilioOtpAuthToken());
 
         Message textMessage = Message
                 .creator(new PhoneNumber(user.getPhone()), // to
                         new PhoneNumber("+14126153338"), // from
-                        "Welcome to find my barber, your OTP is "+otp+" .Its valid for 30 minutes.")
+                        "Welcome to find my barber, your OTP is " + otp + " .Its valid for 30 minutes.")
                 .create();
-        
-        logger.debug("message sent {}",textMessage.getSid());
-		
-	}
 
-	@Override
-	public void sendOtpMessage(String phoneNumber) {
-		User user = userRepository.findByPhone(phoneNumber);
-		logger.info("User {} with phone number {}", user, phoneNumber);
-		
-		if(user==null)
-			throw new NotFoundCustomException("User not found", phoneNumber);
-		
-		sendOtp(user);
-	}
+        log.debug("message sent {}", textMessage.getSid());
+
+    }
+
+    @Override
+    public void sendOtpMessage(String phoneNumber) {
+        User user = userRepository.findByPhone(phoneNumber);
+        log.info("User {} with phone number {}", user, phoneNumber);
+
+        if (user == null)
+            throw new NotFoundCustomException("User not found", phoneNumber);
+
+        sendOtp(user);
+    }
 }

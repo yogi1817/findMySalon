@@ -44,8 +44,7 @@ public class DateUtils {
 		SimpleDateFormat sdf = new SimpleDateFormat("hh:mm aa");
 
 		try {
-		    Date date = sdf.parse(time);
-		    return date;
+            return sdf.parse(time);
 		} catch (ParseException e) {
 		    System.err.println("Couldn't parse string! "+e.getMessage());
 		}

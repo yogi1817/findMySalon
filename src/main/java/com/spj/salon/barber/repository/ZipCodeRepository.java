@@ -3,7 +3,7 @@ package com.spj.salon.barber.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.spj.salon.barber.model.ZipCodeLookup;
+import com.spj.salon.barber.entities.ZipCodeLookup;
 
 /**
  * 
@@ -14,5 +14,5 @@ import com.spj.salon.barber.model.ZipCodeLookup;
 @Repository
 public interface ZipCodeRepository extends JpaRepository<ZipCodeLookup, Long>{
 
-	public ZipCodeLookup findByZipCode(long zipCode);
+	ZipCodeLookup findByZipCode(long zipCode);
 }

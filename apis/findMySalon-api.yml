@@ -1,0 +1,400 @@
+openapi: 3.0.2
+info:
+  title: Barber Services API
+  description: API used for access FindMySalon Services
+  version: 1
+servers:
+  - url: http://localhost:8080
+    description: local
+tags:
+  - name: barber
+  - name: customer
+paths:
+  /barber/register:
+    post:
+      operationId: registerBarber
+      tags:
+        - barber
+      summary: Register a barber
+      description: Register a barber
+#      parameters:
+#        - in: header
+#          name: clientHost
+#          schema:
+#            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterBarberRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterBarberResponse'
+  /barber/barbersCount:
+    post:
+      operationId: addBarberCountToday
+      tags:
+        - barber
+      summary: Add barber count for today
+      description: This service will add barber count for today and update in DB to calculate correct waittime
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DailyBarbersRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DailyBarbersResponse'
+  /barber/services/{serviceId}/cost/{cost}/time/{time}:
+    post:
+      operationId: addServicesForBarber
+      tags:
+        - barber
+      summary: This api will add services to a barber like haircut etc
+      description: This api will add services to a barber like haircut etc
+      parameters:
+        - in: path
+          name: serviceId
+          schema:
+            type: integer
+            format: int64
+        - in: path
+          name: cost
+          schema:
+            type: integer
+        - in: path
+          name: time
+          schema:
+            type: integer
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BarberServicesResponse'
+  /barber/calendar:
+    post:
+      operationId: addBarberCalendar
+      tags:
+        - barber
+      summary: This api will add barber cal entry
+      description: You can add barber calaner like what days are holidays and what are the regular working hours
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BarberCalendarRequest'
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BarberCalendarResponse'
+  /barber/address:
+    post:
+      operationId: addBarbersAddress
+      tags:
+        - barber
+      summary: This api will add barber address
+      description: This api will add barber address, a Barber can have more than 1 address as well
+      parameters:
+        - in: header
+          name: clientHost
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BarberAddressRequest'
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BarberAddressResponse'
+  /customer/register:
+    post:
+      operationId: registerCustomer
+      tags:
+        - customer
+      summary: Register a customer
+      description: Register a customer
+      parameters:
+        - in: header
+          name: clientHost
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterCustomerRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterCustomerResponse'
+  /customer/favourite:
+    post:
+      operationId: customerFavourite
+      tags:
+        - customer
+      summary: Adds a favourite barber into customer profile
+      description: Adds a favourite barber into customer profile
+      parameters:
+        - in: query
+          name: barberId
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerFavouriteBarberResponse'
+  /customer/authenticate:
+    post:
+      operationId: authenticateCustomer
+      tags:
+        - customer
+      summary: This methos returns Outh related data
+      description: This method will return basic user details with jwt token
+      parameters:
+        - in: header
+          name: clientHost
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticationRequest'
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponse'
+  /customer/updatepassword:
+    post:
+      operationId: updatePassword
+      tags:
+        - customer
+      summary: This method updates the password of user
+      description: Update passowrd ofr a user
+      parameters:
+        - in: header
+          name: clientHost
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePasswordRequest'
+      responses:
+              200:
+                description: success
+                content:
+                  application/json:
+                    schema:
+                      $ref: '#/components/schemas/UpdatePasswordResponse'
+              400:
+                description: Bad Request
+components:
+  schemas:
+    RegisterBarberRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        password:
+          type: string
+        storeName:
+          type: string
+      required:
+        - firstName
+        - lastName
+        - email
+        - phone
+        - password
+        - storeName
+    RegisterBarberResponse:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+    DailyBarbersRequest:
+      type: object
+      properties:
+        barbersCount:
+          type: integer
+        barbersDescription:
+          type: string
+      required:
+        - barbersCount
+    DailyBarbersResponse:
+      type: object
+      properties:
+        barbersCount:
+          type: integer
+        actionResult:
+          type: string
+    BarberServicesResponse:
+      type: object
+      properties:
+        serviceName:
+          type: string
+        message:
+          type: string
+    BarberCalendarRequest:
+      type: object
+      properties:
+        salonOpensAt:
+          type: string
+        salonClosesAt:
+          type: string
+        calendarDay:
+          type: string
+        calendarDate:
+          type: string
+    BarberCalendarResponse:
+      type: object
+      properties:
+        email:
+          type: string
+        message:
+          type: string
+    BarberAddressRequest:
+      type: object
+      properties:
+        addressLineOne:
+          type: string
+        addressLineTwo:
+          type: string
+        city:
+          type: string
+        zip:
+          type: integer
+        state:
+          type: string
+        country:
+          type: string
+      required:
+        - addressLineOne
+        - city
+        - zip
+        - country
+    BarberAddressResponse:
+      type: object
+      properties:
+        email:
+          type: string
+        message:
+          type: string
+    RegisterCustomerRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        password:
+          type: string
+      required:
+        - firstName
+        - lastName
+        - email
+        - phone
+        - password
+        - storeName
+    RegisterCustomerResponse:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+    CustomerFavouriteBarberResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        message:
+          type: string
+    AuthenticationRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    AuthenticationResponse:
+      type: object
+      properties:
+        email:
+          type: string
+        jwtToken:
+          type: string
+    UpdatePasswordRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        otpNumber:
+          type: integer
+        newPassword:
+          type: string
+      required:
+        - otpNumber
+        - newPassword
+    UpdatePasswordResponse:
+      type: object
+      properties:
+        jwtToken:
+          type: string
+        message:
+          type: string

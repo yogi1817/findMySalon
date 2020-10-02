@@ -6,8 +6,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.spj.salon.security.pojo.CustomUser;
-import com.spj.salon.user.model.User;
-import com.spj.salon.user.repository.UserRepository;
+import com.spj.salon.customer.model.User;
+import com.spj.salon.customer.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,10 +21,9 @@ public class CustomBarberDetailsFacade implements UserDetailsService{
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = null;
 		try {
-			user = userRepository.findByLoginId(username);
+			user = userRepository.findByEmail(username);
 			if (user != null) {
-				CustomUser customUser = new CustomUser(user);
-				return customUser;
+                return new CustomUser(user);
 			} else {
 				throw new UsernameNotFoundException("User " + username + " was not found in the database");
 			}

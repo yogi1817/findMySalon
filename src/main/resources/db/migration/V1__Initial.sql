@@ -15,7 +15,6 @@ create table usa.user(
 	middle_name varchar(255),
 	email varchar(255) UNIQUE,
 	phone varchar(255),
-	login_id varchar(255) UNIQUE,
 	password varchar(255),
 	create_date DATE,
 	modify_date DATE,
@@ -96,8 +95,8 @@ create table usa.promotions(
 create table usa.barber_calendar(
 	barber_calendar_id  BIGSERIAL PRIMARY KEY,
 	user_id int8 REFERENCES usa.user(user_id),
-	salon_open_time TIMESTAMP,
-	salon_close_time TIMESTAMP,
+	salon_open_time TIME ,
+	salon_close_time TIME ,
 	calendar_day varchar(255),
 	calendar_date date,
 	modify_date date);

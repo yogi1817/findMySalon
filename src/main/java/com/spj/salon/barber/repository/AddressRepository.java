@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.spj.salon.barber.model.Address;
+import com.spj.salon.barber.entities.Address;
 
 /**
  * 
@@ -47,6 +47,6 @@ public interface AddressRepository extends JpaRepository<Address, Long>{
 							+ "where a.longitude between ?4 and ?5 "
 							+ "and a.latitude between ?6 and ?7) t2 " 
 							+ "where t2.distance < ?3 order by t2.distance", nativeQuery = true)
-	public List<Map<String, Object>> getBarbersId(double longitude, double latitude, 
-			double distance, double long1, double long2, double lat1, double lat2);
+    List<Map<String, Object>> getBarbersId(double longitude, double latitude,
+                                           double distance, double long1, double long2, double lat1, double lat2);
 }

@@ -13,9 +13,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.spj.salon.barber.model.Authorities;
-import com.spj.salon.user.model.User;
-import com.spj.salon.user.repository.UserRepository;
+import com.spj.salon.barber.entities.Authorities;
+import com.spj.salon.customer.model.User;
+import com.spj.salon.customer.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class CustomBarberDetailsFacadeTest {
@@ -44,18 +44,17 @@ public class CustomBarberDetailsFacadeTest {
 				.password("testpassword")
 				.storeName("teststore")
 				.authority(authority)
-				.loginId("testlogin")
 				.build();
 		
 		doReturn(user)
 			.when(userRepository)
-			.findByLoginId("test");
+			.findByEmail("email@test.com");
 		
-		UserDetails testResult = testSubject.loadUserByUsername("test");
+		UserDetails testResult = testSubject.loadUserByUsername("email@test.com");
 		
 		assertThat(testResult!=null);
 		verify(userRepository, times(1))
-			.findByLoginId("test");
+			.findByEmail("email@test.com");
 		verifyNoMoreInteractions(userRepository);
 	}
 }

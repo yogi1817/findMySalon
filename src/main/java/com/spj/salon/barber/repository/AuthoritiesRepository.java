@@ -3,7 +3,7 @@ package com.spj.salon.barber.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.spj.salon.barber.model.Authorities;
+import com.spj.salon.barber.entities.Authorities;
 
 /**
  * 
@@ -14,5 +14,5 @@ import com.spj.salon.barber.model.Authorities;
 @Repository
 public interface AuthoritiesRepository extends JpaRepository<Authorities, Long>{
 
-	public Authorities findByAuthority(String authority);
+	Authorities findByAuthority(String authority);
 }
