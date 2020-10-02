@@ -28,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 @EnableAuthorizationServer
 @EnableResourceServer
 @RequiredArgsConstructor
-@OpenAPIDefinition
 public class FindMySalonApplication {
 
     private final ServiceConfig serviceConfig;
