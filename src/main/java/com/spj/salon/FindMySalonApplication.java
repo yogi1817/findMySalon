@@ -17,13 +17,11 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.web.client.RestTemplate;
 
-import com.spj.salon.config.EnvironmentConfig;
-import com.spj.salon.config.ServiceConfig;
-import com.spj.salon.utils.UserContextInterceptor;
+import com.spj.salon.configs.EnvironmentConfig;
+import com.spj.salon.configs.ServiceConfig;
+import com.spj.salon.interceptor.UserContextInterceptor;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import lombok.RequiredArgsConstructor;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @EnableAuthorizationServer

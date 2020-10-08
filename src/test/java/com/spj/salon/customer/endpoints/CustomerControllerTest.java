@@ -1,117 +1,151 @@
 package com.spj.salon.customer.endpoints;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spj.salon.customer.ports.in.ICustomerAdapter;
+import com.spj.salon.customer.ports.in.IRegisterCustomer;
+import com.spj.salon.openapi.endpoint.CustomerApiController;
+import com.spj.salon.openapi.resources.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.spj.salon.customer.ports.in.ICustomerAdapter;
-import com.spj.salon.customer.ports.in.IRegisterCustomer;
-import com.spj.salon.openapi.resources.AuthenticationRequest;
-import com.spj.salon.openapi.resources.AuthenticationResponse;
-import com.spj.salon.openapi.resources.CustomerFavouriteBarberResponse;
-import com.spj.salon.openapi.resources.RegisterCustomerRequest;
-import com.spj.salon.openapi.resources.RegisterCustomerResponse;
-import com.spj.salon.openapi.resources.UpdatePasswordRequest;
-import com.spj.salon.openapi.resources.UpdatePasswordResponse;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CustomerControllerTest {
-
-    private CustomerController testSubject;
 
     @Mock
     private ICustomerAdapter userFacade;
     @Mock
     private IRegisterCustomer registerFacade;
+    private MockMvc mockMvc;
+    private static final String REGISTER_ENDPOINT = "/customer/register";
+    private static final String FAVOURITE_ENDPOINT = "/customer/favourite?barberId={barberId}";
+    private static final String AUTHENTICATE_ENDPOINT = "/customer/authenticate";
+    private static final String UPDATE_PASSWORD_ENDPOINT = "/customer/updatepassword";
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     final RegisterCustomerRequest registerCustomerRequest = new RegisterCustomerRequest()
             .firstName("testfirst")
             .lastName("testlast")
-            .email("email@test.com");
+            .email("email@test.com")
+            .phone("1234567891")
+            .password("testpass");
 
-    final RegisterCustomerResponse user = new RegisterCustomerResponse()
+    final RegisterCustomerResponse registerCustomerResponse = new RegisterCustomerResponse()
             .firstName("testfirst")
             .lastName("testlast")
             .email("email@test.com");
 
+    static {
+        OBJECT_MAPPER.findAndRegisterModules();
+    }
+
     @BeforeEach
     void setup() {
-        testSubject = new CustomerController(userFacade, registerFacade);
+        CustomerController testSubject = new CustomerController(userFacade, registerFacade);
+        mockMvc = MockMvcBuilders.standaloneSetup((new CustomerApiController(testSubject))).build();
     }
 
     @Test
-    void shouldRegisterBarberAndReturnUserObject() {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("clienthost", "test");
-        doReturn(user)
+    void shouldRegisterBarberAndReturnRegisterCustomerResponse() throws Exception {
+        RegisterCustomerResponse expected = new RegisterCustomerResponse()
+                .firstName("testfirst")
+                .lastName("testlast")
+                .email("email@test.com")
+                .message("Member registered successfully");
+
+        doReturn(registerCustomerResponse)
                 .when(registerFacade)
                 .registerCustomer(registerCustomerRequest);
 
-        ResponseEntity<RegisterCustomerResponse> testResult = testSubject.registerCustomer(registerCustomerRequest, Optional.of("test"));
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post(REGISTER_ENDPOINT)
+                .content(OBJECT_MAPPER.writeValueAsString(registerCustomerRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
 
-        assertThat(testResult.getBody() != null);
+        mockMvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(OBJECT_MAPPER.writeValueAsString(expected)));
+
         verify(registerFacade, times(1))
                 .registerCustomer(registerCustomerRequest);
         verifyNoMoreInteractions(registerFacade);
     }
 
     @Test
-    void shouldAddFavouriteSalonAndReturnBoolean() {
+    void shouldAddFavouriteSalonAndReturnCustomerFavouriteBarberResponse() throws Exception {
         doReturn(new CustomerFavouriteBarberResponse().message("updated"))
                 .when(userFacade)
                 .addFavouriteSalon(1L);
 
-        ResponseEntity<CustomerFavouriteBarberResponse> testResult = testSubject.customerFavourite(1L);
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post(FAVOURITE_ENDPOINT, 1L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
 
-        assertThat(testResult.getBody() != null);
+        mockMvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(OBJECT_MAPPER.writeValueAsString(new CustomerFavouriteBarberResponse().message("updated"))));
+
         verify(userFacade, times(1))
                 .addFavouriteSalon(1L);
         verifyNoMoreInteractions(registerFacade);
     }
 
     @Test
-    void shouldAuthenticateAndReturnUser() {
+    void shouldAuthenticateAndReturnAuthenticationRequest() throws Exception {
         AuthenticationRequest authenticationRequest = new AuthenticationRequest().email("test").password("pass");
 
         doReturn(new AuthenticationResponse().jwtToken("jwt"))
                 .when(userFacade)
-                .getJwtToken(authenticationRequest, "test1");
+                .getJwtToken(authenticationRequest, null);
 
-        ResponseEntity<AuthenticationResponse> testResult = testSubject.authenticateCustomer(authenticationRequest, Optional.of("test1"));
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post(AUTHENTICATE_ENDPOINT)
+                .content(OBJECT_MAPPER.writeValueAsString(authenticationRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
 
-        assertThat(testResult.getBody() != null);
+        mockMvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(OBJECT_MAPPER.writeValueAsString(new AuthenticationResponse().jwtToken("jwt"))));
+
         verify(userFacade, times(1))
-                .getJwtToken(authenticationRequest, "test1");
+                .getJwtToken(authenticationRequest, null);
         verifyNoMoreInteractions(userFacade);
     }
 
     @Test
-    void shouldUpdatePasswordAndReturnUserObject() {
+    void shouldUpdatePasswordAndReturnUpdatePasswordRequest() throws Exception{
         UpdatePasswordRequest updatePasswordRequest = new UpdatePasswordRequest().email("email")
                 .otpNumber(1234).newPassword("newpassword");
 
         doReturn(new UpdatePasswordResponse().jwtToken("jwt"))
                 .when(userFacade)
-                .updatePassword(updatePasswordRequest, "test");
+                .updatePassword(updatePasswordRequest, null);
 
-        ResponseEntity<UpdatePasswordResponse> testResult = testSubject.updatePassword(updatePasswordRequest, Optional.of("test"));
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post(UPDATE_PASSWORD_ENDPOINT)
+                .content(OBJECT_MAPPER.writeValueAsString(updatePasswordRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
 
-        assertThat(testResult.getBody() != null);
+        mockMvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(OBJECT_MAPPER.writeValueAsString(new UpdatePasswordResponse().jwtToken("jwt"))));
+
         verify(userFacade, times(1))
-                .updatePassword(updatePasswordRequest, "test");
+                .updatePassword(updatePasswordRequest, null);
         verifyNoMoreInteractions(userFacade);
     }
 }

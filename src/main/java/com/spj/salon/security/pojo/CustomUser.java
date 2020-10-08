@@ -20,7 +20,7 @@ public class CustomUser extends User {
     private String storeName;
     private String email;
 
-    public CustomUser(com.spj.salon.customer.model.User user) {
+    public CustomUser(com.spj.salon.customer.entities.User user) {
         super(user.getEmail(), user.getPassword(), AuthorityUtils.getUserAuthorities(user));
         this.id = user.getUserId();
         this.first_name = user.getFirstName();

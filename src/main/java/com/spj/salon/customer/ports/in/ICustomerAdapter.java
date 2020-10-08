@@ -14,7 +14,6 @@ import com.spj.salon.openapi.resources.UpdatePasswordResponse;
 public interface ICustomerAdapter {
 
 	CustomerFavouriteBarberResponse addFavouriteSalon(Long userId);
-	boolean updateVerifiedFlag(String loginId);
 	UpdatePasswordResponse updatePassword(UpdatePasswordRequest user, String clientHost);
 	AuthenticationResponse getJwtToken(AuthenticationRequest authenticationRequest, String clientHost);
 }

@@ -2,7 +2,7 @@ package com.spj.salon.customer.dao;
 
 import java.util.List;
 
-import com.spj.salon.customer.model.User;
+import com.spj.salon.customer.entities.User;
 
 /**
  * 

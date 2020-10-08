@@ -14,7 +14,7 @@ import javax.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 
 import com.spj.salon.barber.entities.Authorities;
-import com.spj.salon.customer.model.User;
+import com.spj.salon.customer.entities.User;
 
 /**
  * 
