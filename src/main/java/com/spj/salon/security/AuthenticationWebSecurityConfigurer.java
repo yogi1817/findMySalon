@@ -6,12 +6,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.spj.salon.security.adapters.CustomBarberDetailsAdapter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 /**
  * 
@@ -75,11 +77,11 @@ public class AuthenticationWebSecurityConfigurer extends WebSecurityConfigurerAd
 			.passwordEncoder(passwordEncoder)
 			.withUser(serviceConfig.getUsername())
 				.password(passwordEncoder.encode(serviceConfig.getPassword()))
-				.roles("USER")
+				.roles("CUSTOMER")
 		.and()
 			.withUser("csp")
 			.password(passwordEncoder.encode("Computer1"))
-			.roles("USER","ADMIN");
+			.roles("CUSTOMER","ADMIN");
 			
 	}*/
 }

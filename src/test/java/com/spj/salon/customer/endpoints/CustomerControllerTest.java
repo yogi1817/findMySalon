@@ -104,9 +104,9 @@ public class CustomerControllerTest {
 
     @Test
     void shouldAuthenticateAndReturnAuthenticationRequest() throws Exception {
-        AuthenticationRequest authenticationRequest = new AuthenticationRequest().email("test").password("pass");
+        AuthenticationRequest authenticationRequest = new AuthenticationRequest().email("test@test.com").password("pass");
 
-        doReturn(new AuthenticationResponse().jwtToken("jwt"))
+        doReturn(new AuthenticationResponse().jwtToken("jwt").email("test@test.com"))
                 .when(userFacade)
                 .getJwtToken(authenticationRequest, null);
 
@@ -118,7 +118,7 @@ public class CustomerControllerTest {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json(OBJECT_MAPPER.writeValueAsString(new AuthenticationResponse().jwtToken("jwt"))));
+                .andExpect(MockMvcResultMatchers.content().json(OBJECT_MAPPER.writeValueAsString(new AuthenticationResponse().jwtToken("jwt").email("test@test.com"))));
 
         verify(userFacade, times(1))
                 .getJwtToken(authenticationRequest, null);
@@ -127,7 +127,7 @@ public class CustomerControllerTest {
 
     @Test
     void shouldUpdatePasswordAndReturnUpdatePasswordRequest() throws Exception{
-        UpdatePasswordRequest updatePasswordRequest = new UpdatePasswordRequest().email("email")
+        UpdatePasswordRequest updatePasswordRequest = new UpdatePasswordRequest().email("email@test.com")
                 .otpNumber(1234).newPassword("newpassword");
 
         doReturn(new UpdatePasswordResponse().jwtToken("jwt"))

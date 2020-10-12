@@ -73,9 +73,15 @@ public class MyMobileAdapter implements IMyOtpAdapter {
         return sendOtp(user);
     }
 
-    //Implemented in email
+    //Implementation in emailAdaptor
     @Override
-    public OtpResponse validateOtp(int otpNumber) {
+    public OtpResponse validateOtpPostLogin(int otpNumber) {
+        return null;
+    }
+
+    //Implementation in emailAdaptor
+    @Override
+    public OtpResponse validateOtpPreLogin(int otpNumber, String emailAddress) {
         return null;
     }
 }

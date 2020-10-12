@@ -2,7 +2,7 @@ create table usa.authorities(
     authority_id BIGSERIAL PRIMARY KEY,
     authority varchar(50) not null);
 
-insert into usa.authorities values (1, 'USER');
+insert into usa.authorities values (1, 'CUSTOMER');
 insert into usa.authorities values (2, 'BARBER');
 insert into usa.authorities values (3, 'SUPERUSER');
 

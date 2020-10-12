@@ -1,15 +1,17 @@
 package com.spj.salon.security.pojo;
 
+import org.springframework.security.core.userdetails.User;
+
 import com.spj.salon.utils.AuthorityUtils;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springframework.security.core.userdetails.User;
 
 /**
  * @author Yogesh Sharma
  */
 @Data
-@EqualsAndHashCode()
+@EqualsAndHashCode(callSuper = false)
 public class CustomUser extends User {
 
     private static final long serialVersionUID = 1L;

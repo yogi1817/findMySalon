@@ -49,8 +49,14 @@ public class OtpController implements OtpApiDelegate {
     }
 
     @Override
-    public ResponseEntity<OtpResponse> validateOtp(Integer otpNumber) {
+    public ResponseEntity<OtpResponse> validateOtpPostLogin(Integer otpNumber) {
         log.info("Inside OtpController calling validateOtp");
-        return ResponseEntity.ok(myEmailService.validateOtp(otpNumber));
+        return ResponseEntity.ok(myEmailService.validateOtpPostLogin(otpNumber));
+    }
+
+    @Override
+    public ResponseEntity<OtpResponse> validateOtpPreLogin(Integer otpNumber, String emailAddress) {
+        log.info("Inside OtpController calling validateOtp");
+        return ResponseEntity.ok(myEmailService.validateOtpPreLogin(otpNumber, emailAddress));
     }
 }

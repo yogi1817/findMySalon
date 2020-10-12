@@ -68,7 +68,7 @@ public class RegisterFacade implements IRegisterCustomer, IRegisterBarber {
     @Override
     public RegisterCustomerResponse registerCustomer(RegisterCustomerRequest registerCustomerRequest) {
         return registerMapper.toResponse(
-                register(registerMapper.toEntity(registerCustomerRequest), UserType.USER));
+                register(registerMapper.toEntity(registerCustomerRequest), UserType.CUSTOMER));
     }
 
     @Override

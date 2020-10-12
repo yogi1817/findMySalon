@@ -56,29 +56,43 @@ public class MyEmailAdapter implements IMyOtpAdapter {
     }
 
     @Override
-    public OtpResponse validateOtp(int otpNumber) {
+    public OtpResponse validateOtpPreLogin(int otpNumber, String emailAddress) {
+        return validateOtp(otpNumber, emailAddress);
+    }
+
+    @Override
+    public OtpResponse validateOtpPostLogin(int otpNumber) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String loginId = (String) auth.getPrincipal();
 
+        return validateOtp(otpNumber, loginId);
+    }
+
+    /**
+     *
+     * @param otpNumber
+     * @param emailAddress
+     * @return
+     */
+    private OtpResponse validateOtp(int otpNumber, String emailAddress){
         log.info("Otp Number : " + otpNumber);
 
-        int serverOtp = otpCache.getOtp(loginId);
+        int serverOtp = otpCache.getOtp(emailAddress);
         if (otpNumber >= 0 && serverOtp >= 0 && otpNumber == serverOtp) {
-            User user = userRepository.findByEmail(loginId);
+            User user = userRepository.findByEmail(emailAddress);
             user.setVerified(true);
 
             userRepository.saveAndFlush(user);
-            otpCache.clearOTP(loginId);
+            otpCache.clearOTP(emailAddress);
             return new OtpResponse()
                     .message("Entered Otp is valid")
-                    .emailOrPhone(loginId);
+                    .emailOrPhone(emailAddress);
         }
 
         return new OtpResponse()
                 .message("Entered Otp is NOT valid. Please Retry!")
-                .emailOrPhone(loginId);
+                .emailOrPhone(emailAddress);
     }
-
     /**
      * This method send ane meail to the email id.
      *

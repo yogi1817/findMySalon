@@ -1,5 +1,11 @@
 package com.spj.salon.barber.adapters;
 
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
+import org.openapitools.jackson.nullable.JsonNullable;
+
 import com.spj.salon.barber.entities.Address;
 import com.spj.salon.barber.entities.BarberCalendar;
 import com.spj.salon.barber.entities.DailyBarbers;
@@ -9,14 +15,6 @@ import com.spj.salon.openapi.resources.BarberCalendarRequest;
 import com.spj.salon.openapi.resources.BarberServicesRequest;
 import com.spj.salon.openapi.resources.DailyBarbersRequest;
 import com.spj.salon.utils.DateUtils;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.mapstruct.InjectionStrategy;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.ReportingPolicy;
-import org.openapitools.jackson.nullable.JsonNullable;
 
 @Mapper(componentModel = "spring", imports = {DateUtils.class},
         unmappedTargetPolicy = ReportingPolicy.IGNORE,

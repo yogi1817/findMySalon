@@ -10,5 +10,6 @@ import com.spj.salon.openapi.resources.OtpResponse;
 public interface IMyOtpAdapter {
 	OtpResponse sendOtpMessage();
 	OtpResponse sendOtpMessage(String emailOrPhoneNo);
-	OtpResponse validateOtp(int otpNumber);
+	OtpResponse validateOtpPostLogin(int otpNumber);
+	OtpResponse validateOtpPreLogin(int otpNumber, String emailAddress);
 }

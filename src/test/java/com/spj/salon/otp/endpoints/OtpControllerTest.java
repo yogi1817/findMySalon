@@ -30,8 +30,8 @@ class OtpControllerTest {
     private static final String OTP_POST_LOGIN_ENDPOINT = "/otp/postlogin?channel={channelId}";
     private static final String OTP_PRE_LOGIN_ENDPOINT = "/otp/forgotpassword?email={email}";
     private static final String OTP_PRE_PHONE_LOGIN_ENDPOINT = "/otp/forgotpassword?phone={phone}";
-    private static final String VALIDATE_OTP_ENDPOINT = "/otp/validate?otpNumber={otpNumber}";
-
+    private static final String VALIDATE_OTP_POST_LOGIN_ENDPOINT = "/otp/validate/postlogin?otpNumber={otpNumber}";
+    private static final String VALIDATE_OTP_PRE_LOGIN_ENDPOINT = "/otp/validate/prepassword?otpNumber={otpNumber}&emailAddress={emailAddress}";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     static {
@@ -87,13 +87,13 @@ class OtpControllerTest {
     }
 
     @Test
-    void validateOtp() throws Exception {
+    void validateOtpPostLogin() throws Exception {
         doReturn(new OtpResponse().message("otp send"))
                 .when(myEmailService)
-                .validateOtp(12345);
+                .validateOtpPostLogin(12345);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get(VALIDATE_OTP_ENDPOINT, 12345)
+                .get(VALIDATE_OTP_POST_LOGIN_ENDPOINT, 12345)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
 
@@ -102,7 +102,27 @@ class OtpControllerTest {
                 .andExpect(MockMvcResultMatchers.content().json(OBJECT_MAPPER.writeValueAsString(new OtpResponse().message("otp send"))));
 
         verify(myEmailService, times(1))
-                .validateOtp(12345);
+                .validateOtpPostLogin(12345);
+        verifyNoMoreInteractions(myEmailService);
+    }
+
+    @Test
+    void validateOtpPreLogin() throws Exception {
+        doReturn(new OtpResponse().message("otp send"))
+                .when(myEmailService)
+                .validateOtpPreLogin(12345, "test@test.com");
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get(VALIDATE_OTP_PRE_LOGIN_ENDPOINT, 12345, "test@test.com")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(OBJECT_MAPPER.writeValueAsString(new OtpResponse().message("otp send"))));
+
+        verify(myEmailService, times(1))
+                .validateOtpPreLogin(12345, "test@test.com");
         verifyNoMoreInteractions(myEmailService);
     }
 
