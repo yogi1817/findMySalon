@@ -31,7 +31,8 @@ public class CustomerController implements CustomerApiDelegate {
     @Override
     public ResponseEntity<RegisterCustomerResponse> registerCustomer(RegisterCustomerRequest registerCustomerRequest, Optional<String> clientHost) {
         log.info("Inside CustomerController registerBarber service");
-        return ResponseEntity.ok(registerCustomer.registerCustomer(registerCustomerRequest));
+        return ResponseEntity.ok(registerCustomer.registerCustomer(registerCustomerRequest)
+                .message("Member registered successfully"));
     }
 
     @Override

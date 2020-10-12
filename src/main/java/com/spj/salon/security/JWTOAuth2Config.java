@@ -15,7 +15,7 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
-import com.spj.salon.config.ServiceConfig;
+import com.spj.salon.configs.ServiceConfig;
 
 /**
  * 

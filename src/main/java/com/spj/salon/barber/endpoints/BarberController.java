@@ -4,7 +4,8 @@ import com.spj.salon.barber.ports.in.IRegisterBarber;
 import com.spj.salon.openapi.endpoint.BarberApiDelegate;
 import com.spj.salon.barber.ports.in.IBarberAdapter;
 import com.spj.salon.openapi.resources.*;
-import com.spj.salon.utils.UserContextHolder;
+import com.spj.salon.interceptor.UserContextHolder;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,12 @@ public class BarberController implements BarberApiDelegate {
     public ResponseEntity<DailyBarbersResponse> addBarberCountToday(DailyBarbersRequest dailyBarbersRequest) {
         log.info("Inside BarberController addBarbersCountToday service");
         return ResponseEntity.ok(barberAdapter.addBarbersCountToday(dailyBarbersRequest));
+    }
+
+    @Override
+    public ResponseEntity<BarberServicesResponse> addServices(BarberServicesRequest barberServicesRequest) {
+        log.info("Inside ServicesController addService service");
+        return ResponseEntity.ok(barberAdapter.addService(barberServicesRequest));
     }
 
     @Override
