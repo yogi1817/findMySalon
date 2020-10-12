@@ -13,4 +13,6 @@ public interface IBarberAdapter {
     BarberCalendarResponse addBarberCalendar(BarberCalendarRequest barberCalendar);
 
     BarberAddressResponse addBarberAddress(BarberAddressRequest barberAddressRequest);
+
+    BarberServicesResponse addService(BarberServicesRequest services);
 }

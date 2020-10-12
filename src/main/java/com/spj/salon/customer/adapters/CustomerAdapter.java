@@ -1,12 +1,12 @@
 package com.spj.salon.customer.adapters;
 
 import com.spj.salon.barber.ports.out.OAuthClient;
-import com.spj.salon.customer.model.User;
+import com.spj.salon.customer.entities.User;
 import com.spj.salon.customer.ports.in.ICustomerAdapter;
 import com.spj.salon.customer.repository.UserRepository;
 import com.spj.salon.exception.NotFoundCustomException;
 import com.spj.salon.openapi.resources.*;
-import com.spj.salon.otp.facade.OtpService;
+import com.spj.salon.otp.adapters.OtpCache;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class CustomerAdapter implements ICustomerAdapter {
 
-    private final OtpService otpService;
+    private final OtpCache otpCache;
     private final PasswordEncoder passwordEncoder;
     private final OAuthClient oAuthClient;
     private final UserRepository userRepository;
@@ -47,18 +47,9 @@ public class CustomerAdapter implements ICustomerAdapter {
     }
 
     @Override
-    public boolean updateVerifiedFlag(String email) {
-        User user = userRepository.findByEmail(email);
-        user.setVerified(true);
-
-        userRepository.saveAndFlush(user);
-        return true;
-    }
-
-    @Override
     public UpdatePasswordResponse updatePassword(UpdatePasswordRequest updatePasswordRequest, String clientHost) {
         if (updatePasswordRequest.getPhoneNumber() == null && updatePasswordRequest.getEmail() == null) {
-            log.info("No Phone number or email address provided", updatePasswordRequest);
+            log.info("No Phone number or email address provided -> {}", updatePasswordRequest);
             throw new NotFoundCustomException("No Phone number or email address provided", "");
         }
 
@@ -76,7 +67,7 @@ public class CustomerAdapter implements ICustomerAdapter {
         }
 
 
-        if (updatePasswordRequest.getOtpNumber() != otpService.getOtp(persistedUser.getEmail())) {
+        if (updatePasswordRequest.getOtpNumber() != otpCache.getOtp(persistedUser.getEmail())) {
             log.info("Invalid OTP for user {}", updatePasswordRequest);
             throw new NotFoundCustomException("Invalid OTP", "");
         } else {

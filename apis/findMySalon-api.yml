@@ -2,13 +2,17 @@ openapi: 3.0.2
 info:
   title: Barber Services API
   description: API used for access FindMySalon Services
-  version: 1
+  version: Initial
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8081
     description: local
+  - url: https://findmysalon.herokuapp.com
+    description: heroku
 tags:
   - name: barber
   - name: customer
+  - name: otp
+  - name: security
 paths:
   /barber/register:
     post:
@@ -17,11 +21,6 @@ paths:
         - barber
       summary: Register a barber
       description: Register a barber
-#      parameters:
-#        - in: header
-#          name: clientHost
-#          schema:
-#            type: string
       requestBody:
         required: true
         content:
@@ -42,6 +41,8 @@ paths:
         - barber
       summary: Add barber count for today
       description: This service will add barber count for today and update in DB to calculate correct waittime
+      security:
+        - bearerAuth: [ ]
       requestBody:
         required: true
         content:
@@ -55,25 +56,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DailyBarbersResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
   /barber/services/{serviceId}/cost/{cost}/time/{time}:
     post:
       operationId: addServicesForBarber
       tags:
         - barber
+      security:
+        - bearerAuth: [ ]
       summary: This api will add services to a barber like haircut etc
       description: This api will add services to a barber like haircut etc
       parameters:
         - in: path
           name: serviceId
+          required: true
           schema:
             type: integer
             format: int64
         - in: path
           name: cost
+          required: true
           schema:
             type: integer
         - in: path
           name: time
+          required: true
           schema:
             type: integer
       responses:
@@ -89,7 +99,9 @@ paths:
       tags:
         - barber
       summary: This api will add barber cal entry
-      description: You can add barber calaner like what days are holidays and what are the regular working hours
+      description: You can add barber calaner like what days are holidays and what are the regular working hours. If you are providing calendar day them its opena nd close time is required. If you are providing calander Date for holiday then open close time is not required as the salon will be closed on that day.
+      security:
+        - bearerAuth: [ ]
       requestBody:
         required: true
         content:
@@ -110,6 +122,8 @@ paths:
         - barber
       summary: This api will add barber address
       description: This api will add barber address, a Barber can have more than 1 address as well
+      security:
+        - bearerAuth: [ ]
       parameters:
         - in: header
           name: clientHost
@@ -128,6 +142,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BarberAddressResponse'
+  /barber/services/register:
+    post:
+      operationId: addServices
+      tags:
+        - barber
+      summary: This api will add services like haircut etc.
+      description: These services will be later added into barber profiles based on what all service barber provides
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BarberServicesRequest'
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BarberServicesResponse'
   /customer/register:
     post:
       operationId: registerCustomer
@@ -160,6 +196,8 @@ paths:
         - customer
       summary: Adds a favourite barber into customer profile
       description: Adds a favourite barber into customer profile
+      security:
+        - bearerAuth: [ ]
       parameters:
         - in: query
           name: barberId
@@ -179,7 +217,7 @@ paths:
       operationId: authenticateCustomer
       tags:
         - customer
-      summary: This methos returns Outh related data
+      summary: This method returns Outh related data
       description: This method will return basic user details with jwt token
       parameters:
         - in: header
@@ -206,6 +244,8 @@ paths:
         - customer
       summary: This method updates the password of user
       description: Update passowrd ofr a user
+      security:
+        - bearerAuth: [ ]
       parameters:
         - in: header
           name: clientHost
@@ -218,14 +258,232 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdatePasswordRequest'
       responses:
-              200:
-                description: success
-                content:
-                  application/json:
-                    schema:
-                      $ref: '#/components/schemas/UpdatePasswordResponse'
-              400:
-                description: Bad Request
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatePasswordResponse'
+        400:
+          description: Bad Request
+  /checkin/barber/{barberId}:
+    post:
+      operationId: checkInCustomerByCustomer
+      tags:
+        - checkIn
+      summary: A customer checking in at the barber
+      description: Service takes the OAuth jwt token for the customer and check him in at barber and at time x mins(calculated at run time) from now
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: path
+          name: barberId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerCheckInResponse'
+  /checkin/customer/{customerId}:
+    post:
+      operationId: checkInCustomerByBarber
+      tags:
+        - checkIn
+      summary: A baber checking in a customer at the salon
+      description: Service takes the OAuth jwt token for the barber and check in customer at that barber and at time x mins(calculated at run time) from now
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: path
+          name: customerId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerCheckInResponse'
+  /checkin/barber/{barberId}/waittime:
+    get:
+      operationId: waitTimeEstimateAtBarber
+      tags:
+        - checkIn
+      summary: This api will find the wait time at a Salon
+      description: This api will find the wait time at a Salon
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: path
+          name: barberId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BarberWaitTimeResponse'
+  /checkin/customer/checkout:
+    post:
+      operationId: checkOutCustomer
+      tags:
+        - checkIn
+      summary: This api will checkut customer from barber waitlist
+      description: This api will checkut customer from barber waitlist
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: customerId
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerCheckoutResponse'
+  /checkin/barbers/waittime/forlocation:
+    post:
+      operationId: findAllBarbersAtZip
+      tags:
+        - checkIn
+      summary: This method will return all barbers near a certain distance
+      description: This method will return all barbers near a certain distance
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: header
+          name: clientHost
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BarberWaitTimeRequest'
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BarbersWaitTimeResponse'
+  /otp/postlogin:
+    get:
+      operationId: sendOtpOnEmailOrPhoneForLoggedInUser
+      tags:
+        - otp
+      summary: This api will send otp to email address or phone number for a logged in user
+      description: This api will send otp to to email address or phone number for a logged in user
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: channel
+          required: true
+          schema:
+            type: string
+            enum:
+              - mobile
+              - email
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtpResponse'
+  /otp/forgotpassword:
+    get:
+      operationId: generateOtpOnEmailOrPhonePrePassword
+      tags:
+        - otp
+      summary: This api will send otp to email address for a pre password page
+      description: This api will send otp to email address for a pre password page
+      parameters:
+        - in: query
+          name: email
+          schema:
+            type: string
+            format: email
+        - in: query
+          name: phone
+          schema:
+            type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtpResponse'
+  /otp/validate/postlogin:
+    get:
+      operationId: validateOtpPostLogin
+      tags:
+        - otp
+      summary: This api will validate the given OTP for a logged in user.
+      description: This api will validate the otp stored in cache.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: otpNumber
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtpResponse'
+  /otp/validate/prepassword:
+    get:
+      operationId: validateOtpPreLogin
+      tags:
+        - otp
+      summary: This api will validate the given OTP for a pre password user.
+      description: This api will validate the otp stored in cache.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: otpNumber
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: emailAddress
+          required: true
+          schema:
+            type: string
+            format: email
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtpResponse'
 components:
   schemas:
     RegisterBarberRequest:
@@ -237,6 +495,7 @@ components:
           type: string
         email:
           type: string
+          format: email
         phone:
           type: string
         password:
@@ -259,6 +518,7 @@ components:
           type: string
         email:
           type: string
+          format: email
     DailyBarbersRequest:
       type: object
       properties:
@@ -291,6 +551,16 @@ components:
           type: string
         calendarDay:
           type: string
+          nullable: true
+          enum:
+            - Sunday
+            - Monday
+            - Tuesday
+            - Wednesday
+            - Thursday
+            - Friday
+            - Saturday
+            - null
         calendarDate:
           type: string
     BarberCalendarResponse:
@@ -298,6 +568,7 @@ components:
       properties:
         email:
           type: string
+          format: email
         message:
           type: string
     BarberAddressRequest:
@@ -325,7 +596,15 @@ components:
       properties:
         email:
           type: string
+          format: email
         message:
+          type: string
+    BarberServicesRequest:
+      type: object
+      properties:
+        serviceName:
+          type: string
+        serviceDescription:
           type: string
     RegisterCustomerRequest:
       type: object
@@ -336,6 +615,7 @@ components:
           type: string
         email:
           type: string
+          format: email
         phone:
           type: string
         password:
@@ -346,7 +626,6 @@ components:
         - email
         - phone
         - password
-        - storeName
     RegisterCustomerResponse:
       type: object
       properties:
@@ -355,6 +634,9 @@ components:
         lastName:
           type: string
         email:
+          type: string
+          format: email
+        message:
           type: string
     CustomerFavouriteBarberResponse:
       type: object
@@ -368,13 +650,18 @@ components:
       properties:
         email:
           type: string
+          format: email
         password:
           type: string
+      required:
+        - email
+        - password
     AuthenticationResponse:
       type: object
       properties:
         email:
           type: string
+          format: email
         jwtToken:
           type: string
     UpdatePasswordRequest:
@@ -382,6 +669,7 @@ components:
       properties:
         email:
           type: string
+          format: email
         phoneNumber:
           type: string
         otpNumber:
@@ -398,3 +686,88 @@ components:
           type: string
         message:
           type: string
+    CustomerCheckInResponse:
+      type: object
+      properties:
+        customerId:
+          type: string
+        message:
+          type: string
+    BarberWaitTimeResponse:
+      type: object
+      properties:
+        salonName:
+          type: string
+        waitTime:
+          type: string
+    CustomerCheckoutResponse:
+      type: object
+      properties:
+        message:
+          type: string
+    BarberWaitTimeRequest:
+      type: object
+      properties:
+        zipCode:
+          type: string
+        longitude:
+          type: number
+          format: double
+        latitude:
+          type: number
+          format: double
+        distance:
+          type: number
+          format: double
+    BarbersWaitTimeResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        barberDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/BarberDetails'
+    BarberDetails:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        middleName:
+          type: string
+        storeName:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        addressLineOne:
+          type: string
+        addressLineTwo:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zip:
+          type: string
+        distance:
+          type: number
+          format: double
+        waitTime:
+          type: string
+    OtpResponse:
+      type: object
+      properties:
+        emailOrPhone:
+          type: string
+        message:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

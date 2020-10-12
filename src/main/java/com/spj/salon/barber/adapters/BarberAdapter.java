@@ -1,19 +1,14 @@
 package com.spj.salon.barber.adapters;
 
 import com.google.maps.model.GeocodingResult;
-import com.spj.salon.barber.entities.Address;
-import com.spj.salon.barber.entities.BarberCalendar;
-import com.spj.salon.barber.entities.BarberServicesMapping;
-import com.spj.salon.barber.entities.DailyBarbers;
+import com.spj.salon.barber.entities.*;
 import com.spj.salon.barber.ports.in.IBarberAdapter;
-import com.spj.salon.client.GoogleGeoCodingClient;
-import com.spj.salon.customer.model.User;
+import com.spj.salon.barber.repository.ServicesRepository;
+import com.spj.salon.checkin.adapters.GoogleGeoCodingAdapter;
+import com.spj.salon.customer.entities.User;
 import com.spj.salon.customer.repository.UserRepository;
 import com.spj.salon.exception.NotFoundCustomException;
 import com.spj.salon.openapi.resources.*;
-import com.spj.salon.services.model.Services;
-import com.spj.salon.services.repository.ServicesRepository;
-import com.spj.salon.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -35,8 +30,9 @@ public class BarberAdapter implements IBarberAdapter {
 
     private final UserRepository userRepository;
     private final ServicesRepository serviceRepo;
-    private final GoogleGeoCodingClient googleGeoCodingClient;
+    private final GoogleGeoCodingAdapter googleGeoCodingAdapter;
     private final BarberAdapterMapper facadeMapper;
+    private final ServicesRepository servicesRepo;
 
     /**
      * This method will be called every morning by Barber to provide how many barbers are available today.
@@ -78,25 +74,21 @@ public class BarberAdapter implements IBarberAdapter {
         User user = userRepository.findByEmail(email);
 
         Optional<Services> servicesOpt = serviceRepo.findById(serviceId);
-        BarberServicesMapping barberServicesMapping = null;
         if (servicesOpt.isPresent()) {
             log.info("Services found in DB with email {}", email);
-            Set<BarberServicesMapping> barberServicesMappingsSet = user.getBarberServicesMappingSet();
-            barberServicesMapping = new BarberServicesMapping();
-            barberServicesMapping.setUserId(user.getUserId());
-            barberServicesMapping.setServiceId(serviceId);
-            barberServicesMapping.setServiceCharges(cost);
-            barberServicesMapping.setTimeToPerform(time);
-            barberServicesMapping.setCreateDate(DateUtils.getTodaysDate());
+            user.getBarberServicesMappingSet()
+                    .add(BarberServicesMapping.builder()
+                            .userId(user.getUserId())
+                            .serviceId(serviceId)
+                            .serviceCharges(cost)
+                            .timeToPerform(time)
+                            .build());
 
-            log.info("Adding new service DB for barber with email {} and services {}", email, barberServicesMapping);
-            barberServicesMappingsSet.add(barberServicesMapping);
-            user.setBarberServicesMappingSet(barberServicesMappingsSet);
+            log.info("Adding new service DB for barber with email {}", email);
 
             userRepository.saveAndFlush(user);
-
-            return new BarberServicesResponse().serviceName("Service with service id " + serviceId)
-                    .message("Data saved");
+            return new BarberServicesResponse().serviceName(servicesOpt.get().getServiceName())
+                    .message("Service added to account -> " + user.getEmail());
         }
 
         return new BarberServicesResponse().message("Data is not saved");
@@ -152,7 +144,7 @@ public class BarberAdapter implements IBarberAdapter {
              * address.getAddress()).await();
              */
 
-            GeocodingResult[] results = googleGeoCodingClient
+            GeocodingResult[] results = googleGeoCodingAdapter
                     .findGeocodingResult(URLEncoder.encode(address.getAddress(), "UTF-8"));
 
             validateAddress(address, barber.getUserId(), results);
@@ -168,6 +160,15 @@ public class BarberAdapter implements IBarberAdapter {
         }
     }
 
+    @Override
+    public BarberServicesResponse addService(BarberServicesRequest barberServicesRequest) {
+        Services services = facadeMapper.toDomain(barberServicesRequest);
+        servicesRepo.saveAndFlush(services);
+        log.info("Service saved");
+
+        return new BarberServicesResponse().message("service added");
+    }
+
     /**
      * @param address
      * @param barberId
@@ -175,8 +176,6 @@ public class BarberAdapter implements IBarberAdapter {
      */
     private void validateAddress(Address address, Long barberId, GeocodingResult[] results) {
         address.setUserId(barberId);
-        address.setCreateDate(DateUtils.getTodaysDate());
-        address.setModifyDate(DateUtils.getTodaysDate());
         log.debug("longitude " + results[0].geometry.location.lng);
         log.debug("latitude " + results[0].geometry.location.lat);
         address.setLongitude(results[0].geometry.location.lng);

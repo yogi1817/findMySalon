@@ -7,7 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.spj.salon.barber.entities.Authorities;
-import com.spj.salon.customer.model.User;
+import com.spj.salon.customer.entities.User;
 
 /**
  * 

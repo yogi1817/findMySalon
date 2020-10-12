@@ -3,7 +3,7 @@ package com.spj.salon.customer.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.spj.salon.customer.model.User;
+import com.spj.salon.customer.entities.User;
 
 /**
  * 
@@ -12,9 +12,7 @@ import com.spj.salon.customer.model.User;
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>{
-
-	long countByEmail(String email);
-	long countByPhone(String phone);
 	User findByEmail(String email);
 	User findByPhone(String phoneNumber);
+	User findByUserId(Long userId);
 }
