@@ -1,11 +1,10 @@
 package com.spj.salon.barber.endpoints;
 
-import com.spj.salon.barber.ports.in.IRegisterBarber;
-import com.spj.salon.openapi.endpoint.BarberApiDelegate;
 import com.spj.salon.barber.ports.in.IBarberAdapter;
-import com.spj.salon.openapi.resources.*;
+import com.spj.salon.barber.ports.in.IRegisterBarber;
 import com.spj.salon.interceptor.UserContextHolder;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import com.spj.salon.openapi.endpoint.BarberApiDelegate;
+import com.spj.salon.openapi.resources.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
