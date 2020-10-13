@@ -66,7 +66,6 @@ public class CustomerAdapter implements ICustomerAdapter {
             throw new NotFoundCustomException("No user found", "");
         }
 
-
         if (updatePasswordRequest.getOtpNumber() != otpCache.getOtp(persistedUser.getEmail())) {
             log.info("Invalid OTP for user {}", updatePasswordRequest);
             throw new NotFoundCustomException("Invalid OTP", "");

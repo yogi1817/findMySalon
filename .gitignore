@@ -35,6 +35,4 @@ logs
 build
 bin
 generated-sources
-.idea
-.settings
 src/generatedContract
