@@ -33,6 +33,8 @@ build/
 logs
 .env
 build
-bin
+bin/default
+bin/main
+bin/test
 generated-sources
 src/generatedContract

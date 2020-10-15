@@ -54,9 +54,6 @@ public class RegisterFacade implements IRegisterCustomer, IRegisterBarber {
 
             //user.setJwtToken(oAuthClient.getJwtToken(userCopy.getEmail(),userCopy.getPassword(), clientHost));
 
-            //JSONIgnore us not working to setting it to null before returning to user
-            //user.setPassword(null);
-
             log.info("Call completed successfully for user {}", user.getEmail());
             return user;
         }
