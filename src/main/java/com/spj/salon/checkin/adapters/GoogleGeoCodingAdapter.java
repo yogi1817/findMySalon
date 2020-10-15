@@ -41,7 +41,8 @@ public class GoogleGeoCodingAdapter implements GeoCoding {
      * @throws IOException
      */
     public GeocodingResult[] findGeocodingResult(String addessOrZip) throws IOException {
-		URL proxyUrl = new URL(System.getenv("QUOTAGUARDSHIELD_URL"));
+        log.info("inside findGeocodingResult");
+        URL proxyUrl = new URL(System.getenv("QUOTAGUARDSHIELD_URL"));
         String userInfo = proxyUrl.getUserInfo();
         String user = userInfo.substring(0, userInfo.indexOf(':'));
         String password = userInfo.substring(userInfo.indexOf(':') + 1);

@@ -132,6 +132,8 @@ public class BarberAdapter implements IBarberAdapter {
 
         User barber = userRepository.findByEmail(email);
 
+        log.info("Barber found DB {}", barber);
+
         if (barber == null) {
             log.error("Barber not found in DB with email {}", email);
             throw new NotFoundCustomException("Barber not found", email);
@@ -144,6 +146,7 @@ public class BarberAdapter implements IBarberAdapter {
              * address.getAddress()).await();
              */
 
+            log.info("calling googleGeoCodingAdapter",);
             GeocodingResult[] results = googleGeoCodingAdapter
                     .findGeocodingResult(URLEncoder.encode(address.getAddress(), "UTF-8"));
 
