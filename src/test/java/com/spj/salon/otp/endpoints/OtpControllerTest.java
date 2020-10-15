@@ -1,9 +1,10 @@
 package com.spj.salon.otp.endpoints;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spj.salon.openapi.endpoint.OtpApiController;
-import com.spj.salon.openapi.resources.OtpResponse;
-import com.spj.salon.otp.ports.in.IMyOtpAdapter;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +17,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.mockito.Mockito.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spj.salon.openapi.endpoint.OtpApiController;
+import com.spj.salon.openapi.resources.OtpResponse;
+import com.spj.salon.otp.ports.in.IMyOtpAdapter;
 
 @ExtendWith(MockitoExtension.class)
 class OtpControllerTest {
@@ -128,7 +132,7 @@ class OtpControllerTest {
 
     @Test
     void sendOtpOnPhoneForLoggedInUser() throws Exception {
-        OtpResponse response = new OtpResponse().message("otp send");
+        new OtpResponse().message("otp send");
         doReturn(new OtpResponse().message("otp send"))
                 .when(myMobileService)
                 .sendOtpMessage();

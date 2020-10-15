@@ -463,8 +463,6 @@ paths:
         - otp
       summary: This api will validate the given OTP for a pre password user.
       description: This api will validate the otp stored in cache.
-      security:
-        - bearerAuth: [ ]
       parameters:
         - in: query
           name: otpNumber

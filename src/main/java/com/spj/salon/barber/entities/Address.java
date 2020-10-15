@@ -57,12 +57,11 @@ public class Address implements Serializable {
      * @return
      */
     public String getAddress() {
-        StringBuilder address = new StringBuilder();
-        address.append(addressLineOne);
-        address.append(StringUtils.isEmpty(addressLineTwo) ? "" : " " + addressLineTwo);
-        address.append(" ").append(city);
-        address.append(" ").append(state);
-        address.append(" ").append(zip);
-        return address.toString();
+        return new StringBuilder()
+                .append(addressLineOne)
+                .append(StringUtils.isEmpty(addressLineTwo) ? "" : " " + addressLineTwo)
+                .append(" ").append(city)
+                .append(" ").append(state)
+                .append(" ").append(zip).toString();
     }
 }

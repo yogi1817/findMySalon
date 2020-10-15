@@ -4,6 +4,7 @@ plugins {
 	id 'java'
 	id 'org.openapi.generator' version '5.0.0-beta2'
 	id 'idea'
+	id 'eclipse'
 }
 
 group = 'com.spj.find.salon'
@@ -58,10 +59,11 @@ dependencies {
 	implementation 'org.flywaydb:flyway-core:6.5.5'
 	implementation 'org.mapstruct:mapstruct:1.3.1.Final'
 
-	annotationProcessor 'org.projectlombok:lombok:1.18.12'
+	annotationProcessor 'org.projectlombok:lombok:1.18.14'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.3.1.Final'
 
 	testImplementation 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'com.h2database:h2'
 	//testImplementation 'org.codehaus.groovy:groovy-all:2.4.15'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'

@@ -1,36 +1,20 @@
-info: 
-  description: This is a find my salon spring boot project
-  
-server:
-  port: ${PORT:8081}
-  servlet:
-    context-path: /findmysalon
-  
-spring: 
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    platform: org.hibernate.dialect.
+    username: sa
+    password: password
+  jpa:
+    database: h2
+    show-sql: true
+    hibernate:
+      use-new-id-generator-mappings: false
+      ddl-auto: none
   application:
     name: findMySalon
   profiles:
-    active: default
-  
-  flyway:
-    enabled: false 
-      
-  mail:
-    host: smtp.gmail.com
-    port: 587
-  
-management:
-  endpoint:
-    health:
-      show-details: always
+    active: test
 
-logging:
-  level:
-    com.spg.salon: DEBUG
-    
-spj:
-  application:
-    id: spj
-    password: thisissecret
-  services:
-    authenticate: /findmysalon/oauth/token
+  flyway:
+    enabled: false

@@ -1,17 +1,18 @@
 package com.spj.salon.otp.adapters;
 
-import com.spj.salon.customer.entities.User;
-import com.spj.salon.customer.ports.in.ICustomerAdapter;
-import com.spj.salon.customer.repository.UserRepository;
-import com.spj.salon.openapi.resources.OtpResponse;
-import com.spj.salon.otp.ports.in.IMyOtpAdapter;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import com.spj.salon.customer.entities.User;
+import com.spj.salon.customer.repository.UserRepository;
+import com.spj.salon.openapi.resources.OtpResponse;
+import com.spj.salon.otp.ports.in.IMyOtpAdapter;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Yogesh Sharma
@@ -23,7 +24,6 @@ public class MyEmailAdapter implements IMyOtpAdapter {
     private final JavaMailSender javaMailSender;
     public final OtpCache otpCache;
     private final UserRepository userRepository;
-    private final ICustomerAdapter customerFacade;
 
     /**
      * This method will send otp to email address, this will be used only by the registered member

@@ -34,7 +34,7 @@ spring:
     baseline-on-migrate: true
     schemas:
     - usa
-  
+
 management:
   endpoint:
     health:

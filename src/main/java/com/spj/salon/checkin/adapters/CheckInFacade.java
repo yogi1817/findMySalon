@@ -24,7 +24,9 @@ import org.springframework.util.CollectionUtils;
 import javax.naming.ServiceUnavailableException;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -46,9 +48,8 @@ public class CheckInFacade implements ICheckinFacade {
 
     @Override
     public BarberWaitTimeResponse waitTimeEstimate(long barberId) {
-        Optional<User> barberOpt = userRepository.findById(barberId);
-        if (barberOpt.isPresent()) {
-            User barber = barberOpt.get();
+        User barber = userRepository.findByUserId(barberId);
+        if(barber!=null){
             List<BarberCalendar> todaysCal = barber.getBarberCalendarSet()
                     .stream()
                     .filter(this::getTodaysBarberCal)
@@ -58,7 +59,7 @@ public class CheckInFacade implements ICheckinFacade {
                     .stream()
                     .filter(a -> a.getBarbersCount() > 0)
                     .findFirst()
-                    .orElse(null);
+                    .orElse(new DailyBarbers());
 
             long noOfCheckIns = barber.getCheckInSet()
                     .stream()
@@ -68,7 +69,7 @@ public class CheckInFacade implements ICheckinFacade {
             return new BarberWaitTimeResponse().waitTime(getEstimateWaitTime(todaysCal, todaysBarber, noOfCheckIns))
                     .salonName(barber.getStoreName());
         }
-        return new BarberWaitTimeResponse().waitTime("Unable to find waittime");
+        return new BarberWaitTimeResponse().waitTime("Unable to find wait-time");
     }
 
     /**
@@ -134,7 +135,6 @@ public class CheckInFacade implements ICheckinFacade {
     }
 
     private CustomerCheckInResponse checkin(User customer, User barber) {
-        boolean checkInAvailable = true;
         String waitTimeEstimate = waitTimeEstimate(barber.getUserId()).getWaitTime();
 
         try {
@@ -241,23 +241,25 @@ public class CheckInFacade implements ICheckinFacade {
                 addressRepo.getBarbersId(longitude, latitude, distance, long1, long2, lat1, lat2);
 
         for (Map<String, Object> map : addressIds) {
-            Optional<Address> barbersAddress = addressRepo.findById(((BigInteger) map.get("address_id")).longValue());
+            Optional<Address> barbersAddress
+                    = addressRepo.findById(((BigInteger) map.get("address_id")).longValue());
             if (barbersAddress.isPresent()) {
                 Optional<User> user = userRepository.findById(barbersAddress.get().getUserId());
-                barberDetails = new BarberDetails();
-                barberDetails.setAddressLineOne(barbersAddress.get().getAddressLineOne());
-                barberDetails.setAddressLineTwo(barbersAddress.get().getAddressLineTwo());
-                barberDetails.setCity(barbersAddress.get().getCity());
-                barberDetails.setState(barbersAddress.get().getState());
-                barberDetails.setZip(barbersAddress.get().getZip());
-                barberDetails.setEmail(user.get().getEmail());
-                barberDetails.setFirstName(user.get().getFirstName());
-                barberDetails.setLastName(user.get().getLastName());
-                barberDetails.setMiddleName(user.get().getMiddleName());
-                barberDetails.setPhone(user.get().getPhone());
-                barberDetails.setStoreName(user.get().getStoreName());
-                barberDetails.setDistance((Double) map.get("distance"));
-                barberDetails.setWaitTime(waitTimeEstimate(barbersAddress.get().getUserId()).getWaitTime());
+                barberDetails = new BarberDetails()
+                        .addressLineOne(barbersAddress.get().getAddressLineOne())
+                        .addressLineTwo(barbersAddress.get().getAddressLineTwo())
+                        .city(barbersAddress.get().getCity())
+                        .state(barbersAddress.get().getState())
+                        .zip(barbersAddress.get().getZip())
+                        .email(user.get().getEmail())
+                        .firstName(user.get().getFirstName())
+                        .lastName(user.get().getLastName())
+                        .middleName(user.get().getMiddleName())
+                        .phone(user.get().getPhone())
+                        .storeName(user.get().getStoreName())
+                        .distance((Double) map.get("distance"))
+                        .waitTime(waitTimeEstimate(barbersAddress.get().getUserId()).getWaitTime());
+
                 barbersWaitTimeResponse.addBarberDetailsItem(barberDetails);
             }
         }

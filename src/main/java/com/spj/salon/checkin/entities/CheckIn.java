@@ -1,5 +1,7 @@
 package com.spj.salon.checkin.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,7 +15,9 @@ import java.time.OffsetDateTime;
  */
 @Entity
 @Data
+@Builder(toBuilder = true)
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "check_in", schema = "usa", uniqueConstraints = @UniqueConstraint(columnNames = "check_in_id"))
 public class CheckIn implements Serializable {
 

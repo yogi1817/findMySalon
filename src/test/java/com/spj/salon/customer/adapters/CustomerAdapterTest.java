@@ -20,8 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @ExtendWith(MockitoExtension.class)
 class CustomerAdapterTest {
 
+    @Mock
     private CustomerAdapter testSubject;
-
     @Mock
     private OtpCache otpCache;
     @Mock
@@ -62,7 +62,7 @@ class CustomerAdapterTest {
                 .when(userRepository)
                 .saveAndFlush(savedUser);
 
-        CustomerFavouriteBarberResponse customerFavouriteBarberResponse = testSubject.addFavouriteSalon(1L);
+        testSubject.addFavouriteSalon(1L);
         Mockito.verify(userRepository, Mockito.times(1))
                 .findByEmail(user.getEmail());
 

@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
+import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -43,10 +44,10 @@ public class FindMySalonApplication {
 
     @Primary
     @Bean
-    public RestTemplate getCustomRestTemplete() {
+    public RestTemplate getCustomRestTemplate() {
         RestTemplate template = new RestTemplate();
         List<ClientHttpRequestInterceptor> interceptors = template.getInterceptors();
-        if (interceptors == null || interceptors.isEmpty()) {
+        if (interceptors.isEmpty()) {
             template.setInterceptors(Collections.singletonList(new UserContextInterceptor()));
         } else {
             interceptors.add(new UserContextInterceptor());
@@ -76,7 +77,12 @@ public class FindMySalonApplication {
         return mailSender;
     }
 
-    // Uncomment below code if you want to use goofle api for location
+    //This is required for JSONNullable in openAPI for BarberCalendarRequest Enum type
+    @Bean
+    public JsonNullableModule jsonNullableModule() {
+        return new JsonNullableModule();
+    }
+    // Uncomment below code if you want to use google api for location
     /*
      * @Bean public GeoApiContext getGeoApiContext() { return new
      * GeoApiContext.Builder() .apiKey(serviceConfig.getGoogleApiKey()) .build(); }
