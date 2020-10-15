@@ -52,7 +52,8 @@ public class AuthenticationWebSecurityConfigurer extends WebSecurityConfigurerAd
 				"/swagger-resources/**",
 				"/configuration/security",
 				"/swagger-ui.html",
-				"/webjars/**");
+				"/webjars/**",
+				"/actuator/**");
 	}
 
 	/**
