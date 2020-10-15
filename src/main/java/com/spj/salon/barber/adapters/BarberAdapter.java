@@ -146,7 +146,7 @@ public class BarberAdapter implements IBarberAdapter {
              * address.getAddress()).await();
              */
 
-            log.info("calling googleGeoCodingAdapter",);
+            log.info("calling googleGeoCodingAdapter");
             GeocodingResult[] results = googleGeoCodingAdapter
                     .findGeocodingResult(URLEncoder.encode(address.getAddress(), "UTF-8"));
 
