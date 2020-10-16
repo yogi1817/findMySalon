@@ -48,6 +48,9 @@ public class GoogleGeoCodingAdapter implements GeoCoding {
         log.info("proxyUrl.getHost() --> {}", proxyUrl.getHost());
         log.info("proxyUrl.getPort() --> {}", Integer.toString(proxyUrl.getPort()));
 
+        System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "false");
+        System.setProperty("jdk.http.auth.proxying.disabledSchemes", "false");
+        
         URLConnection conn = null;
         System.setProperty("http.proxyHost", proxyUrl.getHost());
         System.setProperty("http.proxyPort", Integer.toString(proxyUrl.getPort()));
@@ -60,7 +63,7 @@ public class GoogleGeoCodingAdapter implements GeoCoding {
 
         Proxy webProxy
                 = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort()));
-        
+
         String geoCodingUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + addessOrZip + "&key="
                 + envConfig.getGoogleApiKey();
         log.info("geoCodingUrl --> {}", geoCodingUrl);
