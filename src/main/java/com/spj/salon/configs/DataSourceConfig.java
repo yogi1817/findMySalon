@@ -1,25 +1,24 @@
 package com.spj.salon.configs;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.sql.DataSource;
+
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.sql.DataSource;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Yogesh Sharma
  */
 @Configuration
 @Slf4j
+@RequiredArgsConstructor
 public class DataSourceConfig {
 
-    @Autowired
-    private EnvironmentConfig envConfig;
-
-    @Autowired
-    private ServiceConfig serviceConfig;
+    private final EnvironmentConfig envConfig;
+    private final ServiceConfig serviceConfig;
 
     @Bean
     public DataSource getDataDource() {

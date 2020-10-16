@@ -1,11 +1,12 @@
 package com.spj.salon.checkin.adapters;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.math.BigInteger;
+import java.util.*;
 
+import com.spj.salon.barber.entities.Address;
+import com.spj.salon.openapi.resources.BarberDetails;
+import com.spj.salon.openapi.resources.BarberWaitTimeRequest;
+import com.spj.salon.openapi.resources.BarbersWaitTimeResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -623,30 +624,103 @@ class CheckInFacadeTest {
     }
 
     @Test
-    void checkOut() {
-        Mockito.doReturn(Arrays.asList(
-                CheckIn.builder().checkedOut(false).userMappingId(1L).build(),
-                CheckIn.builder().checkedOut(false).userMappingId(1L).build()))
-                .when(checkInRepository)
-                .findByUserMappingIdAndCheckedOut(1L, false);
+    void findBarbersAtZipWhenNoBarbersAvailable() {
+        BarberWaitTimeRequest barberWaitTimeRequest = new BarberWaitTimeRequest()
+                .latitude(40.5470947).longitude(-80.011957).distance(25D);
 
-        Mockito.doReturn(null)
-                .when(checkInRepository)
-                .saveAndFlush(CheckIn.builder().checkedOut(true).build());
+        double long1 = barberWaitTimeRequest.getLongitude() - barberWaitTimeRequest.getDistance() / Math.abs(Math.cos(Math.toRadians(barberWaitTimeRequest.getLatitude())) * 69);
+        double long2 = barberWaitTimeRequest.getLongitude() + barberWaitTimeRequest.getDistance() / Math.abs(Math.cos(Math.toRadians(barberWaitTimeRequest.getLatitude())) * 69);
+        double lat1 = barberWaitTimeRequest.getLatitude() - (barberWaitTimeRequest.getDistance() / 69);
+        double lat2 = barberWaitTimeRequest.getLatitude() + (barberWaitTimeRequest.getDistance() / 69);
 
-        Assertions.assertEquals("Customer has been checked out", testSubject.checkOut(1L).getMessage());
+        Mockito.doReturn(new ArrayList())
+                .when(addressRepo)
+                .getBarbersId(barberWaitTimeRequest.getLongitude(), barberWaitTimeRequest.getLatitude(),
+                        barberWaitTimeRequest.getDistance(), long1, long2, lat1, lat2);
 
-        Mockito.verify(checkInRepository, Mockito.times(1))
-                .findByUserMappingIdAndCheckedOut(1L, false);
+        BarbersWaitTimeResponse barbersWaitTimeResponse = new BarbersWaitTimeResponse()
+                .message("No Barbers Found within the range");
 
-        Mockito.verify(checkInRepository, Mockito.times(1))
-                .saveAndFlush(CheckIn.builder().checkedOut(true).build());
+        Assertions.assertEquals("No Barbers Found within the range",
+                testSubject.findBarbersAtZip(barberWaitTimeRequest).getMessage());
 
-        Mockito.verifyNoMoreInteractions(checkInRepository);
+        Mockito.verify(addressRepo, Mockito.times(1))
+                .getBarbersId(barberWaitTimeRequest.getLongitude(), barberWaitTimeRequest.getLatitude(),
+                        barberWaitTimeRequest.getDistance(), long1, long2, lat1, lat2);
+
+        Mockito.verifyNoMoreInteractions(addressRepo);
     }
 
     @Test
-    void findBarbersAtZip() {
+    void findBarbersAtLongiAndLati() {
+        BarberWaitTimeRequest barberWaitTimeRequest = new BarberWaitTimeRequest()
+                .latitude(40.5470947).longitude(-80.011957).distance(25D);
 
+        BarbersWaitTimeResponse barberWaitTimeResponse = new BarbersWaitTimeResponse()
+                .message("2 Barbers Found")
+                .addBarberDetailsItem(new BarberDetails()
+                        .addressLineOne("Line One")
+                        .distance(5.0)
+                        .waitTime("Unable to find wait-time")
+                        .email("user1"))
+                .addBarberDetailsItem(new BarberDetails()
+                        .addressLineOne("Line Two")
+                        .distance(8.0)
+                        .waitTime("Unable to find wait-time")
+                        .email("user2"));
+
+        double long1 = barberWaitTimeRequest.getLongitude() - barberWaitTimeRequest.getDistance() / Math.abs(Math.cos(Math.toRadians(barberWaitTimeRequest.getLatitude())) * 69);
+        double long2 = barberWaitTimeRequest.getLongitude() + barberWaitTimeRequest.getDistance() / Math.abs(Math.cos(Math.toRadians(barberWaitTimeRequest.getLatitude())) * 69);
+        double lat1 = barberWaitTimeRequest.getLatitude() - (barberWaitTimeRequest.getDistance() / 69);
+        double lat2 = barberWaitTimeRequest.getLatitude() + (barberWaitTimeRequest.getDistance() / 69);
+
+        Map<String, Object> map1 = Map.of("address_id", BigInteger.valueOf(1L), "distance", 5D);
+        Map<String, Object> map2 = Map.of("address_id", BigInteger.valueOf(2L), "distance", 8D);
+        List<Map<String, Object>> addressIds = List.of(map1, map2);
+
+        Mockito.doReturn(addressIds)
+                .when(addressRepo)
+                .getBarbersId(barberWaitTimeRequest.getLongitude(), barberWaitTimeRequest.getLatitude(),
+                        barberWaitTimeRequest.getDistance(), long1, long2, lat1, lat2);
+
+        Mockito.doReturn(Optional.of(Address.builder().addressId(1L).addressLineOne("Line One").userId(1L).build()))
+                .when(addressRepo)
+                .findById(1L);
+
+        Mockito.doReturn(Optional.of(Address.builder().addressId(2L).addressLineOne("Line Two").userId(2L).build()))
+                .when(addressRepo)
+                .findById(2L);
+
+        Mockito.doReturn(Optional.of(User.builder().email("user1").userId(1L).build()))
+                .when(userRepository)
+                .findById(1L);
+
+        Mockito.doReturn(Optional.of(User.builder().email("user2").userId(2L).build()))
+                .when(userRepository)
+                .findById(2L);
+
+        BarbersWaitTimeResponse barbersWaitTimeResponse = new BarbersWaitTimeResponse()
+                .message("No Barbers Found within the range");
+
+        Assertions.assertEquals(barberWaitTimeResponse,
+                testSubject.findBarbersAtZip(barberWaitTimeRequest));
+
+        Mockito.verify(addressRepo, Mockito.times(1))
+                .getBarbersId(barberWaitTimeRequest.getLongitude(), barberWaitTimeRequest.getLatitude(),
+                        barberWaitTimeRequest.getDistance(), long1, long2, lat1, lat2);
+
+        Mockito.verify(addressRepo, Mockito.times(1))
+                .findById(2L);
+
+        Mockito.verify(addressRepo, Mockito.times(1))
+                .findById(1L);
+
+        Mockito.verify(userRepository, Mockito.times(1))
+                .findById(1L);
+
+        Mockito.verify(userRepository, Mockito.times(1))
+                .findById(2L);
+
+        Mockito.verifyNoMoreInteractions(addressRepo);
     }
 }

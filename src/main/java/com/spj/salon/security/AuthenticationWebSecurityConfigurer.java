@@ -1,6 +1,5 @@
 package com.spj.salon.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.spj.salon.security.adapters.CustomBarberDetailsAdapter;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * 
  * @author Yogesh Sharma
@@ -21,17 +22,15 @@ import com.spj.salon.security.adapters.CustomBarberDetailsAdapter;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@RequiredArgsConstructor
 public class AuthenticationWebSecurityConfigurer extends WebSecurityConfigurerAdapter{
 
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+	private final PasswordEncoder passwordEncoder;
 	
-	@Autowired
-	private CustomBarberDetailsAdapter userbarberFacade;
+	private final CustomBarberDetailsAdapter userbarberFacade;
 	
 	@Override
-	@Autowired
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+	protected final void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userbarberFacade).passwordEncoder(passwordEncoder);
 	}
 	

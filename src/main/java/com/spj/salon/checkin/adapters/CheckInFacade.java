@@ -1,5 +1,20 @@
 package com.spj.salon.checkin.adapters;
 
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+
+import javax.naming.ServiceUnavailableException;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import com.google.maps.model.GeocodingResult;
 import com.spj.salon.barber.entities.Address;
 import com.spj.salon.barber.entities.BarberCalendar;
@@ -12,23 +27,16 @@ import com.spj.salon.checkin.ports.out.GeoCoding;
 import com.spj.salon.checkin.repository.CheckInRepository;
 import com.spj.salon.customer.entities.User;
 import com.spj.salon.customer.repository.UserRepository;
-import com.spj.salon.openapi.resources.*;
+import com.spj.salon.openapi.resources.BarberDetails;
+import com.spj.salon.openapi.resources.BarberWaitTimeRequest;
+import com.spj.salon.openapi.resources.BarberWaitTimeResponse;
+import com.spj.salon.openapi.resources.BarbersWaitTimeResponse;
+import com.spj.salon.openapi.resources.CustomerCheckInResponse;
+import com.spj.salon.openapi.resources.CustomerCheckoutResponse;
 import com.spj.salon.utils.DateUtils;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import javax.naming.ServiceUnavailableException;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 /**
  * @author Yogesh Sharma
@@ -41,8 +49,7 @@ public class CheckInFacade implements ICheckinFacade {
     private final UserRepository userRepository;
     private final CheckInRepository checkInRepository;
     private final ZipCodeRepository zipCodeRepo;
-    /*@Autowired
-    private GeoApiContext context;*/
+    //private GeoApiContext context;
     private final AddressRepository addressRepo;
     private final GeoCoding googleGeoCodingClient;
 

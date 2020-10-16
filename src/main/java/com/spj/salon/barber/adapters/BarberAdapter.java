@@ -159,7 +159,7 @@ public class BarberAdapter implements IBarberAdapter {
 
             return new BarberAddressResponse().email(email).message("Address saved to DB");
         } catch (IOException e1) {
-            return new BarberAddressResponse().email(email).message(e1.getMessage());
+            return new BarberAddressResponse().email(email).message("error calling location api");
         }
     }
 

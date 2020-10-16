@@ -5,8 +5,8 @@ import com.google.maps.GeocodingApi.Response;
 import com.google.maps.model.GeocodingResult;
 import com.spj.salon.checkin.ports.out.GeoCoding;
 import com.spj.salon.configs.EnvironmentConfig;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.BufferedReader;
@@ -20,38 +20,33 @@ import java.util.stream.Collectors;
  */
 @Configuration
 @Slf4j
+@RequiredArgsConstructor
 public class GoogleGeoCodingAdapter implements GeoCoding {
 
-    @Autowired
-    private EnvironmentConfig envConfig;
+    private final EnvironmentConfig envConfig;
 
-    @Autowired
-    private Gson gson;
+    private final Gson gson;
 
     /**
-     * This service calls google geo-location api and get the location Commenting
-     * the code to find location on heroku as its working without any extra
-     * configuration Will try using QUOTAGUARD if it doesnot work on heroku
+     * This method calls geolocation using proxy qgpass
      *
      * @param addessOrZip
      * @return
      * @throws IOException
      */
     public GeocodingResult[] findGeocodingResult(String addessOrZip) throws IOException {
-        URL proxyUrl = new URL(System.getenv("QUOTAGUARDSTATIC_URL"));
+        URL proxyUrl = new URL(envConfig.getQuotoGuardShieldURL());
         String userInfo = proxyUrl.getUserInfo();
         String user = userInfo.substring(0, userInfo.indexOf(':'));
         String password = userInfo.substring(userInfo.indexOf(':') + 1);
 
         System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "false");
         System.setProperty("jdk.http.auth.proxying.disabledSchemes", "false");
-        //System.setProperty("http.proxyHost", proxyUrl.getHost());
-        //System.setProperty("http.proxyPort", Integer.toString(proxyUrl.getPort()));
 
         Authenticator.setDefault(new Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(user, password.toCharArray());
-                }
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(user, password.toCharArray());
+            }
         });
 
         Proxy webProxy

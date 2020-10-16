@@ -3,15 +3,16 @@ package com.spj.salon.configs;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class EnvironmentConfig {
 	
-    @Autowired
-    private Environment environment;
+    private final Environment environment;
 
     private String port;
     private String hostname;
@@ -61,56 +62,56 @@ public class EnvironmentConfig {
 	 * @return the twilioOtpSid
 	 */
 	public String getTwilioOtpSid() {
-		return System.getenv("twiliootp-sid");
+		return System.getenv("TWILIO_OTP_SID");
 	}
 
 	/**
 	 * @return the twilioOtpAuthToken
 	 */
 	public String getTwilioOtpAuthToken() {
-		return System.getenv("twiliootp-authtoken");
+		return System.getenv("TWILIO_OTP_AUTH_TOKEN");
 	}
 
 	/**
 	 * @return the jwtSigningKey
 	 */
 	public String getJwtSigningKey() {
-		return System.getenv("jwt-signingkey");
+		return System.getenv("JWT_SIGNING_KEY");
 	}
 
 	/**
 	 * @return the googleApiKey
 	 */
 	public String getGoogleApiKey() {
-		return System.getenv("googleapikey");
+		return System.getenv("GOOGLE_API_KEY");
 	}
 
 	/**
 	 * @return the mailUsername
 	 */
 	public String getMailUsername() {
-		return System.getenv("mail-username");
+		return System.getenv("MAIL_USERNAME");
 	}
 
 	/**
 	 * @return the mailPassword
 	 */
 	public String getMailPassword() {
-		return System.getenv("mail-password");
+		return System.getenv("MAIL_PASSWORD");
 	}
 
 	/**
 	 * @return the datasourceUsername
 	 */
 	public String getDatasourceUsername() {
-		return System.getenv("datasource-username");
+		return System.getenv("DATA_SOURCE_USERNAME");
 	}
 
 	/**
 	 * @return the datasourcePassword
 	 */
 	public String getDatasourcePassword() {
-		return System.getenv("datasource-password");
+		return System.getenv("DATA_SOURCE_PASSWORD");
 	}
 	
 	/**

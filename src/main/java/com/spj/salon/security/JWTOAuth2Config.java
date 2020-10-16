@@ -2,7 +2,6 @@ package com.spj.salon.security;
 
 import java.util.Arrays;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,34 +16,24 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 
 import com.spj.salon.configs.ServiceConfig;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * 
  * @author Yogesh Sharma
  *
  */
 @Configuration
+@RequiredArgsConstructor
 public class JWTOAuth2Config extends AuthorizationServerConfigurerAdapter {
 
-	@Autowired
-	private AuthenticationManager authenticationManager;
-	
-	@Autowired
-	private UserDetailsService userDetailsService;
-	
-	@Autowired
-	private TokenStore tokenStore;
-	
-	@Autowired
-	private PasswordEncoder passwordEncoder;
-    
-	@Autowired
-	private JwtAccessTokenConverter jwtAccessTokenConverter;
-
-	@Autowired
-	private TokenEnhancer jwtTokenEnhancer;
-	
-	@Autowired
-	private ServiceConfig serviceConfig;
+	private final AuthenticationManager authenticationManager;
+	private final UserDetailsService userDetailsService;
+	private final TokenStore tokenStore;
+	private final PasswordEncoder passwordEncoder;
+	private final JwtAccessTokenConverter jwtAccessTokenConverter;
+	private final TokenEnhancer jwtTokenEnhancer;
+	private final ServiceConfig serviceConfig;
 	
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
