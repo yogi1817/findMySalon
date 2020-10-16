@@ -52,15 +52,15 @@ public class GoogleGeoCodingAdapter implements GeoCoding {
         System.setProperty("http.proxyHost", proxyUrl.getHost());
         System.setProperty("http.proxyPort", Integer.toString(proxyUrl.getPort()));
 
-        Proxy webProxy
-                = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort()));
-
         Authenticator.setDefault(new Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
                     return new PasswordAuthentication(user, password.toCharArray());
                 }
         });
 
+        Proxy webProxy
+                = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort()));
+        
         String geoCodingUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + addessOrZip + "&key="
                 + envConfig.getGoogleApiKey();
         log.info("geoCodingUrl --> {}", geoCodingUrl);
