@@ -12,10 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.util.stream.Collectors;
 
 /**
@@ -42,7 +39,7 @@ public class GoogleGeoCodingAdapter implements GeoCoding {
      */
     public GeocodingResult[] findGeocodingResult(String addessOrZip) throws IOException {
         log.info("inside findGeocodingResult");
-        URL proxyUrl = new URL("http://localhost:8080");
+        URL proxyUrl = new URL(System.getenv("QUOTAGUARDSTATIC_URL"));
         String userInfo = proxyUrl.getUserInfo();
         String user = userInfo.substring(0, userInfo.indexOf(':'));
         String password = userInfo.substring(userInfo.indexOf(':') + 1);
@@ -54,6 +51,9 @@ public class GoogleGeoCodingAdapter implements GeoCoding {
         URLConnection conn = null;
         System.setProperty("http.proxyHost", proxyUrl.getHost());
         System.setProperty("http.proxyPort", Integer.toString(proxyUrl.getPort()));
+
+        Proxy webProxy
+                = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort()));
 
         Authenticator.setDefault(new Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
@@ -68,9 +68,11 @@ public class GoogleGeoCodingAdapter implements GeoCoding {
 
         try {
             URL url = new URL(geoCodingUrl);
-            conn = url.openConnection();
+            HttpURLConnection webProxyConnection
+                    = (HttpURLConnection) url.openConnection(webProxy);
+            //conn = url.openConnection();
             log.info("Open Connection");
-            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(webProxyConnection.getInputStream()));
 
             log.info("Created Buffer Reader");
             responseBody = new BufferedReader(in).lines().collect(Collectors.joining("\n"));
