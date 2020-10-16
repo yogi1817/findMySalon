@@ -38,42 +38,33 @@ public class GoogleGeoCodingAdapter implements GeoCoding {
      * @throws IOException
      */
     public GeocodingResult[] findGeocodingResult(String addessOrZip) throws IOException {
-        log.info("inside findGeocodingResult");
         URL proxyUrl = new URL(System.getenv("QUOTAGUARDSTATIC_URL"));
         String userInfo = proxyUrl.getUserInfo();
         String user = userInfo.substring(0, userInfo.indexOf(':'));
         String password = userInfo.substring(userInfo.indexOf(':') + 1);
 
-        log.info("user --> {}", user);
-        log.info("proxyUrl.getHost() --> {}", proxyUrl.getHost());
-        log.info("proxyUrl.getPort() --> {}", Integer.toString(proxyUrl.getPort()));
-
         System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "false");
         System.setProperty("jdk.http.auth.proxying.disabledSchemes", "false");
-        
-        URLConnection conn = null;
         System.setProperty("http.proxyHost", proxyUrl.getHost());
         System.setProperty("http.proxyPort", Integer.toString(proxyUrl.getPort()));
 
-        Authenticator.setDefault(new Authenticator() {
+        /*Authenticator.setDefault(new Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
                     return new PasswordAuthentication(user, password.toCharArray());
                 }
-        });
+        });*/
 
         Proxy webProxy
                 = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort()));
 
         String geoCodingUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + addessOrZip + "&key="
                 + envConfig.getGoogleApiKey();
-        log.info("geoCodingUrl --> {}", geoCodingUrl);
         String responseBody = null;
 
         try {
             URL url = new URL(geoCodingUrl);
             HttpURLConnection webProxyConnection
                     = (HttpURLConnection) url.openConnection(webProxy);
-            //conn = url.openConnection();
             log.info("Open Connection");
             BufferedReader in = new BufferedReader(new InputStreamReader(webProxyConnection.getInputStream()));
 
