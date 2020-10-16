@@ -45,14 +45,14 @@ public class GoogleGeoCodingAdapter implements GeoCoding {
 
         System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "false");
         System.setProperty("jdk.http.auth.proxying.disabledSchemes", "false");
-        System.setProperty("http.proxyHost", proxyUrl.getHost());
-        System.setProperty("http.proxyPort", Integer.toString(proxyUrl.getPort()));
+        //System.setProperty("http.proxyHost", proxyUrl.getHost());
+        //System.setProperty("http.proxyPort", Integer.toString(proxyUrl.getPort()));
 
-        /*Authenticator.setDefault(new Authenticator() {
+        Authenticator.setDefault(new Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
                     return new PasswordAuthentication(user, password.toCharArray());
                 }
-        });*/
+        });
 
         Proxy webProxy
                 = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort()));
