@@ -1,26 +1,30 @@
 package com.spj.salon.customer.endpoints;
 
-import com.spj.salon.customer.ports.in.ICustomerAdapter;
-import com.spj.salon.customer.ports.in.IRegisterCustomer;
-import com.spj.salon.openapi.endpoint.CustomerApiDelegate;
-import com.spj.salon.openapi.resources.*;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
+import java.util.Optional;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.Optional;
+import com.spj.salon.customer.ports.in.ICustomerAdapter;
+import com.spj.salon.customer.ports.in.IRegisterCustomer;
+import com.spj.salon.openapi.endpoint.CustomerApiDelegate;
+import com.spj.salon.openapi.resources.AuthenticationRequest;
+import com.spj.salon.openapi.resources.AuthenticationResponse;
+import com.spj.salon.openapi.resources.CustomerFavouriteBarberResponse;
+import com.spj.salon.openapi.resources.RegisterCustomerRequest;
+import com.spj.salon.openapi.resources.RegisterCustomerResponse;
+import com.spj.salon.openapi.resources.UpdatePasswordRequest;
+import com.spj.salon.openapi.resources.UpdatePasswordResponse;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
- * @author ipecy
+ * @author Yogesh Sharma
  */
 @Controller
 @CrossOrigin(origins = "*")
-@RequestMapping(value = "customer",
-        produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 @Slf4j
 public class CustomerController implements CustomerApiDelegate {

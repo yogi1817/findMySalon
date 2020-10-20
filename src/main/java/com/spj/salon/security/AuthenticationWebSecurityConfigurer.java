@@ -54,32 +54,4 @@ public class AuthenticationWebSecurityConfigurer extends WebSecurityConfigurerAd
 				"/webjars/**",
 				"/actuator/**");
 	}
-
-	/**
-	 * This will configure /auth/user service
-	 */
-	/*@Override
-	@Bean
-	public UserDetailsService userDetailsServiceBean() throws Exception {
-		// TODO Auto-generated method stub
-		return super.userDetailsServiceBean();
-	}*/
-
-	/**
-	 * If you are not using any password encoder, you have to add {noop} 
-	 * telling spring that password is not secured by any do you try to decode it.
-	 */
-	/*@Override
-	public void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.inMemoryAuthentication()
-			.passwordEncoder(passwordEncoder)
-			.withUser(serviceConfig.getUsername())
-				.password(passwordEncoder.encode(serviceConfig.getPassword()))
-				.roles("CUSTOMER")
-		.and()
-			.withUser("csp")
-			.password(passwordEncoder.encode("Computer1"))
-			.roles("CUSTOMER","ADMIN");
-			
-	}*/
 }

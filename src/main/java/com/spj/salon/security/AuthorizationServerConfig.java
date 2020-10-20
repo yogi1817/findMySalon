@@ -1,3 +1,4 @@
+/*
 package com.spj.salon.security;
 
 import org.springframework.context.annotation.Configuration;
@@ -8,11 +9,13 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+*/
 /**
  * This will define cors for oauth service
  * @author Yogesh Sharma
  *
- */
+ *//*
+
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
@@ -30,8 +33,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
 		source.registerCorsConfiguration("/oauth/token", config);
 		source.registerCorsConfiguration("/oauth/authenticate", config);
-		
+
 		CorsFilter filter = new CorsFilter(source);
 		security.addTokenEndpointAuthenticationFilter(filter);
 	}
-}
+}*/

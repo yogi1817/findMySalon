@@ -27,6 +27,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .antMatchers("/otp/forgotpassword/mobile").permitAll()
                 .antMatchers("/otp/forgotpassword").permitAll()
                 .antMatchers("/otp/validate/prepassword").permitAll()
+                .antMatchers("/alexa/voice").permitAll()
                 .antMatchers("/barber/services/register").hasAnyAuthority("SUPERUSER")
                 .antMatchers("/customer/favourite").hasAnyAuthority("CUSTOMER")
                 .antMatchers("/checkin/barber/*/time/*").hasAnyAuthority("CUSTOMER")
