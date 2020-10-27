@@ -14,10 +14,7 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,22 +34,23 @@ public class AlexaController {
     private final IAlexaAdapter alexaAdapter;
 
     @PostMapping(value = "voice")
-    public ResponseEntity<ResponseEnvelope> requestIdCard(HttpServletRequest httpRequest) {
-        ContentCachingRequestWrapper request = new ContentCachingRequestWrapper(httpRequest);
+    public ResponseEntity<ResponseEnvelope> requestIdCard(@RequestBody RequestEnvelope requestEnvelope,
+                                                          HttpServletRequest httpRequest,
+                                                          @RequestHeader Map<String, String> headers) {
         try {
             log.debug("inside requestIdCard");
-            verifyAlexaRequest(request);
+            verifyAlexaRequest(httpRequest);
             log.debug("verify complete");
 
 
-            Map<String, String> headersMap =
+           /* Map<String, String> headersMap =
                     Collections.list(request.getHeaderNames())
                             .stream()
                             .collect(Collectors.toMap(
                                     name -> name,
-                                    request::getHeader));
-            headersMap.entrySet().stream().peek(a->log.debug(a.getKey()+"-"+a.getValue()));
-            ResponseEntity.ok(alexaAdapter.processAlexaRequest(getRequestEnvelop(request), headersMap));
+                                    request::getHeader));*/
+            headers.entrySet().stream().peek(a->log.debug(a.getKey()+"-"+a.getValue()));
+            ResponseEntity.ok(alexaAdapter.processAlexaRequest(requestEnvelope, headers));
         } catch (Exception e) {
             log.error("Bad Request Exception {}", e.getMessage());
         }
@@ -85,7 +83,7 @@ public class AlexaController {
             return false;
         }
         return true;
-    }*/
+    }
 
     private RequestEnvelope getRequestEnvelop(HttpServletRequest httpRequest) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -102,5 +100,5 @@ public class AlexaController {
         }
 
         return mapper.readValue(builder.toString(), RequestEnvelope.class);
-    }
+    }*/
 }
