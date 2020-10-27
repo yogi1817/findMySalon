@@ -2,16 +2,29 @@ package com.spj.salon.alexa.endpoints;
 
 import com.amazon.ask.model.RequestEnvelope;
 import com.amazon.ask.model.ResponseEnvelope;
+import com.amazon.ask.model.services.Serializer;
+import com.amazon.ask.servlet.ServletConstants;
+import com.amazon.ask.servlet.verifiers.ServletRequest;
+import com.amazon.ask.servlet.verifiers.SkillRequestSignatureVerifier;
+import com.amazon.ask.util.JacksonSerializer;
 import com.spj.salon.alexa.ports.in.IAlexaAdapter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -23,31 +36,39 @@ public class AlexaController {
     private final IAlexaAdapter alexaAdapter;
 
     @PostMapping(value = "voice")
-    public ResponseEntity<ResponseEnvelope> requestIdCard(@RequestBody RequestEnvelope requestEnvelope,
-                                                          @RequestHeader Map<String, String> headers) {
-        if (!validSignature(headers.get("signaturecertchainurl")))
-            return ResponseEntity.badRequest().build();
-        return ResponseEntity.ok(alexaAdapter.processAlexaRequest(requestEnvelope, headers));
+    public ResponseEntity<ResponseEnvelope> requestIdCard(HttpServletRequest httpRequest) {
+        try {
+            log.debug("inside requestIdCard");
+            verifyAlexaRequest(httpRequest);
+            log.debug("verify complete");
+
+
+            Map<String, String> headersMap =
+                    Collections.list(httpRequest.getHeaderNames())
+                            .stream()
+                            .collect(Collectors.toMap(
+                                    name -> name,
+                                    httpRequest::getHeader));
+            headersMap.entrySet().stream().peek(a->log.debug(a.getKey()+"-"+a.getValue()));
+            ResponseEntity.ok(alexaAdapter.processAlexaRequest(getRequestEnvelop(httpRequest), headersMap));
+        } catch (Exception e) {
+            log.error("Bad Request Exception {}", e.getMessage());
+        }
+        return ResponseEntity.badRequest().build();
     }
 
-    /**
-     * Test cases
-     * The following are examples of correctly formatted URLs:
-     *
-     * https://s3.amazonaws.com/echo.api/echo-api-cert.pem
-     * https://s3.amazonaws.com:443/echo.api/echo-api-cert.pem
-     * https://s3.amazonaws.com/echo.api/../echo.api/echo-api-cert.pem
-     * The following are examples of invalid URLs:
-     *
-     * http://s3.amazonaws.com/echo.api/echo-api-cert.pem (invalid protocol)
-     * https://notamazon.com/echo.api/echo-api-cert.pem (invalid hostname)
-     * https://s3.amazonaws.com/EcHo.aPi/echo-api-cert.pem (invalid path)
-     * https://s3.amazonaws.com/invalid.path/echo-api-cert.pem (invalid path)
-     * https://s3.amazonaws.com:563/echo.api/echo-api-cert.pem (invalid port)
-     * @param signatureCertChainUrl
-     * @return
-     */
-    private boolean validSignature(String signatureCertChainUrl) {
+    private void verifyAlexaRequest(HttpServletRequest httpRequest) throws IOException {
+        final Serializer serializer = new JacksonSerializer();
+        byte[] serializedRequestEnvelope = IOUtils.toByteArray(httpRequest.getInputStream());
+        final RequestEnvelope deserializedRequestEnvelope = serializer.deserialize(IOUtils.toString(
+                serializedRequestEnvelope, ServletConstants.CHARACTER_ENCODING), RequestEnvelope.class);
+
+        ServletRequest servletRequest = new ServletRequest(httpRequest, serializedRequestEnvelope, deserializedRequestEnvelope);
+        SkillRequestSignatureVerifier skillRequestSignatureVerifier = new SkillRequestSignatureVerifier();
+        skillRequestSignatureVerifier.verify(servletRequest);
+    }
+
+    /*private boolean validSignature(String signatureCertChainUrl) {
         try{
             URL myURL = new URL(signatureCertChainUrl);
             if(myURL.getPort()!=-1 && myURL.getPort()!=443)
@@ -62,5 +83,22 @@ public class AlexaController {
             return false;
         }
         return true;
+    }*/
+
+    private RequestEnvelope getRequestEnvelop(HttpServletRequest httpRequest) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        StringBuilder builder = new StringBuilder();
+        try {
+            try (BufferedReader in = httpRequest.getReader()) {
+                char[] buf = new char[4096];
+                for (int len; (len = in.read(buf)) > 0; )
+                    builder.append(buf, 0, len);
+            }
+        } catch (IOException e) {
+            log.error("Invalid request {}", e.getMessage());
+            return null;
+        }
+
+        return mapper.readValue(builder.toString(), RequestEnvelope.class);
     }
 }
