@@ -39,7 +39,7 @@ public class AlexaController {
                                                           @RequestHeader Map<String, String> headers) {
         try {
             log.debug("inside requestIdCard");
-            //verifyAlexaRequest(httpRequest);
+            verifyAlexaRequest(httpRequest);
             log.debug("verify complete");
 
 
