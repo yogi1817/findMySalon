@@ -11,18 +11,13 @@ import com.spj.salon.alexa.ports.in.IAlexaAdapter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -49,8 +44,8 @@ public class AlexaController {
                             .collect(Collectors.toMap(
                                     name -> name,
                                     request::getHeader));*/
-            getRequestEnvelop(httpRequest);
-            headers.entrySet().stream().peek(a->log.debug(a.getKey()+"-"+a.getValue()));
+            //getRequestEnvelop(httpRequest);
+            headers.entrySet().stream().peek(a -> log.debug(a.getKey() + "-" + a.getValue()));
             return ResponseEntity.ok(alexaAdapter.processAlexaRequest(requestEnvelope, headers));
         } catch (Exception e) {
             log.error("Bad Request Exception {}", e.getMessage());
@@ -84,7 +79,8 @@ public class AlexaController {
             return false;
         }
         return true;
-    }*/
+    }
+
 
     private void getRequestEnvelop(HttpServletRequest httpRequest) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -101,5 +97,5 @@ public class AlexaController {
         }
 
         //return mapper.readValue(builder.toString(), RequestEnvelope.class);
-    }
+    }*/
 }
