@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
@@ -37,20 +38,21 @@ public class AlexaController {
 
     @PostMapping(value = "voice")
     public ResponseEntity<ResponseEnvelope> requestIdCard(HttpServletRequest httpRequest) {
+        ContentCachingRequestWrapper request = new ContentCachingRequestWrapper(httpRequest);
         try {
             log.debug("inside requestIdCard");
-            verifyAlexaRequest(httpRequest);
+            verifyAlexaRequest(request);
             log.debug("verify complete");
 
 
             Map<String, String> headersMap =
-                    Collections.list(httpRequest.getHeaderNames())
+                    Collections.list(request.getHeaderNames())
                             .stream()
                             .collect(Collectors.toMap(
                                     name -> name,
-                                    httpRequest::getHeader));
+                                    request::getHeader));
             headersMap.entrySet().stream().peek(a->log.debug(a.getKey()+"-"+a.getValue()));
-            ResponseEntity.ok(alexaAdapter.processAlexaRequest(getRequestEnvelop(httpRequest), headersMap));
+            ResponseEntity.ok(alexaAdapter.processAlexaRequest(getRequestEnvelop(request), headersMap));
         } catch (Exception e) {
             log.error("Bad Request Exception {}", e.getMessage());
         }
