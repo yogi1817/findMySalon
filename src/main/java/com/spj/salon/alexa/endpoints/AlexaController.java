@@ -39,7 +39,7 @@ public class AlexaController {
                                                           @RequestHeader Map<String, String> headers) {
         try {
             log.debug("inside requestIdCard");
-            verifyAlexaRequest(httpRequest);
+            //verifyAlexaRequest(httpRequest);
             log.debug("verify complete");
 
 
@@ -49,8 +49,9 @@ public class AlexaController {
                             .collect(Collectors.toMap(
                                     name -> name,
                                     request::getHeader));*/
+            getRequestEnvelop(httpRequest);
             headers.entrySet().stream().peek(a->log.debug(a.getKey()+"-"+a.getValue()));
-            ResponseEntity.ok(alexaAdapter.processAlexaRequest(requestEnvelope, headers));
+            return ResponseEntity.ok(alexaAdapter.processAlexaRequest(requestEnvelope, headers));
         } catch (Exception e) {
             log.error("Bad Request Exception {}", e.getMessage());
         }
@@ -83,9 +84,9 @@ public class AlexaController {
             return false;
         }
         return true;
-    }
+    }*/
 
-    private RequestEnvelope getRequestEnvelop(HttpServletRequest httpRequest) throws IOException {
+    private void getRequestEnvelop(HttpServletRequest httpRequest) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         StringBuilder builder = new StringBuilder();
         try {
@@ -96,9 +97,9 @@ public class AlexaController {
             }
         } catch (IOException e) {
             log.error("Invalid request {}", e.getMessage());
-            return null;
+            //return null;
         }
 
-        return mapper.readValue(builder.toString(), RequestEnvelope.class);
-    }*/
+        //return mapper.readValue(builder.toString(), RequestEnvelope.class);
+    }
 }
