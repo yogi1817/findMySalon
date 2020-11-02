@@ -1,1 +1,1 @@
-web: bin/qgpass java -Dserver.port=$PORT --spring.profiles.active=heroku $JAVA_OPTS -jar build/libs/*.jar
+web: bin/qgpass java -Dserver.port=$PORT $JAVA_OPTS -jar build/libs/*.jar
