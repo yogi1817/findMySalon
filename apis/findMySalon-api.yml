@@ -19,6 +19,8 @@ paths:
       operationId: registerBarber
       tags:
         - barber
+      security:
+        - bearerAuth: [ ]
       summary: Register a barber
       description: Register a barber
       requestBody:
@@ -124,11 +126,6 @@ paths:
       description: This api will add barber address, a Barber can have more than 1 address as well
       security:
         - bearerAuth: [ ]
-      parameters:
-        - in: header
-          name: clientHost
-          schema:
-            type: string
       requestBody:
         required: true
         content:
@@ -169,13 +166,10 @@ paths:
       operationId: registerCustomer
       tags:
         - customer
+      security:
+        - bearerAuth: [ ]
       summary: Register a customer
       description: Register a customer
-      parameters:
-        - in: header
-          name: clientHost
-          schema:
-            type: string
       requestBody:
         required: true
         content:
@@ -243,14 +237,9 @@ paths:
       tags:
         - customer
       summary: This method updates the password of user
-      description: Update passowrd ofr a user
+      description: Update passowrd of a user
       security:
         - bearerAuth: [ ]
-      parameters:
-        - in: header
-          name: clientHost
-          schema:
-            type: string
       requestBody:
         required: true
         content:
@@ -367,11 +356,6 @@ paths:
       description: This method will return all barbers near a certain distance
       security:
         - bearerAuth: [ ]
-      parameters:
-        - in: header
-          name: clientHost
-          schema:
-            type: string
       requestBody:
         required: true
         content:
@@ -703,8 +687,6 @@ components:
     UpdatePasswordResponse:
       type: object
       properties:
-        jwtToken:
-          type: string
         message:
           type: string
     CustomerCheckInResponse:

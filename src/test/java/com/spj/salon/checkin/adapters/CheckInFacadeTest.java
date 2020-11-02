@@ -45,7 +45,6 @@ class CheckInFacadeTest {
             .authorityId(1)
             .userId(2L)
             .email("customer@customer.com")
-            .password("customersecret")
             .build();
 
     @BeforeEach
@@ -58,7 +57,6 @@ class CheckInFacadeTest {
         final User barber = User.builder()
                 .authorityId(2)
                 .email("barber@barber.com")
-                .password("barbersecret")
                 .build();
 
         Mockito.doReturn(barber)
@@ -106,7 +104,6 @@ class CheckInFacadeTest {
         final User barber = User.builder()
                 .authorityId(2)
                 .email("barber@barber.com")
-                .password("barbersecret")
                 .barberCalendarSet(barberCalendarSet)
                 .build();
 
@@ -162,7 +159,6 @@ class CheckInFacadeTest {
         final User barber = User.builder()
                 .authorityId(2)
                 .email("barber@barber.com")
-                .password("barbersecret")
                 .barberCalendarSet(barberCalendarSet)
                 .dailyBarberSet(dailyBarbersSet)
                 .build();
@@ -227,7 +223,6 @@ class CheckInFacadeTest {
                 .userId(1L)
                 .authorityId(2)
                 .email("barber@barber.com")
-                .password("barbersecret")
                 .barberCalendarSet(barberCalendarSet)
                 .dailyBarberSet(dailyBarbersSet)
                 .checkInSet(checkInSet)
@@ -293,7 +288,6 @@ class CheckInFacadeTest {
                 .userId(1L)
                 .authorityId(2)
                 .email("barber@barber.com")
-                .password("barbersecret")
                 .barberCalendarSet(barberCalendarSet)
                 .dailyBarberSet(dailyBarbersSet)
                 .checkInSet(checkInSet)
@@ -313,12 +307,11 @@ class CheckInFacadeTest {
         final User barber = User.builder()
                 .authorityId(2)
                 .email("barber@barber.com")
-                .password("barbersecret")
                 .userId(1L)
                 .build();
 
         SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(customer.getEmail(), customer.getPassword()));
+                new UsernamePasswordAuthenticationToken(customer.getEmail(), "encryptedPassword"));
 
         Mockito.doReturn(customer)
                 .when(userRepository)
@@ -386,7 +379,6 @@ class CheckInFacadeTest {
         final User barber = User.builder()
                 .authorityId(2)
                 .email("barber@barber.com")
-                .password("barbersecret")
                 .dailyBarberSet(dailyBarbersSet)
                 .barberCalendarSet(barberCalendarSet)
                 .checkInSet(checkInSet)
@@ -394,7 +386,7 @@ class CheckInFacadeTest {
                 .build();
 
         SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(customer.getEmail(), customer.getPassword()));
+                new UsernamePasswordAuthenticationToken(customer.getEmail(), "encryptedPassword"));
 
         Mockito.doReturn(customer)
                 .when(userRepository)
@@ -480,7 +472,6 @@ class CheckInFacadeTest {
         final User barber = User.builder()
                 .authorityId(2)
                 .email("barber@barber.com")
-                .password("barbersecret")
                 .dailyBarberSet(dailyBarbersSet)
                 .barberCalendarSet(barberCalendarSet)
                 .checkInSet(checkInSet)
@@ -488,7 +479,7 @@ class CheckInFacadeTest {
                 .build();
 
         SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(customer.getEmail(), customer.getPassword()));
+                new UsernamePasswordAuthenticationToken(customer.getEmail(), "encryptedPassword"));
 
         Mockito.doReturn(customer)
                 .when(userRepository)
@@ -565,7 +556,6 @@ class CheckInFacadeTest {
         final User barber = User.builder()
                 .authorityId(2)
                 .email("barber@barber.com")
-                .password("barbersecret")
                 .dailyBarberSet(dailyBarbersSet)
                 .barberCalendarSet(barberCalendarSet)
                 .checkInSet(checkInSet)
@@ -573,7 +563,7 @@ class CheckInFacadeTest {
                 .build();
 
         SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(customer.getEmail(), customer.getPassword()));
+                new UsernamePasswordAuthenticationToken(customer.getEmail(), "encryptedPassword"));
 
         Mockito.doReturn(customer)
                 .when(userRepository)

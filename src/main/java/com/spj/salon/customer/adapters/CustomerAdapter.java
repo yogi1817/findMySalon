@@ -2,6 +2,8 @@ package com.spj.salon.customer.adapters;
 
 import com.spj.salon.barber.ports.out.OAuthClient;
 import com.spj.salon.customer.entities.User;
+import com.spj.salon.customer.messaging.UserRegisterPublisher;
+import com.spj.salon.customer.messaging.UserRegisterPayload;
 import com.spj.salon.customer.ports.in.ICustomerAdapter;
 import com.spj.salon.customer.repository.UserRepository;
 import com.spj.salon.exception.NotFoundCustomException;
@@ -11,7 +13,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,7 +24,7 @@ import org.springframework.stereotype.Service;
 public class CustomerAdapter implements ICustomerAdapter {
 
     private final OtpCache otpCache;
-    private final PasswordEncoder passwordEncoder;
+    private final UserRegisterPublisher userRegisterPublisher;
     private final OAuthClient oAuthClient;
     private final UserRepository userRepository;
 
@@ -47,12 +48,11 @@ public class CustomerAdapter implements ICustomerAdapter {
     }
 
     @Override
-    public UpdatePasswordResponse updatePassword(UpdatePasswordRequest updatePasswordRequest, String clientHost) {
+    public UpdatePasswordResponse updatePassword(UpdatePasswordRequest updatePasswordRequest) {
         if (updatePasswordRequest.getPhoneNumber() == null && updatePasswordRequest.getEmail() == null) {
             log.info("No Phone number or email address provided -> {}", updatePasswordRequest);
             throw new NotFoundCustomException("No Phone number or email address provided", "");
         }
-
 
         User persistedUser = null;
         if (updatePasswordRequest.getEmail() != null) {
@@ -70,7 +70,7 @@ public class CustomerAdapter implements ICustomerAdapter {
             log.info("Invalid OTP for user {}", updatePasswordRequest);
             throw new NotFoundCustomException("Invalid OTP", "");
         } else {
-            return updatePassword(persistedUser, updatePasswordRequest.getNewPassword(), clientHost);
+            return updatePassword(persistedUser, updatePasswordRequest.getNewPassword());
         }
     }
 
@@ -81,12 +81,13 @@ public class CustomerAdapter implements ICustomerAdapter {
                         authenticationRequest.getPassword(), clientHeader));
     }
 
-    private UpdatePasswordResponse updatePassword(User persistedUser, String password, String clientHost) {
-        persistedUser.setPassword(passwordEncoder.encode(password));
-        userRepository.saveAndFlush(persistedUser);
+    private UpdatePasswordResponse updatePassword(User persistedUser, String password) {
+        userRegisterPublisher.sendUserRegisterDetails(UserRegisterPayload.builder()
+                .email(persistedUser.getEmail())
+                .password(password)
+                .build());
 
         return new UpdatePasswordResponse()
-                .jwtToken(oAuthClient.getJwtToken(persistedUser.getEmail(), password, clientHost))
                 .message("Password changed successfully");
     }
 }

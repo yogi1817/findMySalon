@@ -4,12 +4,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.http.impl.client.HttpClients;
 import org.openapitools.jackson.nullable.JsonNullableModule;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,7 +30,6 @@ import com.spj.salon.interceptor.UserContextInterceptor;
 import lombok.RequiredArgsConstructor;
 
 @SpringBootApplication
-@EnableAuthorizationServer
 @EnableResourceServer
 @RequiredArgsConstructor
 public class FindMySalonApplication {
@@ -39,10 +43,12 @@ public class FindMySalonApplication {
 
     @Bean
     public RestTemplate restTemplate() {
-        return new RestTemplate();
+        ClientHttpRequestFactory requestFactory
+                = new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
+        return new RestTemplate(requestFactory);
     }
 
-    @Primary
+    /*@Primary
     @Bean
     public RestTemplate getCustomRestTemplate() {
         RestTemplate template = new RestTemplate();
@@ -54,7 +60,7 @@ public class FindMySalonApplication {
             template.setInterceptors(interceptors);
         }
         return template;
-    }
+    }*/
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -90,4 +96,17 @@ public class FindMySalonApplication {
      * @PreDestroy public void preDestroy() { getGeoApiContext().shutdown(); }
      */
 
+    @Bean
+    public ConnectionFactory connectionFactory() {
+        String uri = System.getenv("CLOUDAMQP_URL");
+        if (uri == null)
+            uri = "amqp://guest:guest@localhost";
+
+        CachingConnectionFactory factory = new CachingConnectionFactory();
+        factory.setUri(uri);
+        factory.setRequestedHeartBeat(30);
+        factory.setConnectionTimeout(30);
+
+        return factory;
+    }
 }

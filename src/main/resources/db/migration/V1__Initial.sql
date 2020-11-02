@@ -13,7 +13,6 @@ create table usa.user(
 	middle_name varchar(255),
 	email varchar(255) UNIQUE NOT NULL,
 	phone varchar(255),
-	password varchar(255) NOT NULL,
 	create_date TIMESTAMPTZ NOT NULL DEFAULT CURRENT_DATE,
 	modify_date TIMESTAMPTZ NOT NULL DEFAULT CURRENT_DATE,
 	store_name varchar(255),

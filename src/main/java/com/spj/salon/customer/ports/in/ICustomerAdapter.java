@@ -7,13 +7,13 @@ import com.spj.salon.openapi.resources.UpdatePasswordRequest;
 import com.spj.salon.openapi.resources.UpdatePasswordResponse;
 
 /**
- * 
+ *
  * @author Yogesh Sharma
  *
  */
 public interface ICustomerAdapter {
 
 	CustomerFavouriteBarberResponse addFavouriteSalon(Long userId);
-	UpdatePasswordResponse updatePassword(UpdatePasswordRequest user, String clientHost);
+	UpdatePasswordResponse updatePassword(UpdatePasswordRequest user);
 	AuthenticationResponse getJwtToken(AuthenticationRequest authenticationRequest, String clientHost);
 }

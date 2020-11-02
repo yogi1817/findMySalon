@@ -3,14 +3,11 @@ package com.spj.salon.checkin.endpoints;
 import com.spj.salon.checkin.adapters.ICheckinFacade;
 import com.spj.salon.openapi.endpoint.CheckInApiDelegate;
 import com.spj.salon.openapi.resources.*;
-import com.spj.salon.interceptor.UserContextHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 /**
  * @author Yogesh Sharma
@@ -48,9 +45,8 @@ public class CheckInController implements CheckInApiDelegate {
     }
 
     @Override
-    public ResponseEntity<BarbersWaitTimeResponse> findAllBarbersAtZip(BarberWaitTimeRequest barberWaitTimeRequest, Optional<String> clientHost) {
+    public ResponseEntity<BarbersWaitTimeResponse> findAllBarbersAtZip(BarberWaitTimeRequest barberWaitTimeRequest) {
         log.info("Inside CheckInController findBarbersAtZip service");
-        UserContextHolder.getContext().setHost(clientHost.orElse(null));
         return ResponseEntity.ok(checkInFacade.findBarbersAtZip(barberWaitTimeRequest));
     }
 }

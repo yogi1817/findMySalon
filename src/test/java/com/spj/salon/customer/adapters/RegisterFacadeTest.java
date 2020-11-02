@@ -3,6 +3,7 @@ package com.spj.salon.customer.adapters;
 import java.util.Arrays;
 import java.util.Collections;
 
+import com.spj.salon.customer.messaging.UserRegisterPublisher;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ class RegisterFacadeTest {
 
     @Mock private IUserDao userDao;
     @Mock private AuthoritiesRepository authoritiesRepository;
-    @Mock private PasswordEncoder passwordEncoder;
+    @Mock private UserRegisterPublisher userRegisterPublisher;
     @Mock private UserRepository userRepository;
     @Mock private MyEmailAdapter myEmailAdapter;
     private RegisterMapper registerMapper = new com.spj.salon.customer.adapters.RegisterMapperImpl();
@@ -42,7 +43,6 @@ class RegisterFacadeTest {
     final User customer = User.builder()
             .authorityId(1)
             .email("customer@customer.com")
-            .password("encryptedPassword")
             .firstName("customer")
             .lastName("last")
             .build();
@@ -52,13 +52,12 @@ class RegisterFacadeTest {
             .firstName("barber")
             .lastName("secret")
             .email("barber@barber.com")
-            .password("encryptedPassword")
             .storeName("barberthebarber")
             .build();
 
     @BeforeEach
     void setUp() {
-        testSubject = new RegisterFacade(userDao, authoritiesRepository, passwordEncoder, userRepository, myEmailAdapter, registerMapper);
+        testSubject = new RegisterFacade(userDao, authoritiesRepository, userRegisterPublisher, userRepository, myEmailAdapter, registerMapper);
     }
 
     @Test
@@ -75,7 +74,7 @@ class RegisterFacadeTest {
                 .lastName("last");
 
         SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(customer.getEmail(), customer.getPassword()));
+                new UsernamePasswordAuthenticationToken(customer.getEmail(), "encryptedPassword"));
 
         Mockito.doReturn(Collections.EMPTY_LIST)
                 .when(userDao)
@@ -84,10 +83,6 @@ class RegisterFacadeTest {
         Mockito.doReturn(Authorities.builder().authorityId(1L).authority("CUSTOMER").build())
                 .when(authoritiesRepository)
                 .findByAuthority("CUSTOMER");
-
-        Mockito.doReturn("encryptedPassword")
-                .when(passwordEncoder)
-                .encode(registerCustomerRequest.getPassword());
 
         Mockito.doReturn(customer)
                 .when(userRepository)
@@ -107,9 +102,6 @@ class RegisterFacadeTest {
         Mockito.verify(authoritiesRepository, Mockito.times(1))
                 .findByAuthority("CUSTOMER");
 
-        Mockito.verify(passwordEncoder, Mockito.times(1))
-                .encode(registerCustomerRequest.getPassword());
-
         Mockito.verify(userRepository, Mockito.times(1))
                 .saveAndFlush(customer);
 
@@ -118,7 +110,6 @@ class RegisterFacadeTest {
 
         Mockito.verifyNoMoreInteractions(myEmailAdapter);
         Mockito.verifyNoMoreInteractions(userRepository);
-        Mockito.verifyNoMoreInteractions(passwordEncoder);
         Mockito.verifyNoMoreInteractions(userDao);
         Mockito.verifyNoMoreInteractions(authoritiesRepository);
     }
@@ -155,7 +146,7 @@ class RegisterFacadeTest {
                 .lastName("secret");
 
         SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(barber.getEmail(), barber.getPassword()));
+                new UsernamePasswordAuthenticationToken(barber.getEmail(), "encryptedPassword"));
 
         Mockito.doReturn(Collections.EMPTY_LIST)
                 .when(userDao)
@@ -164,10 +155,6 @@ class RegisterFacadeTest {
         Mockito.doReturn(Authorities.builder().authorityId(2L).authority("BARBER").build())
                 .when(authoritiesRepository)
                 .findByAuthority("BARBER");
-
-        Mockito.doReturn("encryptedPassword")
-                .when(passwordEncoder)
-                .encode(registerBarberRequest.getPassword());
 
         Mockito.doReturn(barber)
                 .when(userRepository)
@@ -183,14 +170,10 @@ class RegisterFacadeTest {
         Mockito.verify(authoritiesRepository, Mockito.times(1))
                 .findByAuthority("BARBER");
 
-        Mockito.verify(passwordEncoder, Mockito.times(1))
-                .encode(registerBarberRequest.getPassword());
-
         Mockito.verify(userRepository, Mockito.times(1))
                 .saveAndFlush(barber);
 
         Mockito.verifyNoMoreInteractions(userRepository);
-        Mockito.verifyNoMoreInteractions(passwordEncoder);
         Mockito.verifyNoMoreInteractions(userDao);
         Mockito.verifyNoMoreInteractions(authoritiesRepository);
     }

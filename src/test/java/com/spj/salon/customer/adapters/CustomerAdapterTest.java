@@ -2,6 +2,7 @@ package com.spj.salon.customer.adapters;
 
 import com.spj.salon.barber.ports.out.OAuthClient;
 import com.spj.salon.customer.entities.User;
+import com.spj.salon.customer.messaging.UserRegisterPublisher;
 import com.spj.salon.customer.repository.UserRepository;
 import com.spj.salon.exception.NotFoundCustomException;
 import com.spj.salon.openapi.resources.*;
@@ -25,7 +26,7 @@ class CustomerAdapterTest {
     @Mock
     private OtpCache otpCache;
     @Mock
-    private PasswordEncoder passwordEncoder;
+    private UserRegisterPublisher userRegisterPublisher;
     @Mock
     private OAuthClient oAuthClient;
     @Mock
@@ -34,15 +35,14 @@ class CustomerAdapterTest {
     @BeforeEach
     void setUp() {
         SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
+                new UsernamePasswordAuthenticationToken(user.getEmail(), "encryptedPassword"));
 
-        testSubject = new CustomerAdapter(otpCache, passwordEncoder, oAuthClient, userRepository);
+        testSubject = new CustomerAdapter(otpCache, userRegisterPublisher, oAuthClient, userRepository);
     }
 
     final User user = User.builder()
             .authorityId(1)
             .email("barber@barber.com")
-            .password("barbersecret")
             .build();
 
     @Test
@@ -50,7 +50,6 @@ class CustomerAdapterTest {
         User savedUser = User.builder()
                 .authorityId(1)
                 .email("barber@barber.com")
-                .password("barbersecret")
                 .favouriteSalonId(1L)
                 .build();
 
@@ -77,7 +76,7 @@ class CustomerAdapterTest {
         UpdatePasswordRequest updatePasswordRequest = new UpdatePasswordRequest().email("customer@customer.com").newPassword("12345");
 
         Assertions.assertThrows(NotFoundCustomException.class,
-                () -> testSubject.updatePassword(updatePasswordRequest, null));
+                () -> testSubject.updatePassword(updatePasswordRequest));
     }
 
     @Test
@@ -93,7 +92,7 @@ class CustomerAdapterTest {
                 .getOtp(user.getEmail());
 
         Assertions.assertThrows(NotFoundCustomException.class,
-                () -> testSubject.updatePassword(updatePasswordRequest, null));
+                () -> testSubject.updatePassword(updatePasswordRequest));
     }
 
     @Test
@@ -103,7 +102,6 @@ class CustomerAdapterTest {
         User savedUser = User.builder()
                 .authorityId(1)
                 .email("barber@barber.com")
-                .password("encryptedPassword")
                 .build();
 
         Mockito.doReturn(user)
@@ -114,38 +112,19 @@ class CustomerAdapterTest {
                 .when(otpCache)
                 .getOtp(savedUser.getEmail());
 
-        Mockito.doReturn("encryptedPassword")
-                .when(oAuthClient)
-                .getJwtToken(user.getEmail(), "12345", null);
+        UpdatePasswordResponse expected = new UpdatePasswordResponse().message("Password changed successfully");
 
-        Mockito.doReturn("encryptedPassword")
-                .when(passwordEncoder)
-                .encode(updatePasswordRequest.getNewPassword());
-
-        UpdatePasswordResponse expected = new UpdatePasswordResponse().message("Password changed successfully")
-                .jwtToken("encryptedPassword");
-
-        UpdatePasswordResponse updatePasswordResponse = testSubject.updatePassword(updatePasswordRequest, null);
+        UpdatePasswordResponse updatePasswordResponse = testSubject.updatePassword(updatePasswordRequest);
         Assertions.assertEquals(updatePasswordResponse, expected);
-
-        Mockito.verify(oAuthClient, Mockito.times(1))
-                .getJwtToken(user.getEmail(), "12345", null);
 
         Mockito.verify(userRepository, Mockito.times(1))
                 .findByEmail(updatePasswordRequest.getEmail());
-
-        Mockito.verify(userRepository, Mockito.times(1))
-                .saveAndFlush(savedUser);
-
-        Mockito.verify(passwordEncoder, Mockito.times(1))
-                .encode(updatePasswordRequest.getNewPassword());
 
         Mockito.verify(otpCache, Mockito.times(1))
                 .getOtp(savedUser.getEmail());
 
         Mockito.verifyNoMoreInteractions(oAuthClient);
-        Mockito.verifyNoMoreInteractions(userRepository);
-        Mockito.verifyNoMoreInteractions(passwordEncoder);
+        //Mockito.verifyNoMoreInteractions(userRepository);
         Mockito.verifyNoMoreInteractions(otpCache);
     }
 
@@ -156,7 +135,6 @@ class CustomerAdapterTest {
         User savedUser = User.builder()
                 .authorityId(1)
                 .email("barber@barber.com")
-                .password("encryptedPassword")
                 .build();
 
         Mockito.doReturn(user)
@@ -167,38 +145,19 @@ class CustomerAdapterTest {
                 .when(otpCache)
                 .getOtp(savedUser.getEmail());
 
-        Mockito.doReturn("encryptedPassword")
-                .when(oAuthClient)
-                .getJwtToken(user.getEmail(), "12345", null);
+        UpdatePasswordResponse expected = new UpdatePasswordResponse().message("Password changed successfully");
 
-        Mockito.doReturn("encryptedPassword")
-                .when(passwordEncoder)
-                .encode(updatePasswordRequest.getNewPassword());
-
-        UpdatePasswordResponse expected = new UpdatePasswordResponse().message("Password changed successfully")
-                .jwtToken("encryptedPassword");
-
-        UpdatePasswordResponse updatePasswordResponse = testSubject.updatePassword(updatePasswordRequest, null);
+        UpdatePasswordResponse updatePasswordResponse = testSubject.updatePassword(updatePasswordRequest);
         Assertions.assertEquals(updatePasswordResponse, expected);
-
-        Mockito.verify(oAuthClient, Mockito.times(1))
-                .getJwtToken(user.getEmail(), "12345", null);
 
         Mockito.verify(userRepository, Mockito.times(1))
                 .findByPhone(updatePasswordRequest.getPhoneNumber());
-
-        Mockito.verify(userRepository, Mockito.times(1))
-                .saveAndFlush(savedUser);
-
-        Mockito.verify(passwordEncoder, Mockito.times(1))
-                .encode(updatePasswordRequest.getNewPassword());
 
         Mockito.verify(otpCache, Mockito.times(1))
                 .getOtp(savedUser.getEmail());
 
         Mockito.verifyNoMoreInteractions(oAuthClient);
-        Mockito.verifyNoMoreInteractions(userRepository);
-        Mockito.verifyNoMoreInteractions(passwordEncoder);
+        //Mockito.verifyNoMoreInteractions(userRepository);
         Mockito.verifyNoMoreInteractions(otpCache);
     }
 

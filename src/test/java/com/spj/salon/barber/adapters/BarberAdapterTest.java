@@ -47,7 +47,6 @@ class BarberAdapterTest {
             .firstName("barber")
             .lastName("secret")
             .email("barber@barber.com")
-            .password("encryptedPassword")
             .storeName("barberthebarber")
             .build();
 
@@ -58,7 +57,7 @@ class BarberAdapterTest {
         testSubject = new BarberAdapter(userRepository, serviceRepo, googleGeoCodingAdapter, facadeMapper, servicesRepo);
 
         SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(barber.getEmail(), barber.getPassword()));
+                new UsernamePasswordAuthenticationToken(barber.getEmail(), "encryptedPassword"));
     }
 
     @Test
@@ -174,7 +173,6 @@ class BarberAdapterTest {
                 .firstName("barber")
                 .lastName("secret")
                 .email("barber@barber.com")
-                .password("encryptedPassword")
                 .storeName("barberthebarber")
                 .addressSet(addressSet)
                 .build();

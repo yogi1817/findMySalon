@@ -1,0 +1,9 @@
+spj:
+  services:
+    oauthRegister: https://authorization-spj.herokuapp.com/findmysalon/user/register
+    updatePassword: https://authorization-spj.herokuapp.com/findmysalon/user/updatepassword
+
+security:
+  oauth2:
+    resource:
+      token-info-uri: https://authorization-spj.herokuapp.com/findmysalon/oauth/check_token

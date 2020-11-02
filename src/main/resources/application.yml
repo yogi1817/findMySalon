@@ -6,7 +6,7 @@ server:
   servlet:
     context-path: /findmysalon
 
-spring: 
+spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/postgres
@@ -25,7 +25,12 @@ spring:
     name: findMySalon
   profiles:
     active: default
-      
+  cloud:
+    stream:
+      bindings:
+        user-registered-out:
+          destination: user-registered
+
   mail:
     host: smtp.gmail.com
     port: 587
@@ -45,8 +50,15 @@ logging:
     com.spg.salon: DEBUG
     
 spj:
-  application:
-    id: spj
-    password: thisissecret
   services:
     authenticate: /findmysalon/oauth/token
+    oauthRegister: http://localhost:8080/findmysalon/user/register
+    updatePassword: http://localhost:8080/findmysalon/user/updatepassword
+
+security:
+  oauth2:
+    resource:
+      token-info-uri: http://localhost:8080/findmysalon/oauth/check_token
+    client:
+      client-id: spj
+      client-secret: thisissecret

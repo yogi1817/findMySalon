@@ -45,7 +45,6 @@ public class User implements Serializable {
     private String middleName;
     private String email;
     private String phone;
-    private String password;
     @CreationTimestamp
     private OffsetDateTime createDate;
     @UpdateTimestamp
@@ -83,11 +82,6 @@ public class User implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private Set<Address> addressSet;
-
-    public User(String email, String password) {
-        this.email = email;
-        this.password = password;
-    }
 
     /**
      * @return the dailyBarberSet

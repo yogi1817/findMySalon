@@ -18,7 +18,6 @@ class RegisterMapperTest {
             .firstName("barber")
             .lastName("secret")
             .email("barber@barber.com")
-            .password("barbersecret")
             .storeName("barberthebarber")
             .build();
 
@@ -26,7 +25,6 @@ class RegisterMapperTest {
             .email("customer@customer.com")
             .firstName("customer")
             .lastName("last")
-            .password("customersecret")
             .build();
 
     @BeforeEach
@@ -51,7 +49,6 @@ class RegisterMapperTest {
                 .email("customer@customer.com")
                 .firstName("customer")
                 .lastName("last")
-                .password("customersecret")
                 .build();
 
         RegisterCustomerResponse expected = new RegisterCustomerResponse()

@@ -130,10 +130,6 @@ public class CustomerControllerTest {
         UpdatePasswordRequest updatePasswordRequest = new UpdatePasswordRequest().email("email@test.com")
                 .otpNumber(1234).newPassword("newpassword");
 
-        doReturn(new UpdatePasswordResponse().jwtToken("jwt"))
-                .when(userFacade)
-                .updatePassword(updatePasswordRequest, null);
-
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(UPDATE_PASSWORD_ENDPOINT)
                 .content(OBJECT_MAPPER.writeValueAsString(updatePasswordRequest))
@@ -141,11 +137,10 @@ public class CustomerControllerTest {
                 .accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json(OBJECT_MAPPER.writeValueAsString(new UpdatePasswordResponse().jwtToken("jwt"))));
+                .andExpect(MockMvcResultMatchers.status().isOk());
 
         verify(userFacade, times(1))
-                .updatePassword(updatePasswordRequest, null);
+                .updatePassword(updatePasswordRequest);
         verifyNoMoreInteractions(userFacade);
     }
 }

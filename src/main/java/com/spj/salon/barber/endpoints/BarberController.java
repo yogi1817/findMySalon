@@ -2,7 +2,6 @@ package com.spj.salon.barber.endpoints;
 
 import com.spj.salon.barber.ports.in.IBarberAdapter;
 import com.spj.salon.barber.ports.in.IRegisterBarber;
-import com.spj.salon.interceptor.UserContextHolder;
 import com.spj.salon.openapi.endpoint.BarberApiDelegate;
 import com.spj.salon.openapi.resources.*;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
-
-import java.util.Optional;
 
 /**
  * @author Yogesh Sharma
@@ -55,9 +52,8 @@ public class BarberController implements BarberApiDelegate {
     }
 
     @Override
-    public ResponseEntity<BarberAddressResponse> addBarbersAddress(BarberAddressRequest barberAddressRequest, Optional<String> clientHost) {
+    public ResponseEntity<BarberAddressResponse> addBarbersAddress(BarberAddressRequest barberAddressRequest) {
         log.info("Inside BarberController addBarberAddress service");
-        UserContextHolder.getContext().setHost(clientHost.orElse(null));
         return ResponseEntity.ok(barberAdapter.addBarberAddress(barberAddressRequest));
     }
 

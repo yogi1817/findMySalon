@@ -1,24 +1,16 @@
 package com.spj.salon.customer.endpoints;
 
-import java.util.Optional;
-
+import com.spj.salon.customer.ports.in.ICustomerAdapter;
+import com.spj.salon.customer.ports.in.IRegisterCustomer;
+import com.spj.salon.openapi.endpoint.CustomerApiDelegate;
+import com.spj.salon.openapi.resources.*;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-import com.spj.salon.customer.ports.in.ICustomerAdapter;
-import com.spj.salon.customer.ports.in.IRegisterCustomer;
-import com.spj.salon.openapi.endpoint.CustomerApiDelegate;
-import com.spj.salon.openapi.resources.AuthenticationRequest;
-import com.spj.salon.openapi.resources.AuthenticationResponse;
-import com.spj.salon.openapi.resources.CustomerFavouriteBarberResponse;
-import com.spj.salon.openapi.resources.RegisterCustomerRequest;
-import com.spj.salon.openapi.resources.RegisterCustomerResponse;
-import com.spj.salon.openapi.resources.UpdatePasswordRequest;
-import com.spj.salon.openapi.resources.UpdatePasswordResponse;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Optional;
 
 /**
  * @author Yogesh Sharma
@@ -33,7 +25,7 @@ public class CustomerController implements CustomerApiDelegate {
     private final IRegisterCustomer registerCustomer;
 
     @Override
-    public ResponseEntity<RegisterCustomerResponse> registerCustomer(RegisterCustomerRequest registerCustomerRequest, Optional<String> clientHost) {
+    public ResponseEntity<RegisterCustomerResponse> registerCustomer(RegisterCustomerRequest registerCustomerRequest) {
         log.info("Inside CustomerController registerBarber service");
         return ResponseEntity.ok(registerCustomer.registerCustomer(registerCustomerRequest)
                 .message("Member registered successfully"));
@@ -52,8 +44,8 @@ public class CustomerController implements CustomerApiDelegate {
     }
 
     @Override
-    public ResponseEntity<UpdatePasswordResponse> updatePassword(UpdatePasswordRequest updatePasswordRequest, Optional<String> clientHost) {
+    public ResponseEntity<UpdatePasswordResponse> updatePassword(UpdatePasswordRequest updatePasswordRequest) {
         log.info("Inside UserController authenticate service");
-        return ResponseEntity.ok(customerAdapter.updatePassword(updatePasswordRequest, clientHost.orElse(null)));
+        return ResponseEntity.ok(customerAdapter.updatePassword(updatePasswordRequest));
     }
 }

@@ -25,13 +25,16 @@ public class ServiceConfig {
 	
 	@Value("${spring.mail.port}")
 	private int mailPort;
-	
+
 	@Value("${spj.services.authenticate}")
 	private String authenticateService;
-	
-	@Value("${spj.application.id}")
+
+	@Value("${security.oauth2.client.client-id}")
 	private String applicationId;
-	
-	@Value("${spj.application.password}")
+
+	@Value("${security.oauth2.client.client-secret}")
 	private String applicationPassword;
+
+	@Value("${spj.services.oauthRegister}")
+	private String oauthRegisterUrl;
 }

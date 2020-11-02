@@ -10,7 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 public class TestHaversine {
 
     /*
-     * @Autowired private RestTemplateClient client;
+     * @Autowired private TIMESTAMPTZClient client;
      */
 
     //15220 - long --> -80.036726, Lati --> 40.422284

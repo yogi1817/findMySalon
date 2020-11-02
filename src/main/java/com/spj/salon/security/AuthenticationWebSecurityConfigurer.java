@@ -1,42 +1,33 @@
+/*
 package com.spj.salon.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.spj.salon.security.adapters.CustomBarberDetailsAdapter;
-
-import lombok.RequiredArgsConstructor;
-
+*/
 /**
  * 
  * @author Yogesh Sharma
  *
- */
+ *//*
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class AuthenticationWebSecurityConfigurer extends WebSecurityConfigurerAdapter{
 
-	private final PasswordEncoder passwordEncoder;
-	
-	private final CustomBarberDetailsAdapter userbarberFacade;
-	
-	@Override
-	protected final void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userbarberFacade).passwordEncoder(passwordEncoder);
-	}
-	
-	/**
+	*/
+/**
 	 * This will configure oauth/token service
-	 */
+	 *//*
+
 	@Override
 	@Bean
 	public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -54,4 +45,4 @@ public class AuthenticationWebSecurityConfigurer extends WebSecurityConfigurerAd
 				"/webjars/**",
 				"/actuator/**");
 	}
-}
+}*/
