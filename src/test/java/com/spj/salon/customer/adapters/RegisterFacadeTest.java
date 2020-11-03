@@ -1,9 +1,13 @@
 package com.spj.salon.customer.adapters;
 
-import java.util.Arrays;
-import java.util.Collections;
-
+import com.spj.salon.barber.entities.Authorities;
+import com.spj.salon.barber.repository.AuthoritiesRepository;
+import com.spj.salon.customer.dao.IUserDao;
+import com.spj.salon.customer.entities.User;
 import com.spj.salon.customer.messaging.UserRegisterPublisher;
+import com.spj.salon.customer.repository.UserRepository;
+import com.spj.salon.openapi.resources.*;
+import com.spj.salon.otp.adapters.MyEmailAdapter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,19 +18,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.spj.salon.barber.entities.Authorities;
-import com.spj.salon.barber.repository.AuthoritiesRepository;
-import com.spj.salon.customer.dao.IUserDao;
-import com.spj.salon.customer.entities.User;
-import com.spj.salon.customer.repository.UserRepository;
-import com.spj.salon.openapi.resources.OtpResponse;
-import com.spj.salon.openapi.resources.RegisterBarberRequest;
-import com.spj.salon.openapi.resources.RegisterBarberResponse;
-import com.spj.salon.openapi.resources.RegisterCustomerRequest;
-import com.spj.salon.openapi.resources.RegisterCustomerResponse;
-import com.spj.salon.otp.adapters.MyEmailAdapter;
+import java.util.Arrays;
+import java.util.Collections;
 
 @ExtendWith(MockitoExtension.class)
 class RegisterFacadeTest {

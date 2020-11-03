@@ -1,9 +1,8 @@
 package com.spj.salon;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
-
+import com.spj.salon.configs.EnvironmentConfig;
+import com.spj.salon.configs.ServiceConfig;
+import lombok.RequiredArgsConstructor;
 import org.apache.http.impl.client.HttpClients;
 import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
@@ -11,23 +10,16 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.web.client.RestTemplate;
 
-import com.spj.salon.configs.EnvironmentConfig;
-import com.spj.salon.configs.ServiceConfig;
-import com.spj.salon.interceptor.UserContextInterceptor;
-
-import lombok.RequiredArgsConstructor;
+import java.util.Properties;
 
 @SpringBootApplication
 @EnableResourceServer

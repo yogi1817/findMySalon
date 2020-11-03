@@ -15,10 +15,10 @@ import java.io.Serializable;
 @JsonDeserialize(builder = UserRegisterPayload.UserRegisterPayloadBuilder.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserRegisterPayload implements Serializable {
-    private String email;
-    private String password;
-    private Long authorityId;
-    private boolean updatePasswordRequest;
+    String email;
+    String password;
+    Long authorityId;
+    boolean updatePasswordRequest;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class UserRegisterPayloadBuilder{

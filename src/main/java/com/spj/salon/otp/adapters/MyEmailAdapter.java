@@ -78,7 +78,7 @@ public class MyEmailAdapter implements IMyOtpAdapter {
         log.info("Otp Number : " + otpNumber);
 
         int serverOtp = otpCache.getOtp(emailAddress);
-        if (otpNumber >= 0 && serverOtp >= 0 && otpNumber == serverOtp) {
+        if (serverOtp >= 0 && otpNumber == serverOtp) {
             User user = userRepository.findByEmail(emailAddress);
             user.setVerified(true);
 

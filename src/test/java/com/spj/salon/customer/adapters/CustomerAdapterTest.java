@@ -5,7 +5,10 @@ import com.spj.salon.customer.entities.User;
 import com.spj.salon.customer.messaging.UserRegisterPublisher;
 import com.spj.salon.customer.repository.UserRepository;
 import com.spj.salon.exception.NotFoundCustomException;
-import com.spj.salon.openapi.resources.*;
+import com.spj.salon.openapi.resources.AuthenticationRequest;
+import com.spj.salon.openapi.resources.AuthenticationResponse;
+import com.spj.salon.openapi.resources.UpdatePasswordRequest;
+import com.spj.salon.openapi.resources.UpdatePasswordResponse;
 import com.spj.salon.otp.adapters.OtpCache;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +19,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 class CustomerAdapterTest {

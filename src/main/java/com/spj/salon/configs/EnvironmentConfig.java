@@ -119,6 +119,6 @@ public class EnvironmentConfig {
 	 * @return
 	 */
 	public String getQuotoGuardShieldURL() {
-		return System.getenv("QUOTAGUARDSHIELD_URL");
+		return System.getenv("QUOTAGUARDSTATIC_URL");
 	}
 }

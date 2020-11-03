@@ -132,7 +132,7 @@ public class BarberAdapter implements IBarberAdapter {
 
         User barber = userRepository.findByEmail(email);
 
-        log.info("Barber found DB {}");
+        log.info("Barber found DB {}", barber);
 
         if (barber == null) {
             log.error("Barber not found in DB with email {}", email);

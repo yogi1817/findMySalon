@@ -68,7 +68,7 @@ public class OAuthAdapter implements OAuthClient {
                 .addHeader("Authorization", "Basic " + authStringEnc)
                 .build();
 
-        Map<String, String> token = null;
+        Map<String, String> token;
         Type empMapType = new TypeToken<Map<String, String>>() {
             private static final long serialVersionUID = 1L;
         }

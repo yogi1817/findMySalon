@@ -18,9 +18,9 @@ public class UserContext {
     public static String ORG_ID         = "spj-org-id";
     public static String HOST			= "host";
 	
-    private String correlationId= new String();
-    private String authToken= new String();
-    private String userId = new String();
-    private String orgId = new String();
-    private String host = new String();
+    private String correlationId= "";
+    private String authToken= "";
+    private String userId = "";
+    private String orgId = "";
+    private String host = "";
 }

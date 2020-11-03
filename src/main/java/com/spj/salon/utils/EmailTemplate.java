@@ -25,7 +25,7 @@ public class EmailTemplate {
 	private String loadTemplate(String templateId) throws Exception {
 		ClassLoader classLoader = getClass().getClassLoader();
 		File file = new File(classLoader.getResource(templateId).getFile());
-		String content = "Empty";
+		String content;
 		try {
 			content = new String(Files.readAllBytes(file.toPath()));
 		} catch (IOException e) {
