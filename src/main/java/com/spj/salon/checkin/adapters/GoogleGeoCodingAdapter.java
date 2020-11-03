@@ -40,10 +40,10 @@ public class GoogleGeoCodingAdapter implements GeoCoding {
         String user = userInfo.substring(0, userInfo.indexOf(':'));
         String password = userInfo.substring(userInfo.indexOf(':') + 1);
 
-        System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "false");
-        System.setProperty("jdk.http.auth.proxying.disabledSchemes", "false");
+        System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
+        System.setProperty("jdk.http.auth.proxying.disabledSchemes", "");
 
-        log.debug("System property set");
+        log.info("user, password {} {}", user, password);
         Authenticator.setDefault(new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(user, password.toCharArray());
@@ -53,7 +53,7 @@ public class GoogleGeoCodingAdapter implements GeoCoding {
         Proxy webProxy
                 = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort()));
 
-        log.debug("Web proxy set");
+        log.info("proxyUrl.getHost(), proxyUrl.getPort() {} {}", proxyUrl.getHost(), proxyUrl.getPort());
         String geoCodingUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + addessOrZip + "&key="
                 + envConfig.getGoogleApiKey();
         String responseBody = null;
