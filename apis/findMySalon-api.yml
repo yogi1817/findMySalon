@@ -255,7 +255,7 @@ paths:
                 $ref: '#/components/schemas/UpdatePasswordResponse'
         400:
           description: Bad Request
-  /checkin/barber/{barberId}:
+  /checkin/barber:
     post:
       operationId: checkInCustomerByCustomer
       tags:
@@ -265,9 +265,8 @@ paths:
       security:
         - bearerAuth: [ ]
       parameters:
-        - in: path
+        - in: query
           name: barberId
-          required: true
           schema:
             type: integer
             format: int64
@@ -317,6 +316,22 @@ paths:
           schema:
             type: integer
             format: int64
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BarberWaitTimeResponse'
+  /checkin/barber/waittime:
+    get:
+      operationId: waitTimeEstimateAtBarberForCustomerInOauthHeader
+      tags:
+        - checkIn
+      summary: This api will find the wait time at a Salon for a customer who has a favourite salon.
+      description: This api will find the wait time at a Salon
+      security:
+        - bearerAuth: [ ]
       responses:
         200:
           description: success

@@ -2,6 +2,10 @@ package com.spj.salon.checkin.adapters;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -79,6 +83,36 @@ public class CheckInFacade implements ICheckinFacade {
         return new BarberWaitTimeResponse().waitTime("Unable to find wait-time");
     }
 
+    @Override
+    public BarberWaitTimeResponse waitTimeEstimateAtBarberForCustomerInOauthHeader() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = (String) auth.getPrincipal();
+
+        User user = userRepository.findByEmail(email);
+        if(user.getFavouriteSalonId()==null){
+            return new BarberWaitTimeResponse().salonName("No Favourite Salon Found");
+        }
+
+        List<CheckIn> checkInList = checkInRepository
+                                        .findByUserMappingIdAndCheckedOut(user.getUserId(), false);
+        //TODO: Test it
+        // If someone is already checkin find his remainintg time
+        if(!CollectionUtils.isEmpty(checkInList)){
+            CheckIn checkIn = checkInList.stream().findFirst().get();
+            return new BarberWaitTimeResponse()
+                    .waitTime(""+findTimeLeft(checkIn.getEta(), checkIn.getCreateTimestamp()))
+                    .salonName("Already checked in");
+        }
+        
+        return waitTimeEstimate(userRepository.findByEmail(email).getFavouriteSalonId());
+    }
+
+    private long findTimeLeft(int eta, OffsetDateTime createTimestamp) {
+        OffsetDateTime stop = LocalDateTime.now().atOffset( ZoneOffset.UTC );
+        Duration d = Duration.between(createTimestamp, stop).minusMinutes(eta);
+        return (d.getSeconds()/60);
+    }
+
     /**
      * This method will calculate the checkin time available for a given service
      *
@@ -121,10 +155,19 @@ public class CheckInFacade implements ICheckinFacade {
     }
 
     @Override
-    public CustomerCheckInResponse checkInCustomerByCustomer(long barberId) {
+    public CustomerCheckInResponse checkInCustomerByCustomer(Optional<Long> barberIdOpt) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = (String) auth.getPrincipal();
         User customer = userRepository.findByEmail(email);
+        Long barberId = null;
+
+        if(barberIdOpt.isPresent()){
+            barberId = barberIdOpt.get();
+        }else if(customer.getFavouriteSalonId()!=null){
+            barberId = customer.getFavouriteSalonId();
+        }else{
+            new CustomerCheckInResponse().message("No Favourite Salon Found");
+        }
 
         User barber = userRepository.findByUserId(barberId);
         return checkin(customer, barber);
@@ -292,4 +335,6 @@ public class CheckInFacade implements ICheckinFacade {
 
         zipCodeRepo.saveAndFlush(zipCodeLookup);
     }
+
+
 }

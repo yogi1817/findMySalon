@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
@@ -48,7 +49,7 @@ public class CheckInControllerTest {
     void shouldCheckInByCustomerAndReturnCustomerCheckInResponse() throws Exception {
         doReturn(new CustomerCheckInResponse().message("CheckedIn"))
                 .when(checkInFacade)
-                .checkInCustomerByCustomer(1);
+                .checkInCustomerByCustomer(Optional.of(1L));
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(CHECKIN_BY_USER, 1L)
@@ -60,7 +61,7 @@ public class CheckInControllerTest {
                 .andExpect(MockMvcResultMatchers.content().json(OBJECT_MAPPER.writeValueAsString(new CustomerCheckInResponse().message("CheckedIn"))));
 
         verify(checkInFacade, times(1))
-                .checkInCustomerByCustomer(1);
+                .checkInCustomerByCustomer(Optional.of(1L));
         verifyNoMoreInteractions(checkInFacade);
     }
 

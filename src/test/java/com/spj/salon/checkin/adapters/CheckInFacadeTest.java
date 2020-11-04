@@ -321,7 +321,7 @@ class CheckInFacadeTest {
                 .when(userRepository)
                 .findByUserId(1L);
 
-        Assertions.assertEquals("Unable to Checkin",testSubject.checkInCustomerByCustomer(1L).getMessage());
+        Assertions.assertEquals("Unable to Checkin",testSubject.checkInCustomerByCustomer(Optional.of(1L)).getMessage());
 
         Mockito.verify(userRepository, Mockito.times(1))
                 .findByEmail(customer.getEmail());
@@ -406,7 +406,7 @@ class CheckInFacadeTest {
                 .when(checkInRepository)
                 .saveAndFlush(checkIn);
 
-        Assertions.assertEquals("Check in with waitTime 30",testSubject.checkInCustomerByCustomer(1L).getMessage());
+        Assertions.assertEquals("Check in with waitTime 30",testSubject.checkInCustomerByCustomer(Optional.of(1L)).getMessage());
 
         Mockito.verify(userRepository, Mockito.times(1))
                 .findByEmail(customer.getEmail());
@@ -493,7 +493,7 @@ class CheckInFacadeTest {
                 .when(checkInRepository)
                 .countByUserMappingId(2L);
 
-        Assertions.assertEquals("Customer is already checkedIn",testSubject.checkInCustomerByCustomer(1L).getMessage());
+        Assertions.assertEquals("Customer is already checkedIn",testSubject.checkInCustomerByCustomer(Optional.of(1L)).getMessage());
 
         Mockito.verify(userRepository, Mockito.times(1))
                 .findByEmail(customer.getEmail());
