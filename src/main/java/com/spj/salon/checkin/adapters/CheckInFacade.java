@@ -166,7 +166,7 @@ public class CheckInFacade implements ICheckinFacade {
         }else if(customer.getFavouriteSalonId()!=null){
             barberId = customer.getFavouriteSalonId();
         }else{
-            new CustomerCheckInResponse().message("No Favourite Salon Found");
+            return new CustomerCheckInResponse().message("No Favourite Salon Found");
         }
 
         User barber = userRepository.findByUserId(barberId);
