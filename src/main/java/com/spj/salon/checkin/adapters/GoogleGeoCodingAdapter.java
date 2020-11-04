@@ -41,8 +41,6 @@ public class GoogleGeoCodingAdapter implements GeoCoding {
         String password = userInfo.substring(userInfo.indexOf(':') + 1);
 
         HttpURLConnection webProxyConnection = null;
-        System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
-        System.setProperty("jdk.http.auth.proxying.disabledSchemes", "");
         System.setProperty("http.proxyHost", proxyUrl.getHost());
         System.setProperty("http.proxyPort", Integer.toString(proxyUrl.getPort()));
 

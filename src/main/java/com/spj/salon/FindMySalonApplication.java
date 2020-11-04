@@ -30,6 +30,8 @@ public class FindMySalonApplication {
     private final EnvironmentConfig envConfig;
 
     public static void main(String[] args) {
+        System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
+        System.setProperty("jdk.http.auth.proxying.disabledSchemes", "");
         SpringApplication.run(FindMySalonApplication.class, args);
     }
 
