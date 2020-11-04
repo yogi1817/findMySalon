@@ -28,7 +28,7 @@ public class CheckInControllerTest {
     @Mock
     private ICheckinFacade checkInFacade;
     private MockMvc mockMvc;
-    private static final String CHECKIN_BY_USER = "/checkin/barber/{barberId}";
+    private static final String CHECKIN_BY_USER = "/checkin/barber?barberId={barberId}";
     private static final String CHECKIN_BY_BARBER = "/checkin/customer/{customerId}";
     private static final String BARBER_WAIT_TIME = "/checkin/barber/{barberId}/waittime";
     private static final String CHECKOUT_CUSTOMER_ENDPOINT = "/checkin/customer/checkout?customerId={customerId}";
