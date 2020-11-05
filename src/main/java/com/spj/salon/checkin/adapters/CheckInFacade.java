@@ -96,7 +96,7 @@ public class CheckInFacade implements ICheckinFacade {
         List<CheckIn> checkInList = checkInRepository
                                         .findByUserMappingIdAndCheckedOut(user.getUserId(), false);
         //TODO: Test it
-        // If someone is already checkin find his remainintg time
+        // If someone is already checkin find his remaining time
         if(!CollectionUtils.isEmpty(checkInList)){
             CheckIn checkIn = checkInList.stream().findFirst().get();
             return new BarberWaitTimeResponse()
@@ -308,6 +308,8 @@ public class CheckInFacade implements ICheckinFacade {
                         .phone(user.get().getPhone())
                         .storeName(user.get().getStoreName())
                         .distance((Double) map.get("distance"))
+                        .longitude(longitude)
+                        .latitude(latitude)
                         .waitTime(waitTimeEstimate(barbersAddress.get().getUserId()).getWaitTime());
 
                 barbersWaitTimeResponse.addBarberDetailsItem(barberDetails);

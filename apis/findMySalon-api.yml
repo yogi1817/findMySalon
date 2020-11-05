@@ -777,6 +777,12 @@ components:
           format: double
         waitTime:
           type: string
+        longitude:
+          type: number
+          format: double
+        latitude:
+          type: number
+          format: double
     OtpResponse:
       type: object
       properties:

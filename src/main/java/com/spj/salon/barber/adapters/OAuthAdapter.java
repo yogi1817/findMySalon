@@ -57,7 +57,7 @@ public class OAuthAdapter implements OAuthClient {
 
         RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
                 .addFormDataPart("grant_type", "password")
-                .addFormDataPart("scope", "webclient")
+                .addFormDataPart("scope", "read")
                 .addFormDataPart("username", email)
                 .addFormDataPart("password", password)
                 .build();
