@@ -302,6 +302,7 @@ public class CheckInFacade implements ICheckinFacade {
                         .state(barbersAddress.get().getState())
                         .zip(barbersAddress.get().getZip())
                         .email(user.get().getEmail())
+                        .barberId(user.get().getUserId())
                         .firstName(user.get().getFirstName())
                         .lastName(user.get().getLastName())
                         .middleName(user.get().getMiddleName())

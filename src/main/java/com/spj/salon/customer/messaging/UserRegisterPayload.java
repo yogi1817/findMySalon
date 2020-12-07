@@ -15,7 +15,11 @@ import java.io.Serializable;
 @JsonDeserialize(builder = UserRegisterPayload.UserRegisterPayloadBuilder.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserRegisterPayload implements Serializable {
-    String email;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	String email;
     String password;
     Long authorityId;
     boolean updatePasswordRequest;

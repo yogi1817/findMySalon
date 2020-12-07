@@ -13,6 +13,7 @@ tags:
   - name: customer
   - name: otp
   - name: security
+  - name: devices
 paths:
   /barber/register:
     post:
@@ -481,6 +482,93 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OtpResponse'
+  /devices/deviceType/{nativeDeviceId}:
+    get:
+      operationId: getNativeDeviceInformation
+      tags:
+        - devices
+      summary: Returns application information pertaining to a native device Id
+      parameters:
+        - name: nativeDeviceId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceTypeResponse'
+  /devices/{email}:
+    get:
+      operationId: getAllDevices
+      tags:
+        - devices
+      summary: Gets a list of all user devices associated with a scorecard
+      parameters:
+        - name: email
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceInfoResponse'
+  /devices/{nativeDeviceId}:
+    post:
+      operationId: newRegisterDevice
+      tags:
+        - devices
+      summary: Register or update device details
+      parameters:
+        - name: nativeDeviceId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterDeviceRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterDeviceResponse'
+        '400':
+          description: Bad request to register device to user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterDeviceResponse'
+    delete:
+      operationId: deregisterDevice
+      tags:
+        - devices
+      summary: Handle device de-registration event
+      parameters:
+        - name: nativeDeviceId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad request
+        '404':
+          description: Device not found
 #  /alexa/voice:
 #    post:
 #      operationId: alexaVoiceEntry
@@ -757,6 +845,9 @@ components:
           type: string
         storeName:
           type: string
+        barberId:
+          type: integer
+          format: int64
         email:
           type: string
           format: email
@@ -788,6 +879,127 @@ components:
       properties:
         emailOrPhone:
           type: string
+        message:
+          type: string
+    DeviceInfoResponse:
+      description: Response object
+      type: object
+      properties:
+        devices:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+              nativeDeviceId:
+                type: string
+              deviceTypeId:
+                type: integer
+              deviceModel:
+                type: string
+              gmtOffsetMinutes:
+                type: integer
+              osVersion:
+                type: string
+              pushNotificationsEnabled:
+                type: boolean
+              pushToken:
+                type: string
+              applicationVersion:
+                type: string
+              email:
+                type: string
+              lastLoggedInDate:
+                type: string
+                format: date-time
+              dateAdded:
+                type: string
+                format: date-time
+              dateUpdated:
+                type: string
+                format: date-time
+    DeviceTypeResponse:
+      type: object
+      properties:
+        deviceType:
+          type: integer
+        applicationVersionCode:
+          type: integer
+    AppVersionRequest:
+      type: object
+      properties:
+        device_type:
+          type: integer
+          description: "1 for iOS, 2 for Android"
+          example: 1
+        version_name:
+          type: string
+          example: "4.8.1"
+        version_code:
+          type: integer
+          example: 765
+        effective_date:
+          type: string
+          format: date
+          example: "2020-07-04"
+        release_date:
+          type: string
+          format: date
+          example: "2020-07-04"
+          description: "If this value is not supplied, the value of effective_date will be used"
+      required:
+        - device_type
+        - version_name
+        - version_code
+        - effective_date
+    RegisterDeviceRequest:
+      type: object
+      properties:
+        advertisingOptOut:
+          type: boolean
+        applicationId:
+          type: integer
+        applicationVersion:
+          type: string
+        deviceTypeId:
+          type: integer
+        deviceModel:
+          type: string
+        formFactorId:
+          type: integer
+        gmtOffsetMinutes:
+          type: integer
+        gpsCapable:
+          type: boolean
+        gpsEnabled:
+          type: boolean
+        gpsTrackingCapable:
+          type: boolean
+        gpsTrackingEnabled:
+          type: boolean
+        horizontalResolution:
+          type: integer
+        mobileWalletCapable:
+          type: boolean
+        mobileWalletEnabled:
+          type: boolean
+        osVersion:
+          type: string
+        pushNotificationCapable:
+          type: boolean
+        pushToken:
+          type: string
+        email:
+          type: string
+        timezone:
+          type: string
+        verticalResolution:
+          type: integer
+    RegisterDeviceResponse:
+      type: object
+      properties:
         message:
           type: string
   securitySchemes:

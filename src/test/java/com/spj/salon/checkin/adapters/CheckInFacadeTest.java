@@ -623,13 +623,10 @@ class CheckInFacadeTest {
         double lat1 = barberWaitTimeRequest.getLatitude() - (barberWaitTimeRequest.getDistance() / 69);
         double lat2 = barberWaitTimeRequest.getLatitude() + (barberWaitTimeRequest.getDistance() / 69);
 
-        Mockito.doReturn(new ArrayList())
+        Mockito.doReturn(new ArrayList<Address>())
                 .when(addressRepo)
                 .getBarbersId(barberWaitTimeRequest.getLongitude(), barberWaitTimeRequest.getLatitude(),
                         barberWaitTimeRequest.getDistance(), long1, long2, lat1, lat2);
-
-        BarbersWaitTimeResponse barbersWaitTimeResponse = new BarbersWaitTimeResponse()
-                .message("No Barbers Found within the range");
 
         Assertions.assertEquals("No Barbers Found within the range",
                 testSubject.findBarbersAtZip(barberWaitTimeRequest).getMessage());
@@ -688,9 +685,6 @@ class CheckInFacadeTest {
         Mockito.doReturn(Optional.of(User.builder().email("user2").userId(2L).build()))
                 .when(userRepository)
                 .findById(2L);
-
-        BarbersWaitTimeResponse barbersWaitTimeResponse = new BarbersWaitTimeResponse()
-                .message("No Barbers Found within the range");
 
         Assertions.assertEquals(barberWaitTimeResponse,
                 testSubject.findBarbersAtZip(barberWaitTimeRequest));
