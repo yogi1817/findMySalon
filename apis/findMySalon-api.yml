@@ -770,7 +770,9 @@ components:
         email:
           type: string
           format: email
-        jwtToken:
+        accessToken:
+          type: string
+        refreshToken:
           type: string
     UpdatePasswordRequest:
       type: object

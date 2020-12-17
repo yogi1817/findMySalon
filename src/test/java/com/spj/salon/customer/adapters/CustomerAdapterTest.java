@@ -171,18 +171,19 @@ class CustomerAdapterTest {
 
         AuthenticationResponse expected = new AuthenticationResponse()
                 .email("customer@customer.com")
-                .jwtToken("encryptedPassword");
+                .accessToken("encryptedPassword")
+                .refreshToken("encryptedPassword");
 
-        Mockito.doReturn("encryptedPassword")
+        Mockito.doReturn(expected)
                 .when(oAuthClient)
-                .getJwtToken(authenticationRequest.getEmail(), authenticationRequest.getPassword(), null);
+                .getAuthenticationData(authenticationRequest.getEmail(), authenticationRequest.getPassword(), null);
 
         AuthenticationResponse authenticationResponse = testSubject.getJwtToken(authenticationRequest, null);
 
         Assertions.assertEquals(authenticationResponse, expected);
 
         Mockito.verify(oAuthClient, Mockito.times(1))
-                .getJwtToken(authenticationRequest.getEmail(), authenticationRequest.getPassword(), null);
+                .getAuthenticationData(authenticationRequest.getEmail(), authenticationRequest.getPassword(), null);
         Mockito.verifyNoMoreInteractions(oAuthClient);
     }
 }

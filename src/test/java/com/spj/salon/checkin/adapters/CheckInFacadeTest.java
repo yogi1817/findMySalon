@@ -649,12 +649,18 @@ class CheckInFacadeTest {
                         .addressLineOne("Line One")
                         .distance(5.0)
                         .waitTime("Unable to find wait-time")
-                        .email("user1"))
+                        .email("user1")
+                        .longitude(-80.011957)
+                        .latitude(40.5470947)
+                        .barberId(1L))
                 .addBarberDetailsItem(new BarberDetails()
                         .addressLineOne("Line Two")
                         .distance(8.0)
                         .waitTime("Unable to find wait-time")
-                        .email("user2"));
+                        .email("user2")
+                        .longitude(-80.011957)
+                        .latitude(40.5470947)
+                        .barberId(2L));
 
         double long1 = barberWaitTimeRequest.getLongitude() - barberWaitTimeRequest.getDistance() / Math.abs(Math.cos(Math.toRadians(barberWaitTimeRequest.getLatitude())) * 69);
         double long2 = barberWaitTimeRequest.getLongitude() + barberWaitTimeRequest.getDistance() / Math.abs(Math.cos(Math.toRadians(barberWaitTimeRequest.getLatitude())) * 69);

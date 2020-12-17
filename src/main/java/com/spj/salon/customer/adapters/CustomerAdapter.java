@@ -76,9 +76,8 @@ public class CustomerAdapter implements ICustomerAdapter {
 
     @Override
     public AuthenticationResponse getJwtToken(AuthenticationRequest authenticationRequest, String clientHeader) {
-        return new AuthenticationResponse().email(authenticationRequest.getEmail())
-                .jwtToken(oAuthClient.getJwtToken(authenticationRequest.getEmail(),
-                        authenticationRequest.getPassword(), clientHeader));
+        return oAuthClient.getAuthenticationData(authenticationRequest.getEmail(),
+                        authenticationRequest.getPassword(), clientHeader);
     }
 
     private UpdatePasswordResponse updatePassword(User persistedUser, String password) {

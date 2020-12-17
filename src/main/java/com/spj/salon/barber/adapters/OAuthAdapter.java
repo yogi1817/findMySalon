@@ -6,6 +6,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.spj.salon.openapi.resources.AuthenticationResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.context.annotation.Configuration;
@@ -45,7 +46,7 @@ public class OAuthAdapter implements OAuthClient {
      * @return
      */
     @Override
-    public String getJwtToken(String email, String password, String clientHost) throws OAuth2Exception {
+    public AuthenticationResponse getAuthenticationData(String email, String password, String clientHost) throws OAuth2Exception {
         String authenticateClient = clientHost + serviceConfig.getAuthenticateService();
 
         String authString = serviceConfig.getApplicationId() + ":" + serviceConfig.getApplicationPassword();
@@ -94,6 +95,8 @@ public class OAuthAdapter implements OAuthClient {
         if (token.get("access_token") == null)
             throw new OAuth2Exception(token.toString());
 
-        return token.get("access_token");
-    }
+        return new AuthenticationResponse().email(email)
+                .accessToken(token.get("access_token"))
+                .refreshToken(token.get("refresh_token"));
+        }
 }
