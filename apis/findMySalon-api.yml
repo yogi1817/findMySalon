@@ -232,6 +232,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthenticationResponse'
+  /customer/refresh:
+      post:
+        operationId: refreshCustomer
+        tags:
+          - customer
+        summary: This method returns Outh related data
+        description: This method will return basic user details with jwt token
+        parameters:
+          - in: header
+            name: clientHost
+            schema:
+              type: string
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshRequest'
+        responses:
+          200:
+            description: success
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/AuthenticationResponse'
   /customer/updatepassword:
     post:
       operationId: updatePassword
@@ -764,6 +789,16 @@ components:
       required:
         - email
         - password
+    RefreshRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        refreshToken:
+          type: string
+      required:
+        - refreshToken
     AuthenticationResponse:
       type: object
       properties:

@@ -80,6 +80,11 @@ public class CustomerAdapter implements ICustomerAdapter {
                         authenticationRequest.getPassword(), clientHeader);
     }
 
+    @Override
+    public AuthenticationResponse getRefreshToken(RefreshRequest refreshRequest, String clientHost) {
+        return oAuthClient.getRefreshToken(refreshRequest.getRefreshToken(), refreshRequest.getEmail(), clientHost);
+    }
+
     private UpdatePasswordResponse updatePassword(User persistedUser, String password) {
         userRegisterPublisher.sendUserRegisterDetails(UserRegisterPayload.builder()
                 .email(persistedUser.getEmail())

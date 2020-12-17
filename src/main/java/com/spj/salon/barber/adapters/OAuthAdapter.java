@@ -47,6 +47,28 @@ public class OAuthAdapter implements OAuthClient {
      */
     @Override
     public AuthenticationResponse getAuthenticationData(String email, String password, String clientHost) throws OAuth2Exception {
+        RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                .addFormDataPart("grant_type", "password")
+                .addFormDataPart("scope", "read")
+                .addFormDataPart("username", email)
+                .addFormDataPart("password", password)
+                .build();
+
+        return getAuthData(clientHost, body, email);
+    }
+
+    @Override
+    public AuthenticationResponse getRefreshToken(String refreshToken, String email, String clientHost) throws OAuth2Exception {
+        RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                .addFormDataPart("grant_type", "refresh_token")
+                .addFormDataPart("scope", "read")
+                .addFormDataPart("refresh_token", refreshToken)
+                .build();
+
+        return getAuthData(clientHost, body, email);
+    }
+
+    private AuthenticationResponse getAuthData(String clientHost, RequestBody body, String email){
         String authenticateClient = clientHost + serviceConfig.getAuthenticateService();
 
         String authString = serviceConfig.getApplicationId() + ":" + serviceConfig.getApplicationPassword();
@@ -54,13 +76,6 @@ public class OAuthAdapter implements OAuthClient {
         String authStringEnc = new String(authEncBytes);
 
         OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
-
-        RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
-                .addFormDataPart("grant_type", "password")
-                .addFormDataPart("scope", "read")
-                .addFormDataPart("username", email)
-                .addFormDataPart("password", password)
                 .build();
 
         Request request = new Request.Builder()
@@ -95,8 +110,12 @@ public class OAuthAdapter implements OAuthClient {
         if (token.get("access_token") == null)
             throw new OAuth2Exception(token.toString());
 
-        return new AuthenticationResponse().email(email)
+        if(!email.equals(token.get("email")))
+            throw new OAuth2Exception("Invalid email passed");
+
+        return new AuthenticationResponse()
                 .accessToken(token.get("access_token"))
-                .refreshToken(token.get("refresh_token"));
-        }
+                .refreshToken(token.get("refresh_token"))
+                .email(email);
+    }
 }

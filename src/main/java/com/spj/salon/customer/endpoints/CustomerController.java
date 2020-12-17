@@ -44,6 +44,11 @@ public class CustomerController implements CustomerApiDelegate {
     }
 
     @Override
+    public ResponseEntity<AuthenticationResponse> refreshCustomer(RefreshRequest refreshRequest, Optional<String> clientHost) {
+        return ResponseEntity.ok(customerAdapter.getRefreshToken(refreshRequest, clientHost.orElse(null)));
+    }
+
+    @Override
     public ResponseEntity<UpdatePasswordResponse> updatePassword(UpdatePasswordRequest updatePasswordRequest) {
         log.info("Inside UserController authenticate service");
         return ResponseEntity.ok(customerAdapter.updatePassword(updatePasswordRequest));

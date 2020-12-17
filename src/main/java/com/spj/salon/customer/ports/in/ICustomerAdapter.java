@@ -1,10 +1,6 @@
 package com.spj.salon.customer.ports.in;
 
-import com.spj.salon.openapi.resources.AuthenticationRequest;
-import com.spj.salon.openapi.resources.AuthenticationResponse;
-import com.spj.salon.openapi.resources.CustomerFavouriteBarberResponse;
-import com.spj.salon.openapi.resources.UpdatePasswordRequest;
-import com.spj.salon.openapi.resources.UpdatePasswordResponse;
+import com.spj.salon.openapi.resources.*;
 
 /**
  *
@@ -16,4 +12,5 @@ public interface ICustomerAdapter {
 	CustomerFavouriteBarberResponse addFavouriteSalon(Long userId);
 	UpdatePasswordResponse updatePassword(UpdatePasswordRequest user);
 	AuthenticationResponse getJwtToken(AuthenticationRequest authenticationRequest, String clientHost);
+	AuthenticationResponse getRefreshToken(RefreshRequest refreshRequest, String clientHost);
 }
