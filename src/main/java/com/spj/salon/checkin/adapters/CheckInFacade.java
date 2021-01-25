@@ -309,8 +309,8 @@ public class CheckInFacade implements ICheckinFacade {
                         .phone(user.get().getPhone())
                         .storeName(user.get().getStoreName())
                         .distance((Double) map.get("distance"))
-                        .longitude(longitude)
-                        .latitude(latitude)
+                        .longitude(barbersAddress.get().getLongitude())
+                        .latitude(barbersAddress.get().getLatitude())
                         .waitTime(waitTimeEstimate(barbersAddress.get().getUserId()).getWaitTime());
 
                 barbersWaitTimeResponse.addBarberDetailsItem(barberDetails);
