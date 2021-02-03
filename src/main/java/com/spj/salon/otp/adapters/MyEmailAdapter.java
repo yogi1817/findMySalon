@@ -51,7 +51,7 @@ public class MyEmailAdapter implements IMyOtpAdapter {
     public OtpResponse sendOtpMessage(String email) {
         User user = userRepository.findByEmail(email);
         if (user == null)
-            return new OtpResponse().message("User not found" + email).emailOrPhone(email);
+            return new OtpResponse().message("User not found " + email).emailOrPhone(email);
         return sendEMail(user);
     }
 

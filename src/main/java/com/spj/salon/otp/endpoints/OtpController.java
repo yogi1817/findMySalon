@@ -40,12 +40,20 @@ public class OtpController implements OtpApiDelegate {
     @Override
     public ResponseEntity<OtpResponse> generateOtpOnEmailOrPhonePrePassword(Optional<String> email, Optional<String> phone) {
         log.info("Inside OtpController calling generateOtpOnEmailOrPhonePrePassword");
+        OtpResponse otpResponse = null;
         if (email.isPresent()) {
-            return ResponseEntity.ok(myEmailService.sendOtpMessage(email.get()));
+            otpResponse = myEmailService.sendOtpMessage(email.get());
+            //return ResponseEntity.ok(myEmailService.sendOtpMessage(email.get()));
         } else if (phone.isPresent()) {
-            return ResponseEntity.ok(myMobileService.sendOtpMessage(phone.get()));
+            otpResponse = myMobileService.sendOtpMessage(phone.get());
+            //return ResponseEntity.ok(myMobileService.sendOtpMessage(phone.get()));
         }
-        return ResponseEntity.badRequest().body(new OtpResponse().message("Phone number or email is required"));
+
+        if("Otp sent".equals(otpResponse.getMessage())){
+            return ResponseEntity.ok(otpResponse);
+        }else{
+            return ResponseEntity.badRequest().body(new OtpResponse().message("Invalid email or phone number"));
+        }
     }
 
     @Override
