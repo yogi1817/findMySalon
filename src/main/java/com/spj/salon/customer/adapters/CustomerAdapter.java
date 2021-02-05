@@ -89,6 +89,8 @@ public class CustomerAdapter implements ICustomerAdapter {
         userRegisterPublisher.sendUserRegisterDetails(UserRegisterPayload.builder()
                 .email(persistedUser.getEmail())
                 .password(password)
+                .updatePasswordRequest(true)
+                .authorityId(persistedUser.getAuthorityId())
                 .build());
 
         return new UpdatePasswordResponse()
