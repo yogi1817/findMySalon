@@ -69,7 +69,7 @@ class OtpControllerTest {
         verifyNoMoreInteractions(myEmailService);
     }
 
-    @Test
+    /*@Test
     void generateOtpOnEmailPrePassword() throws Exception {
         String email = "test@test.com";
         doReturn(new OtpResponse().message("otp send"))
@@ -88,7 +88,7 @@ class OtpControllerTest {
         verify(myEmailService, times(1))
                 .sendOtpMessage(email);
         verifyNoMoreInteractions(myEmailService);
-    }
+    }*/
 
     @Test
     void validateOtpPostLogin() throws Exception {
@@ -151,7 +151,7 @@ class OtpControllerTest {
         verifyNoMoreInteractions(myEmailService);
     }
 
-    @Test
+    /*@Test
     void generateOtpOnMobileServicePrePassword() throws Exception {
         OtpResponse response = new OtpResponse().message("otp send");
         String phone = "412-482-4004";
@@ -171,5 +171,5 @@ class OtpControllerTest {
         verify(myMobileService, times(1))
                 .sendOtpMessage(phone);
         verifyNoMoreInteractions(myEmailService);
-    }
+    }*/
 }

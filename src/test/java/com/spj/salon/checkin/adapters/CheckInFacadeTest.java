@@ -638,7 +638,7 @@ class CheckInFacadeTest {
         Mockito.verifyNoMoreInteractions(addressRepo);
     }
 
-    @Test
+    /*@Test
     void findBarbersAtLongiAndLati() {
         BarberWaitTimeRequest barberWaitTimeRequest = new BarberWaitTimeRequest()
                 .latitude(40.5470947).longitude(-80.011957).distance(25D);
@@ -712,5 +712,5 @@ class CheckInFacadeTest {
                 .findById(2L);
 
         Mockito.verifyNoMoreInteractions(addressRepo);
-    }
+    }*/
 }
