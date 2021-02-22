@@ -918,6 +918,8 @@ components:
           type: string
         message:
           type: string
+        verified:
+          type: boolean
     DeviceInfoResponse:
       description: Response object
       type: object

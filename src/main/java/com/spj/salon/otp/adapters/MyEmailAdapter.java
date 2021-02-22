@@ -37,7 +37,7 @@ public class MyEmailAdapter implements IMyOtpAdapter {
         User user = userRepository.findByEmail(email);
         if (user == null) {
             log.error("No OTP send because user does not exists for email {}", email);
-            return new OtpResponse().message("User does not Exists").emailOrPhone(email);
+            return new OtpResponse().message("User does not Exists").emailOrPhone(email).verified(false);
         }
         return sendEMail(user);
     }
@@ -51,7 +51,7 @@ public class MyEmailAdapter implements IMyOtpAdapter {
     public OtpResponse sendOtpMessage(String email) {
         User user = userRepository.findByEmail(email);
         if (user == null)
-            return new OtpResponse().message("User not found " + email).emailOrPhone(email);
+            return new OtpResponse().message("User not found " + email).emailOrPhone(email).verified(false);
         return sendEMail(user);
     }
 
@@ -86,12 +86,14 @@ public class MyEmailAdapter implements IMyOtpAdapter {
             otpCache.clearOTP(emailAddress);
             return new OtpResponse()
                     .message("Entered Otp is valid")
-                    .emailOrPhone(emailAddress);
+                    .emailOrPhone(emailAddress)
+                    .verified(true);
         }
 
         return new OtpResponse()
                 .message("Entered Otp is NOT valid. Please Retry!")
-                .emailOrPhone(emailAddress);
+                .emailOrPhone(emailAddress)
+                .verified(false);
     }
     /**
      * This method send ane meail to the email id.
@@ -116,6 +118,6 @@ public class MyEmailAdapter implements IMyOtpAdapter {
 
         // Uncomment to send mail
         javaMailSender.send(simpleMailMessage);
-        return new OtpResponse().emailOrPhone(user.getEmail()).message("Otp sent");
+        return new OtpResponse().emailOrPhone(user.getEmail()).message("Otp sent").verified(false);
     }
 }

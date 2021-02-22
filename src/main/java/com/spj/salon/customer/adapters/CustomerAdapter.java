@@ -9,8 +9,10 @@ import com.spj.salon.customer.repository.UserRepository;
 import com.spj.salon.exception.NotFoundCustomException;
 import com.spj.salon.openapi.resources.*;
 import com.spj.salon.otp.adapters.OtpCache;
+import com.spj.salon.otp.ports.in.IMyOtpAdapter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -23,7 +25,8 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class CustomerAdapter implements ICustomerAdapter {
 
-    private final OtpCache otpCache;
+    @Qualifier("emailOtp")
+    private final IMyOtpAdapter myEmailService;
     private final UserRegisterPublisher userRegisterPublisher;
     private final OAuthClient oAuthClient;
     private final UserRepository userRepository;
@@ -66,11 +69,12 @@ public class CustomerAdapter implements ICustomerAdapter {
             throw new NotFoundCustomException("No user found", "");
         }
 
-        if (updatePasswordRequest.getOtpNumber() != otpCache.getOtp(persistedUser.getEmail())) {
+        if(myEmailService.validateOtpPreLogin(updatePasswordRequest.getOtpNumber(),
+                updatePasswordRequest.getEmail()).getVerified()){
+            return updatePassword(persistedUser, updatePasswordRequest.getNewPassword());
+        }else{
             log.info("Invalid OTP for user {}", updatePasswordRequest);
             throw new NotFoundCustomException("Invalid OTP", "");
-        } else {
-            return updatePassword(persistedUser, updatePasswordRequest.getNewPassword());
         }
     }
 

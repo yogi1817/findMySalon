@@ -38,7 +38,9 @@ public class MyMobileAdapter implements IMyOtpAdapter {
 
         if (StringUtils.isEmpty(user.getPhone())) {
             log.error("Cannot send OTP, no phone number found for user {}", email);
-            return new OtpResponse().emailOrPhone(email).message("No phone number found for user " + user.getEmail() + "Please add valid phone number");
+            return new OtpResponse().emailOrPhone(email)
+                    .verified(false)
+                    .message("No phone number found for user " + user.getEmail() + "Please add valid phone number");
         }
 
         return sendOtp(user);
@@ -59,7 +61,9 @@ public class MyMobileAdapter implements IMyOtpAdapter {
                 .create();
 
         log.debug("message sent {}", textMessage.getSid());
-        return new OtpResponse().emailOrPhone(user.getPhone()).message("message sent");
+        return new OtpResponse().emailOrPhone(user.getPhone())
+                .verified(false)
+                .message("message sent");
     }
 
     @Override
@@ -68,7 +72,9 @@ public class MyMobileAdapter implements IMyOtpAdapter {
         log.info("User {} with phone number {}", user, phoneNumber);
 
         if (user == null) {
-            return new OtpResponse().emailOrPhone(phoneNumber).message("User not found" + phoneNumber);
+            return new OtpResponse().emailOrPhone(phoneNumber)
+                    .verified(false)
+                    .message("User not found" + phoneNumber);
         }
         return sendOtp(user);
     }
