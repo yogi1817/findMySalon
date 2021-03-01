@@ -2,13 +2,12 @@ package com.spj.salon.customer.adapters;
 
 import com.spj.salon.barber.ports.out.OAuthClient;
 import com.spj.salon.customer.entities.User;
-import com.spj.salon.customer.messaging.UserRegisterPublisher;
 import com.spj.salon.customer.messaging.UserRegisterPayload;
+import com.spj.salon.customer.messaging.UserRegisterPublisher;
 import com.spj.salon.customer.ports.in.ICustomerAdapter;
 import com.spj.salon.customer.repository.UserRepository;
 import com.spj.salon.exception.NotFoundCustomException;
 import com.spj.salon.openapi.resources.*;
-import com.spj.salon.otp.adapters.OtpCache;
 import com.spj.salon.otp.ports.in.IMyOtpAdapter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -80,7 +79,7 @@ public class CustomerAdapter implements ICustomerAdapter {
 
     @Override
     public AuthenticationResponse getJwtToken(AuthenticationRequest authenticationRequest, String clientHeader) {
-        return oAuthClient.getAuthenticationData(authenticationRequest.getEmail(),
+        return oAuthClient.getAuthenticationData(authenticationRequest.getEmail().toLowerCase(),
                         authenticationRequest.getPassword(), clientHeader);
     }
 
@@ -91,7 +90,7 @@ public class CustomerAdapter implements ICustomerAdapter {
 
     private UpdatePasswordResponse updatePassword(User persistedUser, String password) {
         userRegisterPublisher.sendUserRegisterDetails(UserRegisterPayload.builder()
-                .email(persistedUser.getEmail())
+                .email(persistedUser.getEmail().toLowerCase())
                 .password(password)
                 .updatePasswordRequest(true)
                 .authorityId(persistedUser.getAuthorityId())

@@ -5,8 +5,13 @@ import com.spj.salon.openapi.resources.RegisterBarberRequest;
 import com.spj.salon.openapi.resources.RegisterBarberResponse;
 import com.spj.salon.openapi.resources.RegisterCustomerRequest;
 import com.spj.salon.openapi.resources.RegisterCustomerResponse;
-import org.mapstruct.Mapper;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.Locale;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface RegisterMapper {
@@ -14,7 +19,13 @@ public interface RegisterMapper {
 
     RegisterCustomerResponse toResponse(User register);
 
+    @Mapping(source = "email", target = "email", qualifiedByName = "toLowerCase" )
     User toEntity(RegisterBarberRequest registerBarberRequest);
 
     RegisterBarberResponse toBarberResponse(User register);
+
+    @Named("toLowerCase")
+    public static String toLowerCase(String email) {
+        return email.toLowerCase();
+    }
 }
