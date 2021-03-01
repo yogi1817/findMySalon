@@ -42,7 +42,7 @@ public class OtpController implements OtpApiDelegate {
         log.info("Inside OtpController calling generateOtpOnEmailOrPhonePrePassword");
         OtpResponse otpResponse = null;
         if (email.isPresent()) {
-            otpResponse = myEmailService.sendOtpMessage(email.get());
+            otpResponse = myEmailService.sendOtpMessage(email.get().toLowerCase());
             //return ResponseEntity.ok(myEmailService.sendOtpMessage(email.get()));
         } else if (phone.isPresent()) {
             otpResponse = myMobileService.sendOtpMessage(phone.get());
@@ -65,6 +65,6 @@ public class OtpController implements OtpApiDelegate {
     @Override
     public ResponseEntity<OtpResponse> validateOtpPreLogin(Integer otpNumber, String emailAddress) {
         log.info("Inside OtpController calling validateOtp");
-        return ResponseEntity.ok(myEmailService.validateOtpPreLogin(otpNumber, emailAddress));
+        return ResponseEntity.ok(myEmailService.validateOtpPreLogin(otpNumber, emailAddress.toLowerCase()));
     }
 }
