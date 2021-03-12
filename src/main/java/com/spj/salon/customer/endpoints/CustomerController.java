@@ -53,4 +53,10 @@ public class CustomerController implements CustomerApiDelegate {
         log.info("Inside UserController authenticate service");
         return ResponseEntity.ok(customerAdapter.updatePassword(updatePasswordRequest));
     }
+
+    @Override
+    public ResponseEntity<CustomerProfile> getCustomerProfile() {
+        log.info("Inside getCustomerProfile service");
+        return ResponseEntity.ok(customerAdapter.getCustomerProfile());
+    }
 }

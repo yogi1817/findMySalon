@@ -99,4 +99,24 @@ public class CustomerAdapter implements ICustomerAdapter {
         return new UpdatePasswordResponse()
                 .message("Password changed successfully");
     }
+
+    @Override
+    public CustomerProfile getCustomerProfile() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = (String) auth.getPrincipal();
+
+        User customer = userRepository.findByEmail(email);
+        if(customer==null){
+            throw new NotFoundCustomException("User Not Found", email);
+        }
+        CustomerProfile customerProfile = new CustomerProfile()
+                .email(email)
+                .firstName(customer.getFirstName())
+                .lastName(customer.getLastName())
+                .phone(customer.getPhone())
+                .verified(customer.isVerified())
+                .favouriteSalonId(customer.getFavouriteSalonId());
+
+        return customerProfile;
+    }
 }

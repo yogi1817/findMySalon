@@ -13,4 +13,5 @@ public interface ICustomerAdapter {
 	UpdatePasswordResponse updatePassword(UpdatePasswordRequest user);
 	AuthenticationResponse getJwtToken(AuthenticationRequest authenticationRequest, String clientHost);
 	AuthenticationResponse getRefreshToken(RefreshRequest refreshRequest, String clientHost);
+    CustomerProfile getCustomerProfile();
 }
