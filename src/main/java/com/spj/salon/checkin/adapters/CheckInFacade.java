@@ -2,10 +2,7 @@ package com.spj.salon.checkin.adapters;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -14,6 +11,8 @@ import java.util.stream.Collectors;
 
 import javax.naming.ServiceUnavailableException;
 
+import com.spj.salon.exception.DuplicateEntityException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -41,6 +40,7 @@ import com.spj.salon.utils.DateUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * @author Yogesh Sharma
@@ -84,6 +84,18 @@ public class CheckInFacade implements ICheckinFacade {
     }
 
     @Override
+    public CheckIn findCheckedInBarberId(long customerId) {
+        List<CheckIn> checkInList = checkInRepository
+                .findByUserMappingIdAndCheckedOutAndCreateDate(customerId, false, LocalDate.now());
+
+        if(!CollectionUtils.isEmpty(checkInList)) {
+            return checkInList.stream().findFirst().get();
+        }
+
+        return null;
+    }
+
+    @Override
     public BarberWaitTimeResponse waitTimeEstimateAtBarberForCustomerInOauthHeader() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = (String) auth.getPrincipal();
@@ -93,17 +105,16 @@ public class CheckInFacade implements ICheckinFacade {
             return new BarberWaitTimeResponse().salonName("No Favourite Salon Found");
         }
 
-        List<CheckIn> checkInList = checkInRepository
-                                        .findByUserMappingIdAndCheckedOut(user.getUserId(), false);
         //TODO: Test it
         // If someone is already checkin find his remaining time
-        if(!CollectionUtils.isEmpty(checkInList)){
-            CheckIn checkIn = checkInList.stream().findFirst().get();
+
+        CheckIn checkIn = findCheckedInBarberId(user.getUserId());
+        if(checkIn!=null){
             return new BarberWaitTimeResponse()
                     .waitTime(""+findTimeLeft(checkIn.getEta(), checkIn.getCreateTimestamp()))
                     .salonName("Already checked in");
         }
-        
+
         return waitTimeEstimate(userRepository.findByEmail(email).getFavouriteSalonId());
     }
 
@@ -170,7 +181,7 @@ public class CheckInFacade implements ICheckinFacade {
         }
 
         User barber = userRepository.findByUserId(barberId);
-        return checkin(customer, barber);
+        return checkin(customer, barber, customer.getUserId());
     }
 
     @Override
@@ -181,20 +192,24 @@ public class CheckInFacade implements ICheckinFacade {
 
         User customer = userRepository.findByUserId(userId);
 
-        return checkin(customer, barber);
+        return checkin(customer, barber, barber.getUserId());
     }
 
-    private CustomerCheckInResponse checkin(User customer, User barber) {
+    @Override
+    public boolean isUserAlreadyCheckedIn(long userId) {
+        return checkInRepository.countByUserMappingIdAndCheckedOutAndCreateDate(userId, false, LocalDate.now()) > 0;
+    }
+
+    private CustomerCheckInResponse checkin(User customer, User barber, long updatedBy) {
         String waitTimeEstimate = waitTimeEstimate(barber.getUserId()).getWaitTime();
 
         try {
             int waitTime = Integer.parseInt(waitTimeEstimate);
-            if (checkInRepository.countByUserMappingId(customer.getUserId()) > 0) {
-                return new CustomerCheckInResponse().message("Customer is already checkedIn")
-                        .customerId(customer.getEmail());
+            if (isUserAlreadyCheckedIn(customer.getUserId())) {
+                throw new DuplicateEntityException("Customer is already checkedIn", customer.getEmail());
             }
 
-            CheckIn checkIn = new CheckIn(barber.getUserId(), customer.getUserId(), waitTime);
+            CheckIn checkIn = new CheckIn(barber.getUserId(), customer.getUserId(), waitTime, updatedBy);
             checkInRepository.saveAndFlush(checkIn);
             return new CustomerCheckInResponse().message("Check in with waitTime " + waitTime)
                     .customerId(customer.getEmail());
@@ -205,16 +220,19 @@ public class CheckInFacade implements ICheckinFacade {
     }
 
     @Override
-    public CustomerCheckoutResponse checkOut(long userId) {
-        checkInRepository.findByUserMappingIdAndCheckedOut(userId, false)
+    public CustomerCheckoutResponse checkOut(long userId, long checkedOutBy) {
+        checkInRepository.findByUserMappingIdAndCheckedOutAndCreateDate(userId, false, LocalDate.now())
                 .stream()
-                .peek(this::checkOut);
+                .peek(checkIn -> {
+                    checkOut(checkIn, checkedOutBy);
+                });
 
         return new CustomerCheckoutResponse().message("Customer has been checked out");
     }
 
-    private void checkOut(CheckIn checkIn) {
+    private void checkOut(CheckIn checkIn, long checkOutBy) {
         checkIn.setCheckedOut(true);
+        checkIn.setUpdatedBy(checkOutBy);
         checkInRepository.saveAndFlush(checkIn);
     }
 

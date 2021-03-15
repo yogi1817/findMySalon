@@ -1,6 +1,8 @@
 package com.spj.salon.customer.adapters;
 
 import com.spj.salon.barber.ports.out.OAuthClient;
+import com.spj.salon.checkin.adapters.ICheckinFacade;
+import com.spj.salon.checkin.entities.CheckIn;
 import com.spj.salon.customer.entities.User;
 import com.spj.salon.customer.messaging.UserRegisterPayload;
 import com.spj.salon.customer.messaging.UserRegisterPublisher;
@@ -29,6 +31,7 @@ public class CustomerAdapter implements ICustomerAdapter {
     private final UserRegisterPublisher userRegisterPublisher;
     private final OAuthClient oAuthClient;
     private final UserRepository userRepository;
+    private final ICheckinFacade iCheckinFacade;
 
     @Override
     public CustomerFavouriteBarberResponse addFavouriteSalon(Long barberId) {
@@ -109,12 +112,16 @@ public class CustomerAdapter implements ICustomerAdapter {
         if(customer==null){
             throw new NotFoundCustomException("User Not Found", email);
         }
+
+        CheckIn checkIn = iCheckinFacade.findCheckedInBarberId(customer.getUserId());
+
         CustomerProfile customerProfile = new CustomerProfile()
                 .email(email)
                 .firstName(customer.getFirstName())
                 .lastName(customer.getLastName())
                 .phone(customer.getPhone())
                 .verified(customer.isVerified())
+                .checkedInBarberId(checkIn==null? -1: checkIn.getBarberMappingId())
                 .favouriteSalonId(customer.getFavouriteSalonId());
 
         return customerProfile;

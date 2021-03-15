@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.spj.salon.interceptor.UserContextHolder;
@@ -33,5 +34,12 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(),
 				request.getDescription(false), UserContextHolder.getContext().getCorrelationId());
 	  return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(DuplicateEntityException.class)
+	public final ResponseEntity<ErrorDetails> handleResponseStatusException(Exception ex, WebRequest request) {
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(),
+				request.getDescription(false), UserContextHolder.getContext().getCorrelationId());
+		return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
 	}
 }

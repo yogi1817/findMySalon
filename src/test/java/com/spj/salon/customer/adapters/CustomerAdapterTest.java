@@ -1,6 +1,7 @@
 package com.spj.salon.customer.adapters;
 
 import com.spj.salon.barber.ports.out.OAuthClient;
+import com.spj.salon.checkin.adapters.ICheckinFacade;
 import com.spj.salon.customer.entities.User;
 import com.spj.salon.customer.messaging.UserRegisterPublisher;
 import com.spj.salon.customer.repository.UserRepository;
@@ -34,13 +35,15 @@ class CustomerAdapterTest {
     private OAuthClient oAuthClient;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private ICheckinFacade iCheckinFacade;
 
     @BeforeEach
     void setUp() {
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(user.getEmail(), "encryptedPassword"));
 
-        testSubject = new CustomerAdapter(iMyOtpAdapter, userRegisterPublisher, oAuthClient, userRepository);
+        testSubject = new CustomerAdapter(iMyOtpAdapter, userRegisterPublisher, oAuthClient, userRepository, iCheckinFacade);
     }
 
     final User user = User.builder()

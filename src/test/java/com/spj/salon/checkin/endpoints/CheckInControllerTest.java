@@ -109,7 +109,7 @@ public class CheckInControllerTest {
     void shouldCheckOutUserFromBarberAndReturnCustomerCheckoutResponse() throws Exception {
         doReturn(new CustomerCheckoutResponse().message("checkout"))
                 .when(checkInFacade)
-                .checkOut(1);
+                .checkOut(1l, 1L);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(CHECKOUT_CUSTOMER_ENDPOINT, 1L)
@@ -121,7 +121,7 @@ public class CheckInControllerTest {
                 .andExpect(MockMvcResultMatchers.content().json(OBJECT_MAPPER.writeValueAsString(new CustomerCheckoutResponse().message("checkout"))));
 
         verify(checkInFacade, times(1))
-                .checkOut(1);
+                .checkOut(1L, 1L);
         verifyNoMoreInteractions(checkInFacade);
     }
 

@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 /**
@@ -26,12 +27,13 @@ public class CheckIn implements Serializable {
      */
     private static final long serialVersionUID = -2071110993378978999L;
 
-    public CheckIn(Long barberId, Long userId, int time) {
+    public CheckIn(Long barberId, Long userId, int time, Long updatedBy) {
         this.barberMappingId = barberId;
         this.eta = time;
         this.userMappingId = userId;
         this.description = "";
         this.checkedOut = false;
+        this.updatedBy = updatedBy;
     }
 
     @Id
@@ -50,8 +52,12 @@ public class CheckIn implements Serializable {
 
     @CreationTimestamp
     private OffsetDateTime createTimestamp;
+
+    @CreationTimestamp
+    private LocalDate createDate;
     private int eta;
     private String description;
 
     private boolean checkedOut;
+    private Long updatedBy;
 }

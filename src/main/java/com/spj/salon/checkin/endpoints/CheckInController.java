@@ -43,7 +43,7 @@ public class CheckInController implements CheckInApiDelegate {
     @Override
     public ResponseEntity<CustomerCheckoutResponse> checkOutCustomer(Long customerId) {
         log.info("Inside CheckInController checkOut service");
-        return ResponseEntity.ok(checkInFacade.checkOut(customerId));
+        return ResponseEntity.ok(checkInFacade.checkOut(customerId, customerId));
     }
 
     @Override

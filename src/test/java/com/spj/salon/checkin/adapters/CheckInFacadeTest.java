@@ -1,6 +1,7 @@
 package com.spj.salon.checkin.adapters;
 
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.*;
 
 import com.spj.salon.barber.entities.Address;
@@ -398,9 +399,9 @@ class CheckInFacadeTest {
 
         Mockito.doReturn(0)
                 .when(checkInRepository)
-                .countByUserMappingId(2L);
+                .countByUserMappingIdAndCheckedOutAndCreateDate(2L, false, LocalDate.now());
 
-        CheckIn checkIn = new CheckIn(1L, 2L, 30);
+        CheckIn checkIn = new CheckIn(1L, 2L, 30, 2L);
 
         Mockito.doReturn(checkIn)
                 .when(checkInRepository)
@@ -412,7 +413,7 @@ class CheckInFacadeTest {
                 .findByEmail(customer.getEmail());
 
         Mockito.verify(checkInRepository, Mockito.times(1))
-                .countByUserMappingId(2L);
+                .countByUserMappingIdAndCheckedOutAndCreateDate(2L, false, LocalDate.now());
 
         Mockito.verify(checkInRepository, Mockito.times(1))
                 .saveAndFlush(checkIn);
@@ -491,7 +492,7 @@ class CheckInFacadeTest {
 
         Mockito.doReturn(1)
                 .when(checkInRepository)
-                .countByUserMappingId(2L);
+                .countByUserMappingIdAndCheckedOutAndCreateDate(2L, false, LocalDate.now());
 
         Assertions.assertEquals("Customer is already checkedIn",testSubject.checkInCustomerByCustomer(Optional.of(1L)).getMessage());
 
@@ -499,7 +500,7 @@ class CheckInFacadeTest {
                 .findByEmail(customer.getEmail());
 
         Mockito.verify(checkInRepository, Mockito.times(1))
-                .countByUserMappingId(2L);
+                .countByUserMappingIdAndCheckedOutAndCreateDate(2L, false, LocalDate.now());
 
         Mockito.verifyNoMoreInteractions(userRepository);
 
@@ -575,9 +576,9 @@ class CheckInFacadeTest {
 
         Mockito.doReturn(0)
                 .when(checkInRepository)
-                .countByUserMappingId(1L);
+                .countByUserMappingIdAndCheckedOutAndCreateDate(1L, false, LocalDate.now());
 
-        CheckIn checkIn = new CheckIn(2L, 1L, 30);
+        CheckIn checkIn = new CheckIn(2L, 1L, 30, 2L);
 
         Mockito.doReturn(checkIn)
                 .when(checkInRepository)
@@ -589,7 +590,7 @@ class CheckInFacadeTest {
                 .findByEmail(customer.getEmail());
 
         Mockito.verify(checkInRepository, Mockito.times(1))
-                .countByUserMappingId(1L);
+                .countByUserMappingIdAndCheckedOutAndCreateDate(1L, false, LocalDate.now());
 
         Mockito.verify(checkInRepository, Mockito.times(1))
                 .saveAndFlush(checkIn);
@@ -603,12 +604,12 @@ class CheckInFacadeTest {
     void checkOutNoUsers() {
         Mockito.doReturn(Arrays.asList(CheckIn.builder().build()))
                 .when(checkInRepository)
-                .findByUserMappingIdAndCheckedOut(1L, false);
+                .findByUserMappingIdAndCheckedOutAndCreateDate(1L, false, LocalDate.now());
 
-        Assertions.assertEquals("Customer has been checked out", testSubject.checkOut(1L).getMessage());
+        Assertions.assertEquals("Customer has been checked out", testSubject.checkOut(1L, 1L).getMessage());
 
         Mockito.verify(checkInRepository, Mockito.times(1))
-                .findByUserMappingIdAndCheckedOut(1L, false);
+                .findByUserMappingIdAndCheckedOutAndCreateDate(1L, false, LocalDate.now());
 
         Mockito.verifyNoMoreInteractions(checkInRepository);
     }

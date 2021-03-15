@@ -882,6 +882,9 @@ components:
           format: int64
         verified:
           type: boolean
+        checkedInBarberId:
+          type: integer
+          format: int64
     BarberWaitTimeRequest:
       type: object
       properties:
