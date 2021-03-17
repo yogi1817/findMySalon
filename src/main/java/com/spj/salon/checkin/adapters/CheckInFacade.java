@@ -1,23 +1,5 @@
 package com.spj.salon.checkin.adapters;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.time.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
-
-import javax.naming.ServiceUnavailableException;
-
-import com.spj.salon.exception.DuplicateEntityException;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
 import com.google.maps.model.GeocodingResult;
 import com.spj.salon.barber.entities.Address;
 import com.spj.salon.barber.entities.BarberCalendar;
@@ -26,21 +8,29 @@ import com.spj.salon.barber.entities.ZipCodeLookup;
 import com.spj.salon.barber.repository.AddressRepository;
 import com.spj.salon.barber.repository.ZipCodeRepository;
 import com.spj.salon.checkin.entities.CheckIn;
+import com.spj.salon.checkin.pojo.BarberDayOfWeekWithTime;
 import com.spj.salon.checkin.ports.out.GeoCoding;
 import com.spj.salon.checkin.repository.CheckInRepository;
 import com.spj.salon.customer.entities.User;
 import com.spj.salon.customer.repository.UserRepository;
-import com.spj.salon.openapi.resources.BarberDetails;
-import com.spj.salon.openapi.resources.BarberWaitTimeRequest;
-import com.spj.salon.openapi.resources.BarberWaitTimeResponse;
-import com.spj.salon.openapi.resources.BarbersWaitTimeResponse;
-import com.spj.salon.openapi.resources.CustomerCheckInResponse;
-import com.spj.salon.openapi.resources.CustomerCheckoutResponse;
+import com.spj.salon.exception.DuplicateEntityException;
+import com.spj.salon.openapi.resources.*;
 import com.spj.salon.utils.DateUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import javax.naming.ServiceUnavailableException;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.time.*;
+import java.time.DayOfWeek;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * @author Yogesh Sharma
@@ -56,6 +46,7 @@ public class CheckInFacade implements ICheckinFacade {
     //private GeoApiContext context;
     private final AddressRepository addressRepo;
     private final GeoCoding googleGeoCodingClient;
+    private final CheckInAdapterMapper checkInAdapterMapper;
 
     @Override
     public BarberWaitTimeResponse waitTimeEstimate(long barberId) {
@@ -305,31 +296,50 @@ public class CheckInFacade implements ICheckinFacade {
         log.debug("long1 --> {}, long2 --> {}, lat1 --> {}. lat2 --> {}", long1, long2, lat1, lat2);
 
         log.debug("longitude --> {}, latitude --> {}", longitude, latitude);
-        List<Map<String, Object>> addressIds =
+            List<Map<String, Object>> addressIds =
                 addressRepo.getBarbersId(longitude, latitude, distance, long1, long2, lat1, lat2);
 
         for (Map<String, Object> map : addressIds) {
             Optional<Address> barbersAddress
                     = addressRepo.findById(((BigInteger) map.get("address_id")).longValue());
             if (barbersAddress.isPresent()) {
-                Optional<User> user = userRepository.findById(barbersAddress.get().getUserId());
+                Optional<User> userOpt = userRepository.findById(barbersAddress.get().getUserId());
+                User user = userOpt.get();
+
+                List<BarberDayOfWeekWithTime> barberDayOfWeekWithTimeList = new ArrayList<>();
+                List<Date> holidays = new ArrayList<>();
+                user.getBarberCalendarSet().forEach(barberCalendar -> {
+                    if(barberCalendar.getCalendarDate()==null){
+                        barberDayOfWeekWithTimeList.add(BarberDayOfWeekWithTime.builder()
+                                .salonOpenTime(DateUtils.getFormattedDateInString(barberCalendar.getSalonOpenTime(), "hh:mm aa"))
+                                .salonCloseTime(DateUtils.getFormattedDateInString(barberCalendar.getSalonCloseTime(), "hh:mm aa"))
+                                .dayOfWeek(DayOfWeek.valueOf(barberCalendar.getCalendarDay().toUpperCase()))
+                                .build());
+                    }else{
+                        holidays.add(barberCalendar.getCalendarDate());
+                    }
+                });
+                Collections.sort(barberDayOfWeekWithTimeList);
+
                 barberDetails = new BarberDetails()
                         .addressLineOne(barbersAddress.get().getAddressLineOne())
                         .addressLineTwo(barbersAddress.get().getAddressLineTwo())
                         .city(barbersAddress.get().getCity())
                         .state(barbersAddress.get().getState())
                         .zip(barbersAddress.get().getZip())
-                        .email(user.get().getEmail())
-                        .barberId(user.get().getUserId())
-                        .firstName(user.get().getFirstName())
-                        .lastName(user.get().getLastName())
-                        .middleName(user.get().getMiddleName())
-                        .phone(user.get().getPhone())
-                        .storeName(user.get().getStoreName())
+                        .email(user.getEmail())
+                        .barberId(user.getUserId())
+                        .firstName(user.getFirstName())
+                        .lastName(user.getLastName())
+                        .middleName(user.getMiddleName())
+                        .phone(user.getPhone())
+                        .storeName(user.getStoreName())
                         .distance((Double) map.get("distance"))
                         .longitude(barbersAddress.get().getLongitude())
                         .latitude(barbersAddress.get().getLatitude())
-                        .waitTime(waitTimeEstimate(barbersAddress.get().getUserId()).getWaitTime());
+                        .waitTime(waitTimeEstimate(barbersAddress.get().getUserId()).getWaitTime())
+                        .calendar(checkInAdapterMapper.toResponseList(barberDayOfWeekWithTimeList))
+                        .holidays(holidays);
 
                 barbersWaitTimeResponse.addBarberDetailsItem(barberDetails);
             }

@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.*;
 
 import com.spj.salon.barber.entities.Address;
+import com.spj.salon.checkin.adapters.CheckInAdapterMapperImpl;
+import com.spj.salon.exception.DuplicateEntityException;
 import com.spj.salon.openapi.resources.BarberDetails;
 import com.spj.salon.openapi.resources.BarberWaitTimeRequest;
 import com.spj.salon.openapi.resources.BarbersWaitTimeResponse;
@@ -40,6 +42,7 @@ class CheckInFacadeTest {
     @Mock private ZipCodeRepository zipCodeRepo;
     @Mock private AddressRepository addressRepo;
     @Mock private GeoCoding googleGeoCodingClient;
+    private CheckInAdapterMapper checkInAdapterMapper = new CheckInAdapterMapperImpl();
     private final String DATE_FORMAT = "hh:mm aa";
 
     final User customer = User.builder()
@@ -50,7 +53,7 @@ class CheckInFacadeTest {
 
     @BeforeEach
     void setUp(){
-        testSubject = new CheckInFacade(userRepository, checkInRepository, zipCodeRepo, addressRepo, googleGeoCodingClient);
+        testSubject = new CheckInFacade(userRepository, checkInRepository, zipCodeRepo, addressRepo, googleGeoCodingClient, checkInAdapterMapper);
     }
 
     @Test
@@ -494,7 +497,10 @@ class CheckInFacadeTest {
                 .when(checkInRepository)
                 .countByUserMappingIdAndCheckedOutAndCreateDate(2L, false, LocalDate.now());
 
-        Assertions.assertEquals("Customer is already checkedIn",testSubject.checkInCustomerByCustomer(Optional.of(1L)).getMessage());
+        Exception exception = Assertions.assertThrows(DuplicateEntityException.class, () -> {
+            testSubject.checkInCustomerByCustomer(Optional.of(1L));
+        });
+        Assertions.assertEquals("Customer is already checkedIn",exception.getMessage());
 
         Mockito.verify(userRepository, Mockito.times(1))
                 .findByEmail(customer.getEmail());

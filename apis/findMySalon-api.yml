@@ -704,13 +704,13 @@ components:
           type: string
           nullable: true
           enum:
-            - Sunday
-            - Monday
-            - Tuesday
-            - Wednesday
-            - Thursday
-            - Friday
-            - Saturday
+            - SUNDAY
+            - MONDAY
+            - TUESDAY
+            - WEDNESDAY
+            - THURSDAY
+            - FRIDAY
+            - SATURDAY
             - null
         calendarDate:
           type: string
@@ -948,6 +948,16 @@ components:
         latitude:
           type: number
           format: double
+        holidays:
+          type: array
+          items:
+            type: string
+            format: date
+            example: "2020-07-04"
+        calendar:
+          type: array
+          items:
+            $ref: '#/components/schemas/DayAndTimeInfo'
     OtpResponse:
       type: object
       properties:
@@ -1078,8 +1088,29 @@ components:
       properties:
         message:
           type: string
+    DayAndTimeInfo:
+      type: object
+      properties:
+        dayOfWeek :
+          $ref: '#/components/schemas/DayOfWeek'
+        salonOpenTime:
+          type: string
+          example: "09:30 PM"
+        salonCloseTime:
+          type: string
+          example: "20:30 PM"
+    DayOfWeek:
+      type: string
+      enum:
+        - SUNDAY
+        - MONDAY
+        - TUESDAY
+        - WEDNESDAY
+        - THURSDAY
+        - FRIDAY
+        - SATURDAY
   securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+      bearerAuth:
+        type: http
+        scheme: bearer
+        bearerFormat: JWT

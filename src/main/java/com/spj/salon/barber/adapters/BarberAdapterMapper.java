@@ -32,7 +32,7 @@ public interface BarberAdapterMapper {
     Services toDomain(BarberServicesRequest barberServicesRequest);
 
     default String unwrapJsonNullable(JsonNullable<BarberCalendarRequest.CalendarDayEnum> calendarDayEnumJsonNullable) {
-        if(calendarDayEnumJsonNullable.isPresent())
+        if(calendarDayEnumJsonNullable.isPresent() && calendarDayEnumJsonNullable.get()!=null)
             return calendarDayEnumJsonNullable.get().getValue();
         return null;
     }
