@@ -121,7 +121,7 @@ public class CustomerAdapter implements ICustomerAdapter {
                 .lastName(customer.getLastName())
                 .phone(customer.getPhone())
                 .verified(customer.isVerified())
-                .checkedInBarberId(checkIn==null? -1: checkIn.getBarberMappingId())
+                .checkedInBarberId(checkIn==null? null: checkIn.getBarberMappingId())
                 .favouriteSalonId(customer.getFavouriteSalonId());
 
         return customerProfile;

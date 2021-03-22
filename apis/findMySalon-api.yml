@@ -398,7 +398,7 @@ paths:
           schema:
             type: integer
             format: int64
-          required: true
+          required: false
       responses:
         200:
           description: success

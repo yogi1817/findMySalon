@@ -14,6 +14,7 @@ import com.spj.salon.checkin.repository.CheckInRepository;
 import com.spj.salon.customer.entities.User;
 import com.spj.salon.customer.repository.UserRepository;
 import com.spj.salon.exception.DuplicateEntityException;
+import com.spj.salon.exception.NotFoundCustomException;
 import com.spj.salon.openapi.resources.*;
 import com.spj.salon.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
@@ -211,10 +212,23 @@ public class CheckInFacade implements ICheckinFacade {
     }
 
     @Override
-    public CustomerCheckoutResponse checkOut(long userId, long checkedOutBy) {
-        checkInRepository.findByUserMappingIdAndCheckedOutAndCreateDate(userId, false, LocalDate.now())
-                .stream()
-                .peek(checkIn -> {
+    public CustomerCheckoutResponse checkOut(Optional<Long> customerIdOptional) {
+        Long customerId = null;
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = (String) auth.getPrincipal();
+        User user = userRepository.findByEmail(email);
+        Long checkedOutBy = user.getUserId();
+        if(user.getAuthorityId()==2 && customerIdOptional.isEmpty()) {
+            throw new NotFoundCustomException("Please pass customer ID","Blank customer ID");
+        }else if(customerIdOptional.isPresent()){
+            customerId = customerIdOptional.get();
+        }else{
+            customerId = user.getUserId();
+        }
+
+        checkInRepository.findByUserMappingIdAndCheckedOutAndCreateDate(customerId, false, LocalDate.now())
+                .forEach(checkIn -> {
                     checkOut(checkIn, checkedOutBy);
                 });
 

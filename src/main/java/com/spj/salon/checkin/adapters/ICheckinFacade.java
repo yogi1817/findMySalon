@@ -10,7 +10,7 @@ public interface ICheckinFacade {
 	BarberWaitTimeResponse waitTimeEstimate(long barberId);
 	CustomerCheckInResponse checkInCustomerByCustomer(Optional<Long> barberId) ;
 	CustomerCheckInResponse checkInCustomerByBarber(long barberId) ;
-	CustomerCheckoutResponse checkOut(long userId, long checkedOutBy);
+	CustomerCheckoutResponse checkOut(Optional<Long> customerId);
 	BarbersWaitTimeResponse findBarbersAtZip(BarberWaitTimeRequest barberCheckInRequest) ;
 	BarberWaitTimeResponse waitTimeEstimateAtBarberForCustomerInOauthHeader();
 	boolean isUserAlreadyCheckedIn(long userId);

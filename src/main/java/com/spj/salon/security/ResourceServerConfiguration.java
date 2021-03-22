@@ -31,7 +31,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .antMatchers("/otp/postlogin").hasAnyAuthority("CUSTOMER")
                 .antMatchers("/otp/validate/postlogin").hasAnyAuthority("CUSTOMER")
                 .antMatchers("/checkin/customer/*/time/*").hasAnyAuthority("BARBER")
-                .antMatchers("/checkin/customer/checkout").hasAnyAuthority("BARBER")
+                .antMatchers("/checkin/customer/checkout").hasAnyAuthority("BARBER","CUSTOMER","SUPERUSER")
                 .antMatchers("/barber/barbersCount").hasAnyAuthority("BARBER")
                 .antMatchers("/barber/calendar").hasAnyAuthority("BARBER")
                 .antMatchers("/barber/address").hasAnyAuthority("BARBER")
