@@ -109,7 +109,7 @@ public class CheckInControllerTest {
     void shouldCheckOutUserFromBarberAndReturnCustomerCheckoutResponse() throws Exception {
         doReturn(new CustomerCheckoutResponse().message("checkout"))
                 .when(checkInFacade)
-                .checkOut(Optional.of(1l));
+                .checkOut(Optional.of(1L));
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(CHECKOUT_CUSTOMER_ENDPOINT, 1L)

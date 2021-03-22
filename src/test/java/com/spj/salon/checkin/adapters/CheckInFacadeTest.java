@@ -1,15 +1,12 @@
 package com.spj.salon.checkin.adapters;
 
-import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.*;
 
 import com.spj.salon.barber.entities.Address;
 import com.spj.salon.checkin.adapters.CheckInAdapterMapperImpl;
 import com.spj.salon.exception.DuplicateEntityException;
-import com.spj.salon.openapi.resources.BarberDetails;
 import com.spj.salon.openapi.resources.BarberWaitTimeRequest;
-import com.spj.salon.openapi.resources.BarbersWaitTimeResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -497,9 +494,7 @@ class CheckInFacadeTest {
                 .when(checkInRepository)
                 .countByUserMappingIdAndCheckedOutAndCreateDate(2L, false, LocalDate.now());
 
-        Exception exception = Assertions.assertThrows(DuplicateEntityException.class, () -> {
-            testSubject.checkInCustomerByCustomer(Optional.of(1L));
-        });
+        Exception exception = Assertions.assertThrows(DuplicateEntityException.class, () -> testSubject.checkInCustomerByCustomer(Optional.of(1L)));
         Assertions.assertEquals("Customer is already checkedIn",exception.getMessage());
 
         Mockito.verify(userRepository, Mockito.times(1))

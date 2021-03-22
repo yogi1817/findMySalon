@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -37,13 +36,8 @@ public class DeviceServiceImpl implements IDeviceService {
 
     @Override
     public UserDevice getDeviceByNativeDeviceId(String nativeDeviceId) {
-        UserDevice foundDevice = userDeviceRepository.findFirstByNativeDeviceId(nativeDeviceId);
-        if (foundDevice == null) {
-            return null;
-        }
-
-        return foundDevice;
-    }
+        return userDeviceRepository.findFirstByNativeDeviceId(nativeDeviceId);
+}
 
     @Override
     public UserDevice newRegisterDevice(UserDevice device) {

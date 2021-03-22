@@ -9,8 +9,6 @@ import com.spj.salon.exception.NotFoundCustomException;
 import com.spj.salon.openapi.resources.AuthenticationRequest;
 import com.spj.salon.openapi.resources.AuthenticationResponse;
 import com.spj.salon.openapi.resources.UpdatePasswordRequest;
-import com.spj.salon.openapi.resources.UpdatePasswordResponse;
-import com.spj.salon.otp.adapters.OtpCache;
 import com.spj.salon.otp.ports.in.IMyOtpAdapter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

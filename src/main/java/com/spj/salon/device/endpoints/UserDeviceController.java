@@ -37,7 +37,7 @@ public class UserDeviceController implements DevicesApiDelegate {
             log.error("Device De-Registration failed, device not found: {}", nativeDeviceId);
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            log.error("Device De-Registration failed, exception caught: {}", e);
+            log.error("Device De-Registration failed, exception caught: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
 

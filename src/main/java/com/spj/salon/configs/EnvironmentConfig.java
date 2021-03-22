@@ -47,7 +47,7 @@ public class EnvironmentConfig {
         return hostname;
     }
 
-    public String getServerUrlPrefi() throws UnknownHostException {
+    public String getServerUrlPrefix() throws UnknownHostException {
         return "http://" + getHostname() + ":" + getPort();
     }
 

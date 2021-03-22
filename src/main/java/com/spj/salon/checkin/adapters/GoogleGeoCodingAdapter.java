@@ -30,17 +30,17 @@ public class GoogleGeoCodingAdapter implements GeoCoding {
     /**
      * This method calls geolocation using proxy qgpass
      *
-     * @param addessOrZip
+     * @param addressOrZip
      * @return
      * @throws IOException
      */
-    public GeocodingResult[] findGeocodingResult(String addessOrZip) throws IOException {
+    public GeocodingResult[] findGeocodingResult(String addressOrZip) throws IOException {
         URL proxyUrl = new URL(envConfig.getQuotoGuardShieldURL());
         String userInfo = proxyUrl.getUserInfo();
         String user = userInfo.substring(0, userInfo.indexOf(':'));
         String password = userInfo.substring(userInfo.indexOf(':') + 1);
 
-        HttpURLConnection webProxyConnection = null;
+        HttpURLConnection webProxyConnection;
         System.setProperty("http.proxyHost", proxyUrl.getHost());
         System.setProperty("http.proxyPort", Integer.toString(proxyUrl.getPort()));
 
@@ -55,7 +55,7 @@ public class GoogleGeoCodingAdapter implements GeoCoding {
                 = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort()));
 
         log.info("proxyUrl.getHost(), proxyUrl.getPort() {} {}", proxyUrl.getHost(), proxyUrl.getPort());
-        String geoCodingUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + addessOrZip + "&key="
+        String geoCodingUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + addressOrZip + "&key="
                 + envConfig.getGoogleApiKey();
         String responseBody = null;
 

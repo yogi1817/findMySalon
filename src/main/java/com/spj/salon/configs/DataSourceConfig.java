@@ -21,14 +21,14 @@ public class DataSourceConfig {
     private final ServiceConfig serviceConfig;
 
     @Bean
-    public DataSource getDataDource() {
+    public DataSource getDataSource() {
         DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.username(envConfig.getDatasourceUsername());
         dataSourceBuilder.password(envConfig.getDatasourcePassword());
         dataSourceBuilder.url(serviceConfig.getDatabaseUrl());
         dataSourceBuilder.driverClassName(serviceConfig.getDriverClassName());
 
-        log.debug("Connection stablished");
+        log.debug("Connection established");
         return dataSourceBuilder.build();
     }
 }

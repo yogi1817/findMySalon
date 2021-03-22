@@ -62,7 +62,7 @@ public class OtpCache {
 	}
 
 	/**
-	 * This method is used to clear the OTP catched already
+	 * This method is used to clear the OTP cached already
 	 * @param key
 	 */
 	public void clearOTP(String key) {

@@ -162,7 +162,7 @@ public class CheckInFacade implements ICheckinFacade {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = (String) auth.getPrincipal();
         User customer = userRepository.findByEmail(email);
-        Long barberId = null;
+        Long barberId;
 
         if(barberIdOpt.isPresent()){
             barberId = barberIdOpt.get();
@@ -213,24 +213,26 @@ public class CheckInFacade implements ICheckinFacade {
 
     @Override
     public CustomerCheckoutResponse checkOut(Optional<Long> customerIdOptional) {
-        Long customerId = null;
+        Long customerId;
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = (String) auth.getPrincipal();
         User user = userRepository.findByEmail(email);
         Long checkedOutBy = user.getUserId();
+
         if(user.getAuthorityId()==2 && customerIdOptional.isEmpty()) {
             throw new NotFoundCustomException("Please pass customer ID","Blank customer ID");
         }else if(customerIdOptional.isPresent()){
             customerId = customerIdOptional.get();
+            if(userRepository.findByUserId(customerId)==null){
+                throw new NotFoundCustomException("Customer Id Not Found", ""+customerId);
+            }
         }else{
             customerId = user.getUserId();
         }
 
         checkInRepository.findByUserMappingIdAndCheckedOutAndCreateDate(customerId, false, LocalDate.now())
-                .forEach(checkIn -> {
-                    checkOut(checkIn, checkedOutBy);
-                });
+                .forEach(checkIn -> checkOut(checkIn, checkedOutBy));
 
         return new CustomerCheckoutResponse().message("Customer has been checked out");
     }

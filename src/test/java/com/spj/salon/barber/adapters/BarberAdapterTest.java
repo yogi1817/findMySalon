@@ -2,6 +2,7 @@ package com.spj.salon.barber.adapters;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -193,7 +194,7 @@ class BarberAdapterTest {
 
         Mockito.doReturn(array)
                 .when(googleGeoCodingAdapter)
-                .findGeocodingResult(URLEncoder.encode(address.toString(), "UTF-8"));
+                .findGeocodingResult(URLEncoder.encode(address.toString(), StandardCharsets.UTF_8));
 
         Mockito.doReturn(barber)
                 .when(userRepository)
@@ -205,7 +206,7 @@ class BarberAdapterTest {
                 .findByEmail(barber.getEmail());
 
         Mockito.verify(googleGeoCodingAdapter, Mockito.times(1))
-                .findGeocodingResult(URLEncoder.encode(address.toString(), "UTF-8"));
+                .findGeocodingResult(URLEncoder.encode(address.toString(), StandardCharsets.UTF_8));
 
         Mockito.verify(userRepository, Mockito.times(1))
                 .saveAndFlush(barberSave);

@@ -96,7 +96,7 @@ public class MyEmailAdapter implements IMyOtpAdapter {
                 .verified(false);
     }
     /**
-     * This method send ane meail to the email id.
+     * This method send ane email to the email id.
      *
      * @param user
      */

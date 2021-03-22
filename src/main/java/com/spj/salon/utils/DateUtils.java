@@ -14,7 +14,7 @@ import java.util.GregorianCalendar;
 public class DateUtils {
 
     /**
-     * NoOne should be able to instintiate
+     * NoOne should be able to instantiate
      */
     private DateUtils() {
         throw new IllegalStateException("UtilityClass");
@@ -51,19 +51,19 @@ public class DateUtils {
         return null;
     }
 
-    public static Date getFormattedDate(String calendayDateString, String dateFormat) {
+    public static Date getFormattedDate(String calendarDateString, String dateFormat) {
         DateFormat df = new SimpleDateFormat(dateFormat);
         try {
-            return df.parse(calendayDateString);
+            return df.parse(calendarDateString);
         } catch (ParseException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public static String getFormattedDateInString(Date calendayDate, String dateFormat) {
+    public static String getFormattedDateInString(Date calendarDate, String dateFormat) {
         DateFormat df = new SimpleDateFormat(dateFormat);
-        return df.format(calendayDate);
+        return df.format(calendarDate);
     }
 
     /**

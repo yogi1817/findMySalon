@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.Set;
 
@@ -95,7 +96,7 @@ public class BarberAdapter implements IBarberAdapter {
     }
 
     /**
-     * This method will add barber calendar. The barber can send his daily calander like wednesday from 10 to 4.
+     * This method will add barber calendar. The barber can send his daily calendar like wednesday from 10 to 4.
      * He can also send calendar with date and mentions his hours.
      */
     @Override
@@ -122,7 +123,7 @@ public class BarberAdapter implements IBarberAdapter {
     }
 
     /**
-     * This method add the barber address in address table. It also add longi and lati into the table using geolocation api
+     * This method add the barber address in address table. It also add longitude and latitude into the table using geolocation api
      */
     @Override
     public BarberAddressResponse addBarberAddress(BarberAddressRequest barberAddressRequest) {
@@ -148,7 +149,7 @@ public class BarberAdapter implements IBarberAdapter {
 
             log.info("calling googleGeoCodingAdapter");
             GeocodingResult[] results = googleGeoCodingAdapter
-                    .findGeocodingResult(URLEncoder.encode(address.getAddress(), "UTF-8"));
+                    .findGeocodingResult(URLEncoder.encode(address.getAddress(), StandardCharsets.UTF_8));
 
             validateAddress(address, barber.getUserId(), results);
             Set<Address> barberAddresses = barber.getAddressSet();

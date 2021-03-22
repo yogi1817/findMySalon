@@ -5,5 +5,5 @@ import com.google.maps.model.GeocodingResult;
 import java.io.IOException;
 
 public interface GeoCoding {
-    GeocodingResult[] findGeocodingResult(String addessOrZip) throws IOException;
+    GeocodingResult[] findGeocodingResult(String addressOrZip) throws IOException;
 }

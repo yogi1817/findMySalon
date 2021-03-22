@@ -115,7 +115,7 @@ public class CustomerAdapter implements ICustomerAdapter {
 
         CheckIn checkIn = iCheckinFacade.findCheckedInBarberId(customer.getUserId());
 
-        CustomerProfile customerProfile = new CustomerProfile()
+        return new CustomerProfile()
                 .email(email)
                 .firstName(customer.getFirstName())
                 .lastName(customer.getLastName())
@@ -123,7 +123,5 @@ public class CustomerAdapter implements ICustomerAdapter {
                 .verified(customer.isVerified())
                 .checkedInBarberId(checkIn==null? null: checkIn.getBarberMappingId())
                 .favouriteSalonId(customer.getFavouriteSalonId());
-
-        return customerProfile;
     }
 }
