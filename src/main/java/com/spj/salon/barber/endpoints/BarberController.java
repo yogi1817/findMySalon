@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import java.util.Optional;
+
 /**
  * @author Yogesh Sharma
  */
@@ -57,7 +59,12 @@ public class BarberController implements BarberApiDelegate {
         return ResponseEntity.ok(barberAdapter.addBarberAddress(barberAddressRequest));
     }
 
-	/*@GetMapping("/validate/prime-number")
+    @Override
+    public ResponseEntity<BarberProfile> getBarberProfile(Optional<Long> barberId) {
+        return ResponseEntity.ok(barberAdapter.getBarberProfile(barberId));
+    }
+
+    /*@GetMapping("/validate/prime-number")
 	public String isNumberPrime(@RequestParam("number") String number) {
 		return Integer.parseInt(number) % 2 == 0 ? "Even" : "Odd";
 	}*/

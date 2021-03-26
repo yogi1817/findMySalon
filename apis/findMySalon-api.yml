@@ -162,6 +162,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BarberServicesResponse'
+  /barber/profile:
+    get:
+      operationId: getBarberProfile
+      tags:
+        - barber
+      summary: Get barber details
+      description: Get barber details
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: barberId
+          schema:
+            type: integer
+            format: int64
+          required: false
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BarberProfile'
   /customer/register:
     post:
       operationId: registerCustomer
@@ -290,6 +313,13 @@ paths:
       description: This api returns customer profile details
       security:
         - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: customerId
+          schema:
+            type: integer
+            format: int64
+          required: false
       responses:
         200:
           description: success
@@ -1109,6 +1139,19 @@ components:
         - THURSDAY
         - FRIDAY
         - SATURDAY
+    BarberProfile:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        storeName:
+          type: string
   securitySchemes:
       bearerAuth:
         type: http

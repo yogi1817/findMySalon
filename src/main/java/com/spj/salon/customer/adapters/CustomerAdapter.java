@@ -18,6 +18,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 /**
  * @author Yogesh Sharma
  */
@@ -104,13 +106,20 @@ public class CustomerAdapter implements ICustomerAdapter {
     }
 
     @Override
-    public CustomerProfile getCustomerProfile() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = (String) auth.getPrincipal();
+    public CustomerProfile getCustomerProfile(Optional<Long> customerId) {
+        User customer;
+        String email = null;
+        if(customerId.isPresent()){
+            customer = userRepository.findByUserId(customerId.get());
+        }else{
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            email = (String) auth.getPrincipal();
 
-        User customer = userRepository.findByEmail(email);
+            customer = userRepository.findByEmail(email);
+        }
+
         if(customer==null){
-            throw new NotFoundCustomException("User Not Found", email);
+            throw new NotFoundCustomException("User Not Found",""+customerId+email);
         }
 
         CheckIn checkIn = iCheckinFacade.findCheckedInBarberId(customer.getUserId());

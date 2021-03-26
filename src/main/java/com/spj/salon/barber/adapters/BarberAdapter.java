@@ -185,4 +185,29 @@ public class BarberAdapter implements IBarberAdapter {
         address.setLongitude(results[0].geometry.location.lng);
         address.setLatitude(results[0].geometry.location.lat);
     }
+
+    @Override
+    public BarberProfile getBarberProfile(Optional<Long> barberId) {
+        User barber;
+        String email = null;
+        if(barberId.isPresent()){
+            barber = userRepository.findByUserId(barberId.get());
+        }else{
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            email = (String) auth.getPrincipal();
+
+            barber = userRepository.findByEmail(email);
+        }
+
+        if(barber==null){
+            throw new NotFoundCustomException("User Not Found",""+barberId+email);
+        }
+
+        return new BarberProfile()
+                .email(barber.getEmail())
+                .lastName(barber.getLastName())
+                .phone(barber.getPhone())
+                .firstName(barber.getFirstName())
+                .storeName(barber.getStoreName());
+    }
 }

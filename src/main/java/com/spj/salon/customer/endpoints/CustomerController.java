@@ -55,8 +55,8 @@ public class CustomerController implements CustomerApiDelegate {
     }
 
     @Override
-    public ResponseEntity<CustomerProfile> getCustomerProfile() {
+    public ResponseEntity<CustomerProfile> getCustomerProfile(Optional<Long> customerId) {
         log.info("Inside getCustomerProfile service");
-        return ResponseEntity.ok(customerAdapter.getCustomerProfile());
+        return ResponseEntity.ok(customerAdapter.getCustomerProfile(customerId));
     }
 }
