@@ -1,13 +1,9 @@
 package com.spj.salon.customer.adapters;
 
-import com.spj.salon.barber.ports.out.OAuthClient;
-import com.spj.salon.checkin.adapters.ICheckinFacade;
 import com.spj.salon.customer.entities.User;
 import com.spj.salon.customer.messaging.UserRegisterPublisher;
 import com.spj.salon.customer.repository.UserRepository;
 import com.spj.salon.exception.NotFoundCustomException;
-import com.spj.salon.openapi.resources.AuthenticationRequest;
-import com.spj.salon.openapi.resources.AuthenticationResponse;
 import com.spj.salon.openapi.resources.UpdatePasswordRequest;
 import com.spj.salon.otp.ports.in.IMyOtpAdapter;
 import org.junit.jupiter.api.Assertions;
@@ -30,18 +26,14 @@ class CustomerAdapterTest {
     @Mock
     private UserRegisterPublisher userRegisterPublisher;
     @Mock
-    private OAuthClient oAuthClient;
-    @Mock
     private UserRepository userRepository;
-    @Mock
-    private ICheckinFacade iCheckinFacade;
 
     @BeforeEach
     void setUp() {
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(user.getEmail(), "encryptedPassword"));
 
-        testSubject = new CustomerAdapter(iMyOtpAdapter, userRegisterPublisher, oAuthClient, userRepository, iCheckinFacade);
+        testSubject = new CustomerAdapter(iMyOtpAdapter, userRegisterPublisher, userRepository);
     }
 
     final User user = User.builder()
@@ -157,7 +149,7 @@ class CustomerAdapterTest {
         Mockito.verifyNoMoreInteractions(oAuthClient);
         //Mockito.verifyNoMoreInteractions(userRepository);
         Mockito.verifyNoMoreInteractions(iMyOtpAdapter);
-    }*/
+    }
 
     @Test
     void getJwtToken() {
@@ -181,5 +173,5 @@ class CustomerAdapterTest {
         Mockito.verify(oAuthClient, Mockito.times(1))
                 .getAuthenticationData(authenticationRequest.getEmail(), authenticationRequest.getPassword(), null);
         Mockito.verifyNoMoreInteractions(oAuthClient);
-    }
+    }*/
 }

@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-import java.util.Optional;
-
 /**
  * @author Yogesh Sharma
  */
@@ -36,27 +34,10 @@ public class CustomerController implements CustomerApiDelegate {
         log.info("Inside UserController addFavouriteSalon service");
         return ResponseEntity.ok(customerAdapter.addFavouriteSalon(barberId));
     }
-
-    @Override
-    public ResponseEntity<AuthenticationResponse> authenticateCustomer(AuthenticationRequest authenticationRequest, Optional<String> clientHost) {
-        log.info("Inside UserController authenticate service");
-        return ResponseEntity.ok(customerAdapter.getJwtToken(authenticationRequest, clientHost.orElse(null)));
-    }
-
-    @Override
-    public ResponseEntity<AuthenticationResponse> refreshCustomer(RefreshRequest refreshRequest, Optional<String> clientHost) {
-        return ResponseEntity.ok(customerAdapter.getRefreshToken(refreshRequest, clientHost.orElse(null)));
-    }
-
+    
     @Override
     public ResponseEntity<UpdatePasswordResponse> updatePassword(UpdatePasswordRequest updatePasswordRequest) {
         log.info("Inside UserController authenticate service");
         return ResponseEntity.ok(customerAdapter.updatePassword(updatePasswordRequest));
-    }
-
-    @Override
-    public ResponseEntity<CustomerProfile> getCustomerProfile(Optional<Long> customerId) {
-        log.info("Inside getCustomerProfile service");
-        return ResponseEntity.ok(customerAdapter.getCustomerProfile(customerId));
     }
 }

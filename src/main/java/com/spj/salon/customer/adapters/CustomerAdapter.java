@@ -1,15 +1,14 @@
 package com.spj.salon.customer.adapters;
 
-import com.spj.salon.barber.ports.out.OAuthClient;
-import com.spj.salon.checkin.adapters.ICheckinFacade;
-import com.spj.salon.checkin.entities.CheckIn;
 import com.spj.salon.customer.entities.User;
 import com.spj.salon.customer.messaging.UserRegisterPayload;
 import com.spj.salon.customer.messaging.UserRegisterPublisher;
 import com.spj.salon.customer.ports.in.ICustomerAdapter;
 import com.spj.salon.customer.repository.UserRepository;
 import com.spj.salon.exception.NotFoundCustomException;
-import com.spj.salon.openapi.resources.*;
+import com.spj.salon.openapi.resources.CustomerFavouriteBarberResponse;
+import com.spj.salon.openapi.resources.UpdatePasswordRequest;
+import com.spj.salon.openapi.resources.UpdatePasswordResponse;
 import com.spj.salon.otp.ports.in.IMyOtpAdapter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 /**
  * @author Yogesh Sharma
@@ -31,9 +28,7 @@ public class CustomerAdapter implements ICustomerAdapter {
     @Qualifier("emailOtp")
     private final IMyOtpAdapter myEmailService;
     private final UserRegisterPublisher userRegisterPublisher;
-    private final OAuthClient oAuthClient;
     private final UserRepository userRepository;
-    private final ICheckinFacade iCheckinFacade;
 
     @Override
     public CustomerFavouriteBarberResponse addFavouriteSalon(Long barberId) {
@@ -73,24 +68,13 @@ public class CustomerAdapter implements ICustomerAdapter {
             throw new NotFoundCustomException("No user found", "");
         }
 
-        if(myEmailService.validateOtpPreLogin(updatePasswordRequest.getOtpNumber(),
-                updatePasswordRequest.getEmail()).getVerified()){
+        if (myEmailService.validateOtpPreLogin(updatePasswordRequest.getOtpNumber(),
+                updatePasswordRequest.getEmail()).getVerified()) {
             return updatePassword(persistedUser, updatePasswordRequest.getNewPassword());
-        }else{
+        } else {
             log.info("Invalid OTP for user {}", updatePasswordRequest);
             throw new NotFoundCustomException("Invalid OTP", "");
         }
-    }
-
-    @Override
-    public AuthenticationResponse getJwtToken(AuthenticationRequest authenticationRequest, String clientHeader) {
-        return oAuthClient.getAuthenticationData(authenticationRequest.getEmail().toLowerCase(),
-                        authenticationRequest.getPassword(), clientHeader);
-    }
-
-    @Override
-    public AuthenticationResponse getRefreshToken(RefreshRequest refreshRequest, String clientHost) {
-        return oAuthClient.getRefreshToken(refreshRequest.getRefreshToken(), refreshRequest.getEmail(), clientHost);
     }
 
     private UpdatePasswordResponse updatePassword(User persistedUser, String password) {
@@ -103,34 +87,5 @@ public class CustomerAdapter implements ICustomerAdapter {
 
         return new UpdatePasswordResponse()
                 .message("Password changed successfully");
-    }
-
-    @Override
-    public CustomerProfile getCustomerProfile(Optional<Long> customerId) {
-        User customer;
-        String email = null;
-        if(customerId.isPresent()){
-            customer = userRepository.findByUserId(customerId.get());
-        }else{
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            email = (String) auth.getPrincipal();
-
-            customer = userRepository.findByEmail(email);
-        }
-
-        if(customer==null){
-            throw new NotFoundCustomException("User Not Found",""+customerId+email);
-        }
-
-        CheckIn checkIn = iCheckinFacade.findCheckedInBarberId(customer.getUserId());
-
-        return new CustomerProfile()
-                .email(email)
-                .firstName(customer.getFirstName())
-                .lastName(customer.getLastName())
-                .phone(customer.getPhone())
-                .verified(customer.isVerified())
-                .checkedInBarberId(checkIn==null? null: checkIn.getBarberMappingId())
-                .favouriteSalonId(customer.getFavouriteSalonId());
     }
 }

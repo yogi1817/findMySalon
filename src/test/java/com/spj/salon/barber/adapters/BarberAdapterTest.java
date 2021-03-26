@@ -1,12 +1,12 @@
 package com.spj.salon.barber.adapters;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-
+import com.spj.salon.barber.entities.Services;
+import com.spj.salon.barber.repository.ServicesRepository;
+import com.spj.salon.customer.entities.User;
+import com.spj.salon.customer.repository.UserRepository;
+import com.spj.salon.openapi.resources.BarberCalendarRequest;
+import com.spj.salon.openapi.resources.BarberServicesRequest;
+import com.spj.salon.openapi.resources.DailyBarbersRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,19 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.google.maps.model.GeocodingResult;
-import com.google.maps.model.Geometry;
-import com.google.maps.model.LatLng;
-import com.spj.salon.barber.entities.Address;
-import com.spj.salon.barber.entities.Services;
-import com.spj.salon.barber.repository.ServicesRepository;
-import com.spj.salon.checkin.adapters.GoogleGeoCodingAdapter;
-import com.spj.salon.customer.entities.User;
-import com.spj.salon.customer.repository.UserRepository;
-import com.spj.salon.openapi.resources.BarberAddressRequest;
-import com.spj.salon.openapi.resources.BarberCalendarRequest;
-import com.spj.salon.openapi.resources.BarberServicesRequest;
-import com.spj.salon.openapi.resources.DailyBarbersRequest;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class BarberAdapterTest {
@@ -37,8 +25,6 @@ class BarberAdapterTest {
     private UserRepository userRepository;
     @Mock
     private ServicesRepository serviceRepo;
-    @Mock
-    private GoogleGeoCodingAdapter googleGeoCodingAdapter;
     private BarberAdapterMapper facadeMapper = new com.spj.salon.barber.adapters.BarberAdapterMapperImpl();
     @Mock
     private ServicesRepository servicesRepo;
@@ -55,7 +41,7 @@ class BarberAdapterTest {
 
     @BeforeEach
     void setUp() {
-        testSubject = new BarberAdapter(userRepository, serviceRepo, googleGeoCodingAdapter, facadeMapper, servicesRepo);
+        testSubject = new BarberAdapter(userRepository, serviceRepo, facadeMapper, servicesRepo);
 
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(barber.getEmail(), "encryptedPassword"));
@@ -141,7 +127,7 @@ class BarberAdapterTest {
         Mockito.verifyNoMoreInteractions(userRepository);
     }
 
-    @Test
+    /*@Test
     void addBarberAddress() throws IOException {
         BarberAddressRequest barberAddressRequest = new BarberAddressRequest()
                 .addressLineOne("one")
@@ -213,7 +199,7 @@ class BarberAdapterTest {
 
         Mockito.verifyNoMoreInteractions(userRepository);
         Mockito.verifyNoMoreInteractions(googleGeoCodingAdapter);
-    }
+    }*/
 
     @Test
     void addService() {

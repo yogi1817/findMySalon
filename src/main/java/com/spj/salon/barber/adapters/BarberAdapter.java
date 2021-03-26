@@ -1,13 +1,13 @@
 package com.spj.salon.barber.adapters;
 
-import com.google.maps.model.GeocodingResult;
-import com.spj.salon.barber.entities.*;
+import com.spj.salon.barber.entities.BarberCalendar;
+import com.spj.salon.barber.entities.BarberServicesMapping;
+import com.spj.salon.barber.entities.DailyBarbers;
+import com.spj.salon.barber.entities.Services;
 import com.spj.salon.barber.ports.in.IBarberAdapter;
 import com.spj.salon.barber.repository.ServicesRepository;
-import com.spj.salon.checkin.adapters.GoogleGeoCodingAdapter;
 import com.spj.salon.customer.entities.User;
 import com.spj.salon.customer.repository.UserRepository;
-import com.spj.salon.exception.NotFoundCustomException;
 import com.spj.salon.openapi.resources.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,9 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.Set;
 
@@ -31,7 +28,6 @@ public class BarberAdapter implements IBarberAdapter {
 
     private final UserRepository userRepository;
     private final ServicesRepository serviceRepo;
-    private final GoogleGeoCodingAdapter googleGeoCodingAdapter;
     private final BarberAdapterMapper facadeMapper;
     private final ServicesRepository servicesRepo;
 
@@ -122,48 +118,6 @@ public class BarberAdapter implements IBarberAdapter {
         return new BarberCalendarResponse().email(email).message("Calendar entry failed to save");
     }
 
-    /**
-     * This method add the barber address in address table. It also add longitude and latitude into the table using geolocation api
-     */
-    @Override
-    public BarberAddressResponse addBarberAddress(BarberAddressRequest barberAddressRequest) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = (String) auth.getPrincipal();
-        log.info("Barber found in jwt with email {}", email);
-
-        User barber = userRepository.findByEmail(email);
-
-        log.info("Barber found DB {}", barber);
-
-        if (barber == null) {
-            log.error("Barber not found in DB with email {}", email);
-            throw new NotFoundCustomException("Barber not found", email);
-        }
-
-        Address address = facadeMapper.toDomain(barberAddressRequest);
-        try {
-            /*
-             * GeocodingResult[] results = GeocodingApi.geocode(context,
-             * address.getAddress()).await();
-             */
-
-            log.info("calling googleGeoCodingAdapter");
-            GeocodingResult[] results = googleGeoCodingAdapter
-                    .findGeocodingResult(URLEncoder.encode(address.getAddress(), StandardCharsets.UTF_8));
-
-            validateAddress(address, barber.getUserId(), results);
-            Set<Address> barberAddresses = barber.getAddressSet();
-            barberAddresses.add(address);
-            barber.setAddressSet(barberAddresses);
-
-            userRepository.saveAndFlush(barber);
-
-            return new BarberAddressResponse().email(email).message("Address saved to DB");
-        } catch (IOException e1) {
-            return new BarberAddressResponse().email(email).message("error calling location api");
-        }
-    }
-
     @Override
     public BarberServicesResponse addService(BarberServicesRequest barberServicesRequest) {
         Services services = facadeMapper.toDomain(barberServicesRequest);
@@ -171,43 +125,5 @@ public class BarberAdapter implements IBarberAdapter {
         log.info("Service saved");
 
         return new BarberServicesResponse().message("service added");
-    }
-
-    /**
-     * @param address
-     * @param barberId
-     * @param results
-     */
-    private void validateAddress(Address address, Long barberId, GeocodingResult[] results) {
-        address.setUserId(barberId);
-        log.debug("longitude " + results[0].geometry.location.lng);
-        log.debug("latitude " + results[0].geometry.location.lat);
-        address.setLongitude(results[0].geometry.location.lng);
-        address.setLatitude(results[0].geometry.location.lat);
-    }
-
-    @Override
-    public BarberProfile getBarberProfile(Optional<Long> barberId) {
-        User barber;
-        String email = null;
-        if(barberId.isPresent()){
-            barber = userRepository.findByUserId(barberId.get());
-        }else{
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            email = (String) auth.getPrincipal();
-
-            barber = userRepository.findByEmail(email);
-        }
-
-        if(barber==null){
-            throw new NotFoundCustomException("User Not Found",""+barberId+email);
-        }
-
-        return new BarberProfile()
-                .email(barber.getEmail())
-                .lastName(barber.getLastName())
-                .phone(barber.getPhone())
-                .firstName(barber.getFirstName())
-                .storeName(barber.getStoreName());
     }
 }

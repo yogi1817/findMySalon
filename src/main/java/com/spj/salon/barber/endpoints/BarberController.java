@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-import java.util.Optional;
-
 /**
  * @author Yogesh Sharma
  */
@@ -52,20 +50,4 @@ public class BarberController implements BarberApiDelegate {
         log.info("Inside BarberController calendar service");
         return ResponseEntity.ok(barberAdapter.addBarberCalendar(barberCalendarRequest));
     }
-
-    @Override
-    public ResponseEntity<BarberAddressResponse> addBarbersAddress(BarberAddressRequest barberAddressRequest) {
-        log.info("Inside BarberController addBarberAddress service");
-        return ResponseEntity.ok(barberAdapter.addBarberAddress(barberAddressRequest));
-    }
-
-    @Override
-    public ResponseEntity<BarberProfile> getBarberProfile(Optional<Long> barberId) {
-        return ResponseEntity.ok(barberAdapter.getBarberProfile(barberId));
-    }
-
-    /*@GetMapping("/validate/prime-number")
-	public String isNumberPrime(@RequestParam("number") String number) {
-		return Integer.parseInt(number) % 2 == 0 ? "Even" : "Odd";
-	}*/
 }
