@@ -73,7 +73,7 @@ public class DateUtils {
      */
     public static String getTodaysDay() {
         SimpleDateFormat simpleDateformat = new SimpleDateFormat("EEEE");
-        return simpleDateformat.format(new Date());
+        return simpleDateformat.format(new Date()).toUpperCase();
     }
 
     public static boolean isTodayDate(Date date) {
