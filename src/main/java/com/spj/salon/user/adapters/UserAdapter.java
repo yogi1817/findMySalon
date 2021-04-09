@@ -68,6 +68,7 @@ public class UserAdapter implements IUserAdapter {
                     .phone(user.getPhone())
                     .verified(user.isVerified())
                     .checkedInBarberId(checkIn == null ? null : checkIn.getBarberMappingId())
+                    .userId(user.getUserId())
                     .favouriteSalonId(user.getFavouriteSalonId());
         }
 
@@ -79,6 +80,7 @@ public class UserAdapter implements IUserAdapter {
                 .storeName(user.getStoreName())
                 .address(userAdapterMapper.toResponse(user.getAddress()))
                 .verified(user.isVerified())
+                .userId(user.getUserId())
                 .calendar(iCheckinFacade.getUserCalendar(user.getBarberCalendarSet()));
     }
 
