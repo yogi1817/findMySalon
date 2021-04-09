@@ -1,6 +1,8 @@
 package com.spj.salon.checkin.adapters;
 
+import com.spj.salon.barber.entities.Address;
 import com.spj.salon.checkin.pojo.BarberDayOfWeekWithTime;
+import com.spj.salon.openapi.resources.AddressInfo;
 import com.spj.salon.openapi.resources.DayAndTimeInfo;
 import com.spj.salon.openapi.resources.DayOfWeek;
 import org.mapstruct.InjectionStrategy;
@@ -14,6 +16,8 @@ import java.util.List;
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface CheckInAdapterMapper {
+    AddressInfo toResponse(Address address);
+
     @Mapping(target = "dayOfWeek", expression = "java(DayOfWeek.fromValue(barberDayOfWeekWithTime.getDayOfWeek().name()))")
     DayAndTimeInfo toResponse(BarberDayOfWeekWithTime barberDayOfWeekWithTime);
 

@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * @author Yogesh Sharma
@@ -71,14 +70,16 @@ public class UserAdapter implements IUserAdapter {
                     .checkedInBarberId(checkIn == null ? null : checkIn.getBarberMappingId())
                     .favouriteSalonId(user.getFavouriteSalonId());
         }
-        {
-            return new UserProfile()
-                    .email(user.getEmail())
-                    .lastName(user.getLastName())
-                    .phone(user.getPhone())
-                    .firstName(user.getFirstName())
-                    .storeName(user.getStoreName());
-        }
+
+        return new UserProfile()
+                .email(user.getEmail())
+                .lastName(user.getLastName())
+                .phone(user.getPhone())
+                .firstName(user.getFirstName())
+                .storeName(user.getStoreName())
+                .address(userAdapterMapper.toResponse(user.getAddress()))
+                .verified(user.isVerified())
+                .calendar(iCheckinFacade.getUserCalendar(user.getBarberCalendarSet()));
     }
 
     /**
@@ -100,9 +101,7 @@ public class UserAdapter implements IUserAdapter {
                     .findGeocodingResult(URLEncoder.encode(address.getAddress(), StandardCharsets.UTF_8));
 
             validateAddress(address, user.getUserId(), results);
-            Set<Address> barberAddresses = user.getAddressSet();
-            barberAddresses.add(address);
-            user.setAddressSet(barberAddresses);
+            user.setAddress(address);
 
             userRepository.saveAndFlush(user);
 

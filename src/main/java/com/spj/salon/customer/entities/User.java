@@ -79,9 +79,9 @@ public class User implements Serializable {
     @JoinColumn(name = "barber_mapping_id", referencedColumnName = "user_id")
     private Set<CheckIn> checkInSet;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-    private Set<Address> addressSet;
+    @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
+    private Address address;
 
     /**
      * @return the dailyBarberSet
@@ -109,12 +109,5 @@ public class User implements Serializable {
      */
     public Set<CheckIn> getCheckInSet() {
         return checkInSet == null ? new HashSet<>() : checkInSet;
-    }
-
-    /**
-     * @return the addressSet
-     */
-    public Set<Address> getAddressSet() {
-        return addressSet == null ? new HashSet<>() : addressSet;
     }
 }

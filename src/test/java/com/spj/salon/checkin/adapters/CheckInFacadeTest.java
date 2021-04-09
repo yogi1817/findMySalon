@@ -1,12 +1,19 @@
 package com.spj.salon.checkin.adapters;
 
-import java.time.LocalDate;
-import java.util.*;
-
 import com.spj.salon.barber.entities.Address;
-import com.spj.salon.checkin.adapters.CheckInAdapterMapperImpl;
+import com.spj.salon.barber.entities.BarberCalendar;
+import com.spj.salon.barber.entities.DailyBarbers;
+import com.spj.salon.barber.repository.AddressRepository;
+import com.spj.salon.barber.repository.ZipCodeRepository;
+import com.spj.salon.checkin.entities.CheckIn;
+import com.spj.salon.checkin.ports.out.GeoCoding;
+import com.spj.salon.checkin.repository.CheckInRepository;
+import com.spj.salon.customer.entities.User;
+import com.spj.salon.customer.repository.UserRepository;
 import com.spj.salon.exception.DuplicateEntityException;
 import com.spj.salon.openapi.resources.BarberWaitTimeRequest;
+import com.spj.salon.openapi.resources.BarberWaitTimeResponse;
+import com.spj.salon.utils.DateUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,28 +24,25 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.spj.salon.barber.entities.BarberCalendar;
-import com.spj.salon.barber.entities.DailyBarbers;
-import com.spj.salon.barber.repository.AddressRepository;
-import com.spj.salon.barber.repository.ZipCodeRepository;
-import com.spj.salon.checkin.entities.CheckIn;
-import com.spj.salon.checkin.ports.out.GeoCoding;
-import com.spj.salon.checkin.repository.CheckInRepository;
-import com.spj.salon.customer.entities.User;
-import com.spj.salon.customer.repository.UserRepository;
-import com.spj.salon.openapi.resources.BarberWaitTimeResponse;
-import com.spj.salon.utils.DateUtils;
+import java.time.LocalDate;
+import java.util.*;
 
 @ExtendWith(MockitoExtension.class)
 class CheckInFacadeTest {
 
     private CheckInFacade testSubject;
 
-    @Mock private UserRepository userRepository;
-    @Mock private CheckInRepository checkInRepository;
-    @Mock private ZipCodeRepository zipCodeRepo;
-    @Mock private AddressRepository addressRepo;
-    @Mock private GeoCoding googleGeoCodingClient;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private CheckInRepository checkInRepository;
+    @Mock
+    private ZipCodeRepository zipCodeRepo;
+    @Mock
+    private AddressRepository addressRepo;
+    @Mock
+    private GeoCoding googleGeoCodingClient;
+
     private CheckInAdapterMapper checkInAdapterMapper = new CheckInAdapterMapperImpl();
     private final String DATE_FORMAT = "hh:mm aa";
 
@@ -49,7 +53,7 @@ class CheckInFacadeTest {
             .build();
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         testSubject = new CheckInFacade(userRepository, checkInRepository, zipCodeRepo, addressRepo, googleGeoCodingClient, checkInAdapterMapper);
     }
 
@@ -72,31 +76,31 @@ class CheckInFacadeTest {
     @Test
     void waitTimeEstimateWhenNoBarberDailyCountSet() {
         Set<BarberCalendar> barberCalendarSet = new HashSet<>(Arrays.asList(
-                BarberCalendar.builder().calendarDay("Monday")
+                BarberCalendar.builder().calendarDay("MONDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Tuesday")
+                BarberCalendar.builder().calendarDay("TUESDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Wednesday")
+                BarberCalendar.builder().calendarDay("WEDNESDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Thursday")
+                BarberCalendar.builder().calendarDay("THURSDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Friday")
+                BarberCalendar.builder().calendarDay("FRIDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Saturday")
+                BarberCalendar.builder().calendarDay("SATURDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Sunday")
+                BarberCalendar.builder().calendarDay("SUNDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build()
@@ -120,31 +124,31 @@ class CheckInFacadeTest {
     @Test
     void waitTimeEstimateWhenNoOneHasCheckedIn() {
         Set<BarberCalendar> barberCalendarSet = new HashSet<>(Arrays.asList(
-                BarberCalendar.builder().calendarDay("Monday")
+                BarberCalendar.builder().calendarDay("MONDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Tuesday")
+                BarberCalendar.builder().calendarDay("TUESDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Wednesday")
+                BarberCalendar.builder().calendarDay("WEDNESDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Thursday")
+                BarberCalendar.builder().calendarDay("THURSDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Friday")
+                BarberCalendar.builder().calendarDay("FRIDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Saturday")
+                BarberCalendar.builder().calendarDay("SATURDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Sunday")
+                BarberCalendar.builder().calendarDay("SUNDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build()
@@ -176,31 +180,31 @@ class CheckInFacadeTest {
     @Test
     void waitTimeEstimateWhen3RdPersonCheckIn() {
         Set<BarberCalendar> barberCalendarSet = new HashSet<>(Arrays.asList(
-                BarberCalendar.builder().calendarDay("Monday")
+                BarberCalendar.builder().calendarDay("MONDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Tuesday")
+                BarberCalendar.builder().calendarDay("TUESDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Wednesday")
+                BarberCalendar.builder().calendarDay("WEDNESDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Thursday")
+                BarberCalendar.builder().calendarDay("THURSDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Friday")
+                BarberCalendar.builder().calendarDay("FRIDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Saturday")
+                BarberCalendar.builder().calendarDay("SATURDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Sunday")
+                BarberCalendar.builder().calendarDay("SUNDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build()
@@ -241,31 +245,31 @@ class CheckInFacadeTest {
     @Test
     void waitTimeEstimateWhen5thPersonCheckIn() {
         Set<BarberCalendar> barberCalendarSet = new HashSet<>(Arrays.asList(
-                BarberCalendar.builder().calendarDay("Monday")
+                BarberCalendar.builder().calendarDay("MONDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Tuesday")
+                BarberCalendar.builder().calendarDay("TUESDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Wednesday")
+                BarberCalendar.builder().calendarDay("WEDNESDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Thursday")
+                BarberCalendar.builder().calendarDay("THURSDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Friday")
+                BarberCalendar.builder().calendarDay("FRIDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Saturday")
+                BarberCalendar.builder().calendarDay("SATURDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Sunday")
+                BarberCalendar.builder().calendarDay("SUNDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build()
@@ -322,7 +326,7 @@ class CheckInFacadeTest {
                 .when(userRepository)
                 .findByUserId(1L);
 
-        Assertions.assertEquals("Unable to Checkin",testSubject.checkInCustomerByCustomer(Optional.of(1L)).getMessage());
+        Assertions.assertEquals("Unable to Checkin", testSubject.checkInCustomerByCustomer(Optional.of(1L)).getMessage());
 
         Mockito.verify(userRepository, Mockito.times(1))
                 .findByEmail(customer.getEmail());
@@ -333,31 +337,31 @@ class CheckInFacadeTest {
     @Test
     void checkInCustomerByCustomer() {
         Set<BarberCalendar> barberCalendarSet = new HashSet<>(Arrays.asList(
-                BarberCalendar.builder().calendarDay("Monday")
+                BarberCalendar.builder().calendarDay("MONDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Tuesday")
+                BarberCalendar.builder().calendarDay("TUESDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Wednesday")
+                BarberCalendar.builder().calendarDay("WEDNESDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Thursday")
+                BarberCalendar.builder().calendarDay("THURSDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Friday")
+                BarberCalendar.builder().calendarDay("FRIDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Saturday")
+                BarberCalendar.builder().calendarDay("SATURDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Sunday")
+                BarberCalendar.builder().calendarDay("SUNDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build()
@@ -407,7 +411,7 @@ class CheckInFacadeTest {
                 .when(checkInRepository)
                 .saveAndFlush(checkIn);
 
-        Assertions.assertEquals("Check in with waitTime 30",testSubject.checkInCustomerByCustomer(Optional.of(1L)).getMessage());
+        Assertions.assertEquals("Check in with waitTime 30", testSubject.checkInCustomerByCustomer(Optional.of(1L)).getMessage());
 
         Mockito.verify(userRepository, Mockito.times(1))
                 .findByEmail(customer.getEmail());
@@ -426,31 +430,31 @@ class CheckInFacadeTest {
     @Test
     void checkInCustomerByCustomerForAlreadyCheckedInCustomer() {
         Set<BarberCalendar> barberCalendarSet = new HashSet<>(Arrays.asList(
-                BarberCalendar.builder().calendarDay("Monday")
+                BarberCalendar.builder().calendarDay("MONDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Tuesday")
+                BarberCalendar.builder().calendarDay("TUESDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Wednesday")
+                BarberCalendar.builder().calendarDay("WEDNESDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Thursday")
+                BarberCalendar.builder().calendarDay("THURSDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Friday")
+                BarberCalendar.builder().calendarDay("FRIDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Saturday")
+                BarberCalendar.builder().calendarDay("SATURDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Sunday")
+                BarberCalendar.builder().calendarDay("SUNDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build()
@@ -495,7 +499,7 @@ class CheckInFacadeTest {
                 .countByUserMappingIdAndCheckedOutAndCreateDate(2L, false, LocalDate.now());
 
         Exception exception = Assertions.assertThrows(DuplicateEntityException.class, () -> testSubject.checkInCustomerByCustomer(Optional.of(1L)));
-        Assertions.assertEquals("Customer is already checkedIn",exception.getMessage());
+        Assertions.assertEquals("Customer is already checkedIn", exception.getMessage());
 
         Mockito.verify(userRepository, Mockito.times(1))
                 .findByEmail(customer.getEmail());
@@ -511,31 +515,31 @@ class CheckInFacadeTest {
     @Test
     void checkInCustomerByBarber() {
         Set<BarberCalendar> barberCalendarSet = new HashSet<>(Arrays.asList(
-                BarberCalendar.builder().calendarDay("Monday")
+                BarberCalendar.builder().calendarDay("MONDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Tuesday")
+                BarberCalendar.builder().calendarDay("TUESDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Wednesday")
+                BarberCalendar.builder().calendarDay("WEDNESDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Thursday")
+                BarberCalendar.builder().calendarDay("THURSDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Friday")
+                BarberCalendar.builder().calendarDay("FRIDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Saturday")
+                BarberCalendar.builder().calendarDay("SATURDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build(),
-                BarberCalendar.builder().calendarDay("Sunday")
+                BarberCalendar.builder().calendarDay("SUNDAY")
                         .salonOpenTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .salonCloseTime(DateUtils.getFormattedDate("10:00 AM", DATE_FORMAT))
                         .build()
@@ -585,7 +589,7 @@ class CheckInFacadeTest {
                 .when(checkInRepository)
                 .saveAndFlush(checkIn);
 
-        Assertions.assertEquals("Check in with waitTime 30",testSubject.checkInCustomerByBarber(2L).getMessage());
+        Assertions.assertEquals("Check in with waitTime 30", testSubject.checkInCustomerByBarber(2L).getMessage());
 
         Mockito.verify(userRepository, Mockito.times(1))
                 .findByEmail(customer.getEmail());

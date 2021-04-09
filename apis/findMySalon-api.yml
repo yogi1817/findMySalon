@@ -920,37 +920,26 @@ components:
           format: email
         phone:
           type: string
-        addressLineOne:
-          type: string
-        addressLineTwo:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        zip:
-          type: string
         distance:
           type: number
           format: double
         waitTime:
           type: string
-        longitude:
-          type: number
-          format: double
-        latitude:
-          type: number
-          format: double
-        holidays:
-          type: array
-          items:
-            type: string
-            format: date
-            example: "2020-07-04"
+        address:
+          $ref: '#/components/schemas/AddressInfo'
         calendar:
-          type: array
-          items:
-            $ref: '#/components/schemas/DayAndTimeInfo'
+          type: object
+          properties:
+            weeklySchedule:
+              type: array
+              items:
+                $ref: '#/components/schemas/DayAndTimeInfo'
+            holidays:
+              type: array
+              items:
+                type: string
+                format: date
+                example: "2020-07-04"
     OtpResponse:
       type: object
       properties:
@@ -1109,6 +1098,8 @@ components:
           type: string
         lastName:
           type: string
+        middleName:
+          type: string
         email:
           type: string
         phone:
@@ -1123,6 +1114,43 @@ components:
         checkedInBarberId:
           type: integer
           format: int64
+        userId:
+          type: integer
+          format: int64
+        calendar:
+          type: object
+          properties:
+            weeklySchedule:
+              type: array
+              items:
+                $ref: '#/components/schemas/DayAndTimeInfo'
+            holidays:
+              type: array
+              items:
+                type: string
+                format: date
+                example: "2020-07-04"
+        address:
+          $ref: '#/components/schemas/AddressInfo'
+    AddressInfo:
+      type: object
+      properties:
+        addressLineOne:
+          type: string
+        addressLineTwo:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zip:
+          type: string
+        longitude:
+          type: number
+          format: double
+        latitude:
+          type: number
+          format: double
   securitySchemes:
     bearerAuth:
       type: http

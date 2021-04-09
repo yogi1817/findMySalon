@@ -27,8 +27,8 @@ import org.springframework.util.CollectionUtils;
 import javax.naming.ServiceUnavailableException;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.time.*;
 import java.time.DayOfWeek;
+import java.time.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -52,7 +52,7 @@ public class CheckInFacade implements ICheckinFacade {
     @Override
     public BarberWaitTimeResponse waitTimeEstimate(long barberId) {
         User barber = userRepository.findByUserId(barberId);
-        if(barber!=null){
+        if (barber != null) {
             List<BarberCalendar> todaysCal = barber.getBarberCalendarSet()
                     .stream()
                     .filter(this::getTodaysBarberCal)
@@ -80,7 +80,7 @@ public class CheckInFacade implements ICheckinFacade {
         List<CheckIn> checkInList = checkInRepository
                 .findByUserMappingIdAndCheckedOutAndCreateDate(customerId, false, LocalDate.now());
 
-        if(!CollectionUtils.isEmpty(checkInList)) {
+        if (!CollectionUtils.isEmpty(checkInList)) {
             return checkInList.stream().findFirst().get();
         }
 
@@ -93,7 +93,7 @@ public class CheckInFacade implements ICheckinFacade {
         String email = (String) auth.getPrincipal();
 
         User user = userRepository.findByEmail(email);
-        if(user.getFavouriteSalonId()==null){
+        if (user.getFavouriteSalonId() == null) {
             return new BarberWaitTimeResponse().salonName("No Favourite Salon Found");
         }
 
@@ -101,9 +101,9 @@ public class CheckInFacade implements ICheckinFacade {
         // If someone is already checkin find his remaining time
 
         CheckIn checkIn = findCheckedInBarberId(user.getUserId());
-        if(checkIn!=null){
+        if (checkIn != null) {
             return new BarberWaitTimeResponse()
-                    .waitTime(""+findTimeLeft(checkIn.getEta(), checkIn.getCreateTimestamp()))
+                    .waitTime("" + findTimeLeft(checkIn.getEta(), checkIn.getCreateTimestamp()))
                     .salonName("Already checked in");
         }
 
@@ -111,9 +111,9 @@ public class CheckInFacade implements ICheckinFacade {
     }
 
     private long findTimeLeft(int eta, OffsetDateTime createTimestamp) {
-        OffsetDateTime stop = LocalDateTime.now().atOffset( ZoneOffset.UTC );
+        OffsetDateTime stop = LocalDateTime.now().atOffset(ZoneOffset.UTC);
         Duration d = Duration.between(createTimestamp, stop).minusMinutes(eta);
-        return (d.getSeconds()/60);
+        return (d.getSeconds() / 60);
     }
 
     /**
@@ -164,11 +164,11 @@ public class CheckInFacade implements ICheckinFacade {
         User customer = userRepository.findByEmail(email);
         Long barberId;
 
-        if(barberIdOpt.isPresent()){
+        if (barberIdOpt.isPresent()) {
             barberId = barberIdOpt.get();
-        }else if(customer.getFavouriteSalonId()!=null){
+        } else if (customer.getFavouriteSalonId() != null) {
             barberId = customer.getFavouriteSalonId();
-        }else{
+        } else {
             return new CustomerCheckInResponse().message("No Favourite Salon Found");
         }
 
@@ -220,14 +220,14 @@ public class CheckInFacade implements ICheckinFacade {
         User user = userRepository.findByEmail(email);
         Long checkedOutBy = user.getUserId();
 
-        if(user.getAuthorityId()==2 && customerIdOptional.isEmpty()) {
-            throw new NotFoundCustomException("Please pass customer ID","Blank customer ID");
-        }else if(customerIdOptional.isPresent()){
+        if (user.getAuthorityId() == 2 && customerIdOptional.isEmpty()) {
+            throw new NotFoundCustomException("Please pass customer ID", "Blank customer ID");
+        } else if (customerIdOptional.isPresent()) {
             customerId = customerIdOptional.get();
-            if(userRepository.findByUserId(customerId)==null){
-                throw new NotFoundCustomException("Customer Id Not Found", ""+customerId);
+            if (userRepository.findByUserId(customerId) == null) {
+                throw new NotFoundCustomException("Customer Id Not Found", "" + customerId);
             }
-        }else{
+        } else {
             customerId = user.getUserId();
         }
 
@@ -312,7 +312,7 @@ public class CheckInFacade implements ICheckinFacade {
         log.debug("long1 --> {}, long2 --> {}, lat1 --> {}. lat2 --> {}", long1, long2, lat1, lat2);
 
         log.debug("longitude --> {}, latitude --> {}", longitude, latitude);
-            List<Map<String, Object>> addressIds =
+        List<Map<String, Object>> addressIds =
                 addressRepo.getBarbersId(longitude, latitude, distance, long1, long2, lat1, lat2);
 
         for (Map<String, Object> map : addressIds) {
@@ -322,27 +322,8 @@ public class CheckInFacade implements ICheckinFacade {
                 Optional<User> userOpt = userRepository.findById(barbersAddress.get().getUserId());
                 User user = userOpt.get();
 
-                List<BarberDayOfWeekWithTime> barberDayOfWeekWithTimeList = new ArrayList<>();
-                List<Date> holidays = new ArrayList<>();
-                user.getBarberCalendarSet().forEach(barberCalendar -> {
-                    if(barberCalendar.getCalendarDate()==null){
-                        barberDayOfWeekWithTimeList.add(BarberDayOfWeekWithTime.builder()
-                                .salonOpenTime(DateUtils.getFormattedDateInString(barberCalendar.getSalonOpenTime(), "hh:mm aa"))
-                                .salonCloseTime(DateUtils.getFormattedDateInString(barberCalendar.getSalonCloseTime(), "hh:mm aa"))
-                                .dayOfWeek(DayOfWeek.valueOf(barberCalendar.getCalendarDay().toUpperCase()))
-                                .build());
-                    }else{
-                        holidays.add(barberCalendar.getCalendarDate());
-                    }
-                });
-                Collections.sort(barberDayOfWeekWithTimeList);
-
                 barberDetails = new BarberDetails()
-                        .addressLineOne(barbersAddress.get().getAddressLineOne())
-                        .addressLineTwo(barbersAddress.get().getAddressLineTwo())
-                        .city(barbersAddress.get().getCity())
-                        .state(barbersAddress.get().getState())
-                        .zip(barbersAddress.get().getZip())
+                        .address(checkInAdapterMapper.toResponse(barbersAddress.get()))
                         .email(user.getEmail())
                         .barberId(user.getUserId())
                         .firstName(user.getFirstName())
@@ -351,11 +332,8 @@ public class CheckInFacade implements ICheckinFacade {
                         .phone(user.getPhone())
                         .storeName(user.getStoreName())
                         .distance((Double) map.get("distance"))
-                        .longitude(barbersAddress.get().getLongitude())
-                        .latitude(barbersAddress.get().getLatitude())
                         .waitTime(waitTimeEstimate(barbersAddress.get().getUserId()).getWaitTime())
-                        .calendar(checkInAdapterMapper.toResponseList(barberDayOfWeekWithTimeList))
-                        .holidays(holidays);
+                        .calendar(getUserCalendar(user.getBarberCalendarSet()));
 
                 barbersWaitTimeResponse.addBarberDetailsItem(barberDetails);
             }
@@ -383,5 +361,24 @@ public class CheckInFacade implements ICheckinFacade {
         zipCodeRepo.saveAndFlush(zipCodeLookup);
     }
 
+    public BarberDetailsCalendar getUserCalendar(Set<BarberCalendar> barberCalendarSet) {
+        List<BarberDayOfWeekWithTime> barberDayOfWeekWithTimeList = new ArrayList<>();
+        List<Date> holidays = new ArrayList<>();
+        barberCalendarSet.forEach(barberCalendar -> {
+            if (barberCalendar.getCalendarDate() == null) {
+                barberDayOfWeekWithTimeList.add(BarberDayOfWeekWithTime.builder()
+                        .salonOpenTime(DateUtils.getFormattedDateInString(barberCalendar.getSalonOpenTime(), "hh:mm aa"))
+                        .salonCloseTime(DateUtils.getFormattedDateInString(barberCalendar.getSalonCloseTime(), "hh:mm aa"))
+                        .dayOfWeek(DayOfWeek.valueOf(barberCalendar.getCalendarDay().toUpperCase()))
+                        .build());
+            } else {
+                holidays.add(barberCalendar.getCalendarDate());
+            }
+        });
+        Collections.sort(barberDayOfWeekWithTimeList);
 
+        return new BarberDetailsCalendar()
+                .holidays(holidays)
+                .weeklySchedule(checkInAdapterMapper.toResponseList(barberDayOfWeekWithTimeList));
+    }
 }
