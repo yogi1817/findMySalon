@@ -1,18 +1,16 @@
 package com.spj.salon.otp.adapters;
 
+import com.spj.salon.openapi.resources.OtpResponse;
+import com.spj.salon.otp.ports.in.IMyOtpAdapter;
+import com.spj.salon.user.entities.User;
+import com.spj.salon.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import com.spj.salon.customer.entities.User;
-import com.spj.salon.customer.repository.UserRepository;
-import com.spj.salon.openapi.resources.OtpResponse;
-import com.spj.salon.otp.ports.in.IMyOtpAdapter;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Yogesh Sharma
@@ -69,12 +67,11 @@ public class MyEmailAdapter implements IMyOtpAdapter {
     }
 
     /**
-     *
      * @param otpNumber
      * @param emailAddress
      * @return
      */
-    private OtpResponse validateOtp(int otpNumber, String emailAddress){
+    private OtpResponse validateOtp(int otpNumber, String emailAddress) {
         log.info("Otp Number : " + otpNumber);
 
         int serverOtp = otpCache.getOtp(emailAddress);
@@ -95,6 +92,7 @@ public class MyEmailAdapter implements IMyOtpAdapter {
                 .emailOrPhone(emailAddress)
                 .verified(false);
     }
+
     /**
      * This method send ane email to the email id.
      *

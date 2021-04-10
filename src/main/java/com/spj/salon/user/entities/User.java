@@ -1,7 +1,10 @@
-package com.spj.salon.customer.entities;
+package com.spj.salon.user.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.spj.salon.barber.entities.*;
+import com.spj.salon.barber.entities.Address;
+import com.spj.salon.barber.entities.BarberCalendar;
+import com.spj.salon.barber.entities.BarberServicesMapping;
+import com.spj.salon.barber.entities.DailyBarbers;
 import com.spj.salon.checkin.entities.CheckIn;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,6 +14,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -33,6 +37,7 @@ public class User implements Serializable {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -2761741425148039955L;
 
     @Id

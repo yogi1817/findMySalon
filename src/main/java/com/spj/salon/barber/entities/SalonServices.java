@@ -4,6 +4,7 @@ import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 
@@ -18,6 +19,7 @@ public class SalonServices implements Serializable {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -1359360042449055750L;
 
     @Id

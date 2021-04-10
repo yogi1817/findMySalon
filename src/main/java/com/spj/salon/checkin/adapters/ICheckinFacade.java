@@ -9,7 +9,7 @@ import java.util.Set;
 
 public interface ICheckinFacade {
 
-    BarberWaitTimeResponse waitTimeEstimate(long barberId);
+    BarberWaitTimeResponse waitTimeEstimate(Optional<Long> barberIdOptional);
 
     CustomerCheckInResponse checkInCustomerByCustomer(Optional<Long> barberId);
 
@@ -18,8 +18,6 @@ public interface ICheckinFacade {
     CustomerCheckoutResponse checkOut(Optional<Long> customerId);
 
     BarbersWaitTimeResponse findBarbersAtZip(BarberWaitTimeRequest barberCheckInRequest);
-
-    BarberWaitTimeResponse waitTimeEstimateAtBarberForCustomerInOauthHeader();
 
     boolean isUserAlreadyCheckedIn(long userId);
 

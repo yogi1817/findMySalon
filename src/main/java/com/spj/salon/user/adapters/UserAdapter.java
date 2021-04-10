@@ -2,17 +2,21 @@ package com.spj.salon.user.adapters;
 
 import com.google.maps.model.GeocodingResult;
 import com.spj.salon.barber.entities.Address;
-import com.spj.salon.barber.ports.out.OAuthClient;
 import com.spj.salon.checkin.adapters.ICheckinFacade;
 import com.spj.salon.checkin.entities.CheckIn;
 import com.spj.salon.checkin.ports.out.GeoCoding;
-import com.spj.salon.customer.entities.User;
-import com.spj.salon.customer.repository.UserRepository;
 import com.spj.salon.exception.NotFoundCustomException;
 import com.spj.salon.openapi.resources.*;
+import com.spj.salon.otp.ports.in.IMyOtpAdapter;
+import com.spj.salon.user.entities.User;
+import com.spj.salon.user.messaging.UserRegisterPayload;
+import com.spj.salon.user.messaging.UserRegisterPublisher;
 import com.spj.salon.user.ports.in.IUserAdapter;
+import com.spj.salon.user.ports.out.OAuthClient;
+import com.spj.salon.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -35,7 +39,10 @@ public class UserAdapter implements IUserAdapter {
     private final GeoCoding googleGeoCodingAdapter;
     private final UserAdapterMapper userAdapterMapper;
     private final OAuthClient oAuthClient;
-
+    @Qualifier("emailOtp")
+    private final IMyOtpAdapter myEmailService;
+    private final UserRegisterPublisher userRegisterPublisher;
+    
     @Override
     public UserProfile getUserProfile(Optional<Long> barberId, Optional<Long> customerId) {
         Long userId = null;
@@ -144,5 +151,45 @@ public class UserAdapter implements IUserAdapter {
     @Override
     public AuthenticationResponse getRefreshToken(RefreshRequest refreshRequest, String clientHeader) {
         return oAuthClient.getRefreshToken(refreshRequest.getRefreshToken(), refreshRequest.getEmail(), clientHeader);
+    }
+
+    @Override
+    public UpdatePasswordResponse updatePassword(UpdatePasswordRequest updatePasswordRequest) {
+        if (updatePasswordRequest.getPhoneNumber() == null && updatePasswordRequest.getEmail() == null) {
+            log.info("No Phone number or email address provided -> {}", updatePasswordRequest);
+            throw new NotFoundCustomException("No Phone number or email address provided", "");
+        }
+
+        User persistedUser = null;
+        if (updatePasswordRequest.getEmail() != null) {
+            persistedUser = userRepository.findByEmail(updatePasswordRequest.getEmail());
+        } else if (updatePasswordRequest.getPhoneNumber() != null) {
+            persistedUser = userRepository.findByPhone(updatePasswordRequest.getPhoneNumber());
+        }
+
+        if (persistedUser == null) {
+            log.info("No user found for updatePasswordRequest {}", updatePasswordRequest);
+            throw new NotFoundCustomException("No user found", "");
+        }
+
+        if (myEmailService.validateOtpPreLogin(updatePasswordRequest.getOtpNumber(),
+                updatePasswordRequest.getEmail()).getVerified()) {
+            return updatePassword(persistedUser, updatePasswordRequest.getNewPassword());
+        } else {
+            log.info("Invalid OTP for user {}", updatePasswordRequest);
+            throw new NotFoundCustomException("Invalid OTP", "");
+        }
+    }
+
+    private UpdatePasswordResponse updatePassword(User persistedUser, String password) {
+        userRegisterPublisher.sendUserRegisterDetails(UserRegisterPayload.builder()
+                .email(persistedUser.getEmail().toLowerCase())
+                .password(password)
+                .updatePasswordRequest(true)
+                .authorityId(persistedUser.getAuthorityId())
+                .build());
+
+        return new UpdatePasswordResponse()
+                .message("Password changed successfully");
     }
 }

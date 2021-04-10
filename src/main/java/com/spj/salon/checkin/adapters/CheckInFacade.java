@@ -11,11 +11,11 @@ import com.spj.salon.checkin.entities.CheckIn;
 import com.spj.salon.checkin.pojo.BarberDayOfWeekWithTime;
 import com.spj.salon.checkin.ports.out.GeoCoding;
 import com.spj.salon.checkin.repository.CheckInRepository;
-import com.spj.salon.customer.entities.User;
-import com.spj.salon.customer.repository.UserRepository;
 import com.spj.salon.exception.DuplicateEntityException;
 import com.spj.salon.exception.NotFoundCustomException;
 import com.spj.salon.openapi.resources.*;
+import com.spj.salon.user.entities.User;
+import com.spj.salon.user.repository.UserRepository;
 import com.spj.salon.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +50,38 @@ public class CheckInFacade implements ICheckinFacade {
     private final CheckInAdapterMapper checkInAdapterMapper;
 
     @Override
-    public BarberWaitTimeResponse waitTimeEstimate(long barberId) {
+    public BarberWaitTimeResponse waitTimeEstimate(Optional<Long> barberIdOptional) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = (String) auth.getPrincipal();
+
+        User user = userRepository.findByEmail(email);
+        Long barberId;
+        if (user.getAuthority().getAuthority().equals("CUSTOMER")) {
+            if (barberIdOptional.isEmpty()) {
+                if (user.getFavouriteSalonId() == null) {
+                    throw new NotFoundCustomException("No Favourite Salon Found", "NULL");
+                } else {
+                    barberId = user.getFavouriteSalonId();
+                }
+            } else {
+                barberId = barberIdOptional.get();
+            }
+            //TODO: Test it
+            // If someone is already checkin find his remaining time
+
+            CheckIn checkIn = findCheckedInBarberId(user.getUserId());
+            if (checkIn != null) {
+                return new BarberWaitTimeResponse()
+                        .waitTime("" + findTimeLeft(checkIn.getEta(), checkIn.getCreateTimestamp()))
+                        .salonName("Already checked in");
+            }
+        } else {
+            barberId = user.getUserId();
+        }
+        return waitTimeEstimateAtBarber(barberId);
+    }
+
+    private BarberWaitTimeResponse waitTimeEstimateAtBarber(Long barberId) {
         User barber = userRepository.findByUserId(barberId);
         if (barber != null) {
             List<BarberCalendar> todaysCal = barber.getBarberCalendarSet()
@@ -85,29 +116,6 @@ public class CheckInFacade implements ICheckinFacade {
         }
 
         return null;
-    }
-
-    @Override
-    public BarberWaitTimeResponse waitTimeEstimateAtBarberForCustomerInOauthHeader() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = (String) auth.getPrincipal();
-
-        User user = userRepository.findByEmail(email);
-        if (user.getFavouriteSalonId() == null) {
-            return new BarberWaitTimeResponse().salonName("No Favourite Salon Found");
-        }
-
-        //TODO: Test it
-        // If someone is already checkin find his remaining time
-
-        CheckIn checkIn = findCheckedInBarberId(user.getUserId());
-        if (checkIn != null) {
-            return new BarberWaitTimeResponse()
-                    .waitTime("" + findTimeLeft(checkIn.getEta(), checkIn.getCreateTimestamp()))
-                    .salonName("Already checked in");
-        }
-
-        return waitTimeEstimate(userRepository.findByEmail(email).getFavouriteSalonId());
     }
 
     private long findTimeLeft(int eta, OffsetDateTime createTimestamp) {
@@ -193,7 +201,7 @@ public class CheckInFacade implements ICheckinFacade {
     }
 
     private CustomerCheckInResponse checkin(User customer, User barber, long updatedBy) {
-        String waitTimeEstimate = waitTimeEstimate(barber.getUserId()).getWaitTime();
+        String waitTimeEstimate = waitTimeEstimateAtBarber(barber.getUserId()).getWaitTime();
 
         try {
             int waitTime = Integer.parseInt(waitTimeEstimate);
@@ -332,7 +340,7 @@ public class CheckInFacade implements ICheckinFacade {
                         .phone(user.getPhone())
                         .storeName(user.getStoreName())
                         .distance((Double) map.get("distance"))
-                        .waitTime(waitTimeEstimate(barbersAddress.get().getUserId()).getWaitTime())
+                        .waitTime(waitTimeEstimateAtBarber(barbersAddress.get().getUserId()).getWaitTime())
                         .calendar(getUserCalendar(user.getBarberCalendarSet()));
 
                 barbersWaitTimeResponse.addBarberDetailsItem(barberDetails);

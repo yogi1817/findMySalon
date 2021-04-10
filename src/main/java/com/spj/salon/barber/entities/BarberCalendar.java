@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.Date;
@@ -25,6 +26,7 @@ public class BarberCalendar implements Serializable {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -3785966067355560454L;
 
     @Id

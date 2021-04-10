@@ -1,9 +1,13 @@
 package com.spj.salon.barber.entities;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 
@@ -21,6 +25,7 @@ public class BarberServicesMapping implements Serializable {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 6214756683528070357L;
 
     @Id

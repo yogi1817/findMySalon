@@ -1,10 +1,10 @@
 package com.spj.salon.otp.adapters;
 
 import com.spj.salon.configs.EnvironmentConfig;
-import com.spj.salon.customer.entities.User;
-import com.spj.salon.customer.repository.UserRepository;
 import com.spj.salon.openapi.resources.OtpResponse;
 import com.spj.salon.otp.ports.in.IMyOtpAdapter;
+import com.spj.salon.user.entities.User;
+import com.spj.salon.user.repository.UserRepository;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;

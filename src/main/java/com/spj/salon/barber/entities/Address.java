@@ -9,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 
@@ -26,6 +27,7 @@ public class Address implements Serializable {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 5833513921844126261L;
 
     @Id

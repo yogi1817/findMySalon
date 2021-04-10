@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 
@@ -25,6 +26,7 @@ public class DailyBarbers implements Serializable {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 7027628947547933472L;
 
     @Id

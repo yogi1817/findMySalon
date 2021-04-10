@@ -30,7 +30,7 @@ public class CheckInControllerTest {
     private MockMvc mockMvc;
     private static final String CHECKIN_BY_USER = "/checkin/barber?barberId={barberId}";
     private static final String CHECKIN_BY_BARBER = "/checkin/customer/{customerId}";
-    private static final String BARBER_WAIT_TIME = "/checkin/barber/{barberId}/waittime";
+    private static final String BARBER_WAIT_TIME = "/checkin/barber/waittime?barberId={barberId}";
     private static final String CHECKOUT_CUSTOMER_ENDPOINT = "/checkin/customer/checkout?customerId={customerId}";
     private static final String CHECKIN_BARBERS_LOCATION = "/checkin/barbers/waittime/forlocation";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -89,7 +89,7 @@ public class CheckInControllerTest {
     void shouldFindWaitTimeEstimateAtBarberAndReturnString() throws Exception {
         doReturn(new BarberWaitTimeResponse().waitTime("15"))
                 .when(checkInFacade)
-                .waitTimeEstimate(1);
+                .waitTimeEstimate(Optional.of(1L));
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get(BARBER_WAIT_TIME, 1L)
@@ -101,7 +101,7 @@ public class CheckInControllerTest {
                 .andExpect(MockMvcResultMatchers.content().json(OBJECT_MAPPER.writeValueAsString(new BarberWaitTimeResponse().waitTime("15"))));
 
         verify(checkInFacade, times(1))
-                .waitTimeEstimate(1);
+                .waitTimeEstimate(Optional.of(1L));
         verifyNoMoreInteractions(checkInFacade);
     }
 

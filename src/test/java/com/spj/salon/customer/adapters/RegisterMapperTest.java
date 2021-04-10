@@ -1,14 +1,14 @@
 package com.spj.salon.customer.adapters;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import com.spj.salon.customer.entities.User;
 import com.spj.salon.openapi.resources.RegisterBarberRequest;
 import com.spj.salon.openapi.resources.RegisterBarberResponse;
 import com.spj.salon.openapi.resources.RegisterCustomerRequest;
 import com.spj.salon.openapi.resources.RegisterCustomerResponse;
+import com.spj.salon.user.adapters.RegisterMapper;
+import com.spj.salon.user.entities.User;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class RegisterMapperTest {
 
@@ -28,8 +28,8 @@ class RegisterMapperTest {
             .build();
 
     @BeforeEach
-    void setUp(){
-        testSubject = new com.spj.salon.customer.adapters.RegisterMapperImpl();
+    void setUp() {
+        testSubject = new com.spj.salon.user.adapters.RegisterMapperImpl();
     }
 
     @Test

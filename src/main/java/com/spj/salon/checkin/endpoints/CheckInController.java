@@ -35,9 +35,9 @@ public class CheckInController implements CheckInApiDelegate {
     }
 
     @Override
-    public ResponseEntity<BarberWaitTimeResponse> waitTimeEstimateAtBarber(Long barberId) {
+    public ResponseEntity<BarberWaitTimeResponse> waitTimeEstimateAtBarber(Optional<Long> barberIdOptional) {
         log.info("Inside CheckInController waitTimeEstimate service");
-        return ResponseEntity.ok(checkInFacade.waitTimeEstimate(barberId));
+        return ResponseEntity.ok(checkInFacade.waitTimeEstimate(barberIdOptional));
     }
 
     @Override
@@ -50,10 +50,5 @@ public class CheckInController implements CheckInApiDelegate {
     public ResponseEntity<BarbersWaitTimeResponse> findAllBarbersAtZip(BarberWaitTimeRequest barberWaitTimeRequest) {
         log.info("Inside CheckInController findBarbersAtZip service");
         return ResponseEntity.ok(checkInFacade.findBarbersAtZip(barberWaitTimeRequest));
-    }
-
-    @Override
-    public ResponseEntity<BarberWaitTimeResponse> waitTimeEstimateAtBarberForCustomerInOauthHeader() {
-        return ResponseEntity.ok(checkInFacade.waitTimeEstimateAtBarberForCustomerInOauthHeader());
     }
 }

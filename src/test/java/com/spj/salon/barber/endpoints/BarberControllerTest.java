@@ -2,9 +2,9 @@ package com.spj.salon.barber.endpoints;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spj.salon.barber.ports.in.IBarberAdapter;
-import com.spj.salon.barber.ports.in.IRegisterBarber;
 import com.spj.salon.openapi.endpoint.BarberApiController;
 import com.spj.salon.openapi.resources.*;
+import com.spj.salon.user.ports.in.IRegisterBarber;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,12 +1,12 @@
-package com.spj.salon.barber.entities;
+package com.spj.salon.user.entities;
 
-import com.spj.salon.customer.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +23,7 @@ public class Authorities implements Serializable {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 5833513921844126261L;
 
     @Id

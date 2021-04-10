@@ -2,11 +2,11 @@ package com.spj.salon.barber.adapters;
 
 import com.spj.salon.barber.entities.Services;
 import com.spj.salon.barber.repository.ServicesRepository;
-import com.spj.salon.customer.entities.User;
-import com.spj.salon.customer.repository.UserRepository;
 import com.spj.salon.openapi.resources.BarberCalendarRequest;
 import com.spj.salon.openapi.resources.BarberServicesRequest;
 import com.spj.salon.openapi.resources.DailyBarbersRequest;
+import com.spj.salon.user.entities.User;
+import com.spj.salon.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

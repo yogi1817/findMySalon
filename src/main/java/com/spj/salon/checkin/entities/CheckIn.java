@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -25,6 +26,7 @@ public class CheckIn implements Serializable {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -2071110993378978999L;
 
     public CheckIn(Long barberId, Long userId, int time, Long updatedBy) {

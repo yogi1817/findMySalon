@@ -1,9 +1,11 @@
 package com.spj.salon.customer.endpoints;
 
 import com.spj.salon.customer.ports.in.ICustomerAdapter;
-import com.spj.salon.customer.ports.in.IRegisterCustomer;
 import com.spj.salon.openapi.endpoint.CustomerApiDelegate;
-import com.spj.salon.openapi.resources.*;
+import com.spj.salon.openapi.resources.CustomerFavouriteBarberResponse;
+import com.spj.salon.openapi.resources.RegisterCustomerRequest;
+import com.spj.salon.openapi.resources.RegisterCustomerResponse;
+import com.spj.salon.user.ports.in.IRegisterCustomer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -33,11 +35,5 @@ public class CustomerController implements CustomerApiDelegate {
     public ResponseEntity<CustomerFavouriteBarberResponse> customerFavourite(Long barberId) {
         log.info("Inside UserController addFavouriteSalon service");
         return ResponseEntity.ok(customerAdapter.addFavouriteSalon(barberId));
-    }
-    
-    @Override
-    public ResponseEntity<UpdatePasswordResponse> updatePassword(UpdatePasswordRequest updatePasswordRequest) {
-        log.info("Inside UserController authenticate service");
-        return ResponseEntity.ok(customerAdapter.updatePassword(updatePasswordRequest));
     }
 }

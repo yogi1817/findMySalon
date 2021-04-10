@@ -1,29 +1,25 @@
-package com.spj.salon.barber.adapters;
+package com.spj.salon.user.adapters;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.lang.reflect.Type;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.spj.salon.configs.ServiceConfig;
 import com.spj.salon.openapi.resources.AuthenticationResponse;
+import com.spj.salon.user.ports.out.OAuthClient;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import okhttp3.*;
 import org.apache.commons.codec.binary.Base64;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import com.spj.salon.barber.ports.out.OAuthClient;
-import com.spj.salon.configs.ServiceConfig;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.Serial;
+import java.lang.reflect.Type;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author Yogesh Sharma
@@ -40,6 +36,7 @@ public class OAuthAdapter implements OAuthClient {
      * This method calls the oauth service with login id and password and
      * generates the jwt token.
      * This is needed because the UI(angular) was not able to call the OAUTh service provided by spring security
+     *
      * @param email
      * @param password
      * @param clientHost
@@ -68,7 +65,7 @@ public class OAuthAdapter implements OAuthClient {
         return getAuthData(clientHost, body, email);
     }
 
-    private AuthenticationResponse getAuthData(String clientHost, RequestBody body, String email){
+    private AuthenticationResponse getAuthData(String clientHost, RequestBody body, String email) {
         String authenticateClient = clientHost + serviceConfig.getAuthenticateService();
 
         String authString = serviceConfig.getApplicationId() + ":" + serviceConfig.getApplicationPassword();
@@ -86,12 +83,13 @@ public class OAuthAdapter implements OAuthClient {
 
         Map<String, String> token;
         Type empMapType = new TypeToken<Map<String, String>>() {
+            @Serial
             private static final long serialVersionUID = 1L;
         }
                 .getType();
         try {
             Response response = client.newCall(request).execute();
-            BufferedReader in = new BufferedReader(new InputStreamReader(response.body().byteStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(Objects.requireNonNull(response.body()).byteStream()));
 
             String responseBody = new BufferedReader(in)
                     .lines()
@@ -110,7 +108,7 @@ public class OAuthAdapter implements OAuthClient {
         if (token.get("access_token") == null)
             throw new OAuth2Exception(token.toString());
 
-        if(!email.equals(token.get("email")))
+        if (!email.equals(token.get("email")))
             throw new OAuth2Exception("Invalid email passed");
 
         return new AuthenticationResponse()

@@ -1,13 +1,15 @@
 package com.spj.salon.customer.adapters;
 
-import com.spj.salon.barber.entities.Authorities;
-import com.spj.salon.barber.repository.AuthoritiesRepository;
-import com.spj.salon.customer.dao.IUserDao;
-import com.spj.salon.customer.entities.User;
-import com.spj.salon.customer.messaging.UserRegisterPublisher;
-import com.spj.salon.customer.repository.UserRepository;
 import com.spj.salon.openapi.resources.*;
 import com.spj.salon.otp.adapters.MyEmailAdapter;
+import com.spj.salon.user.adapters.RegisterFacade;
+import com.spj.salon.user.adapters.RegisterMapper;
+import com.spj.salon.user.entities.Authorities;
+import com.spj.salon.user.entities.User;
+import com.spj.salon.user.messaging.UserRegisterPublisher;
+import com.spj.salon.user.ports.in.IUserDao;
+import com.spj.salon.user.repository.AuthoritiesRepository;
+import com.spj.salon.user.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,12 +29,17 @@ class RegisterFacadeTest {
 
     private RegisterFacade testSubject;
 
-    @Mock private IUserDao userDao;
-    @Mock private AuthoritiesRepository authoritiesRepository;
-    @Mock private UserRegisterPublisher userRegisterPublisher;
-    @Mock private UserRepository userRepository;
-    @Mock private MyEmailAdapter myEmailAdapter;
-    private RegisterMapper registerMapper = new com.spj.salon.customer.adapters.RegisterMapperImpl();
+    @Mock
+    private IUserDao userDao;
+    @Mock
+    private AuthoritiesRepository authoritiesRepository;
+    @Mock
+    private UserRegisterPublisher userRegisterPublisher;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private MyEmailAdapter myEmailAdapter;
+    private RegisterMapper registerMapper = new com.spj.salon.user.adapters.RegisterMapperImpl();
 
     final User customer = User.builder()
             .authorityId(1)

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -23,6 +24,7 @@ public class UserDevice implements Serializable {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 5833513921844126261L;
 
     @Id
@@ -35,7 +37,7 @@ public class UserDevice implements Serializable {
     private String deviceModel;
     private Integer gmtOffsetMinutes;
     private String osVersion;
-    private Boolean pushNotificationEnabled ;
+    private Boolean pushNotificationEnabled;
     private String pushToken;
     private String applicationVersion;
     private String email;

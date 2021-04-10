@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -49,9 +50,9 @@ public class OtpController implements OtpApiDelegate {
             //return ResponseEntity.ok(myMobileService.sendOtpMessage(phone.get()));
         }
 
-        if("Otp sent".equals(otpResponse.getMessage())){
+        if ("Otp sent".equals(Objects.requireNonNull(otpResponse).getMessage())) {
             return ResponseEntity.ok(otpResponse);
-        }else{
+        } else {
             return ResponseEntity.badRequest().body(new OtpResponse().message("Invalid email or phone number"));
         }
     }

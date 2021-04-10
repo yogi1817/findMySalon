@@ -1,4 +1,4 @@
-package com.spj.salon.customer.messaging;
+package com.spj.salon.user.messaging;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class UserRegisterPublisher {
     private final UserRegisterSource userRegisterSource;
 
-    public void sendUserRegisterDetails(UserRegisterPayload userRegisterPayload){
+    public void sendUserRegisterDetails(UserRegisterPayload userRegisterPayload) {
         userRegisterSource.output().send(MessageBuilder.withPayload(userRegisterPayload).build());
     }
 }

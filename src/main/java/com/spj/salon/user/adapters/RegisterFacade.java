@@ -1,28 +1,27 @@
-package com.spj.salon.customer.adapters;
+package com.spj.salon.user.adapters;
 
-import com.spj.salon.barber.entities.Authorities;
-import com.spj.salon.barber.ports.in.IRegisterBarber;
-import com.spj.salon.barber.repository.AuthoritiesRepository;
-import com.spj.salon.customer.dao.IUserDao;
-import com.spj.salon.customer.entities.User;
-import com.spj.salon.customer.messaging.UserRegisterPublisher;
-import com.spj.salon.customer.messaging.UserRegisterPayload;
-import com.spj.salon.customer.ports.in.IRegisterCustomer;
-import com.spj.salon.customer.repository.UserRepository;
 import com.spj.salon.openapi.resources.RegisterBarberRequest;
 import com.spj.salon.openapi.resources.RegisterBarberResponse;
 import com.spj.salon.openapi.resources.RegisterCustomerRequest;
 import com.spj.salon.openapi.resources.RegisterCustomerResponse;
 import com.spj.salon.otp.adapters.MyEmailAdapter;
 import com.spj.salon.security.pojo.UserType;
+import com.spj.salon.user.entities.Authorities;
+import com.spj.salon.user.entities.User;
+import com.spj.salon.user.messaging.UserRegisterPayload;
+import com.spj.salon.user.messaging.UserRegisterPublisher;
+import com.spj.salon.user.ports.in.IRegisterBarber;
+import com.spj.salon.user.ports.in.IRegisterCustomer;
+import com.spj.salon.user.ports.in.IUserDao;
+import com.spj.salon.user.repository.AuthoritiesRepository;
+import com.spj.salon.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.concurrent.CompletableFuture;
-
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor

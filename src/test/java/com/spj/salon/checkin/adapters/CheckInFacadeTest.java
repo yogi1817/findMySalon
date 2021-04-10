@@ -8,11 +8,12 @@ import com.spj.salon.barber.repository.ZipCodeRepository;
 import com.spj.salon.checkin.entities.CheckIn;
 import com.spj.salon.checkin.ports.out.GeoCoding;
 import com.spj.salon.checkin.repository.CheckInRepository;
-import com.spj.salon.customer.entities.User;
-import com.spj.salon.customer.repository.UserRepository;
 import com.spj.salon.exception.DuplicateEntityException;
 import com.spj.salon.openapi.resources.BarberWaitTimeRequest;
 import com.spj.salon.openapi.resources.BarberWaitTimeResponse;
+import com.spj.salon.user.entities.Authorities;
+import com.spj.salon.user.entities.User;
+import com.spj.salon.user.repository.UserRepository;
 import com.spj.salon.utils.DateUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,20 +56,28 @@ class CheckInFacadeTest {
     @BeforeEach
     void setUp() {
         testSubject = new CheckInFacade(userRepository, checkInRepository, zipCodeRepo, addressRepo, googleGeoCodingClient, checkInAdapterMapper);
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("customer@customer.com", "encryptedPassword"));
     }
 
     @Test
     void waitTimeEstimateWhenNoBarberCalenderSet() {
         final User barber = User.builder()
                 .authorityId(2)
+                .authority(Authorities.builder().authority("BARBER").build())
                 .email("barber@barber.com")
+                .userId(1L)
                 .build();
+
+        Mockito.doReturn(barber)
+                .when(userRepository)
+                .findByEmail("customer@customer.com");
 
         Mockito.doReturn(barber)
                 .when(userRepository)
                 .findByUserId(1L);
 
-        BarberWaitTimeResponse barberWaitTimeResponse = testSubject.waitTimeEstimate(1L);
+        BarberWaitTimeResponse barberWaitTimeResponse = testSubject.waitTimeEstimate(Optional.of(1L));
 
         Assertions.assertEquals(barberWaitTimeResponse.getWaitTime(), "Barber Calender not set for today");
     }
@@ -110,13 +119,19 @@ class CheckInFacadeTest {
                 .authorityId(2)
                 .email("barber@barber.com")
                 .barberCalendarSet(barberCalendarSet)
+                .authority(Authorities.builder().authority("BARBER").build())
+                .userId(1L)
                 .build();
+
+        Mockito.doReturn(barber)
+                .when(userRepository)
+                .findByEmail("customer@customer.com");
 
         Mockito.doReturn(barber)
                 .when(userRepository)
                 .findByUserId(1L);
 
-        BarberWaitTimeResponse barberWaitTimeResponse = testSubject.waitTimeEstimate(1L);
+        BarberWaitTimeResponse barberWaitTimeResponse = testSubject.waitTimeEstimate(Optional.of(1L));
 
         Assertions.assertEquals(barberWaitTimeResponse.getWaitTime(), "No Barbers available at this time");
     }
@@ -166,13 +181,19 @@ class CheckInFacadeTest {
                 .email("barber@barber.com")
                 .barberCalendarSet(barberCalendarSet)
                 .dailyBarberSet(dailyBarbersSet)
+                .authority(Authorities.builder().authority("BARBER").build())
+                .userId(1L)
                 .build();
+
+        Mockito.doReturn(barber)
+                .when(userRepository)
+                .findByEmail("customer@customer.com");
 
         Mockito.doReturn(barber)
                 .when(userRepository)
                 .findByUserId(1L);
 
-        BarberWaitTimeResponse barberWaitTimeResponse = testSubject.waitTimeEstimate(1L);
+        BarberWaitTimeResponse barberWaitTimeResponse = testSubject.waitTimeEstimate(Optional.of(1L));
 
         Assertions.assertEquals(barberWaitTimeResponse.getWaitTime(), "0");
     }
@@ -231,13 +252,18 @@ class CheckInFacadeTest {
                 .barberCalendarSet(barberCalendarSet)
                 .dailyBarberSet(dailyBarbersSet)
                 .checkInSet(checkInSet)
+                .authority(Authorities.builder().authority("BARBER").build())
                 .build();
+
+        Mockito.doReturn(barber)
+                .when(userRepository)
+                .findByEmail("customer@customer.com");
 
         Mockito.doReturn(barber)
                 .when(userRepository)
                 .findByUserId(1L);
 
-        BarberWaitTimeResponse barberWaitTimeResponse = testSubject.waitTimeEstimate(1L);
+        BarberWaitTimeResponse barberWaitTimeResponse = testSubject.waitTimeEstimate(Optional.of(1L));
 
         Assertions.assertEquals(barberWaitTimeResponse.getWaitTime(), "15");
     }
@@ -296,13 +322,18 @@ class CheckInFacadeTest {
                 .barberCalendarSet(barberCalendarSet)
                 .dailyBarberSet(dailyBarbersSet)
                 .checkInSet(checkInSet)
+                .authority(Authorities.builder().authority("BARBER").build())
                 .build();
+
+        Mockito.doReturn(barber)
+                .when(userRepository)
+                .findByEmail("customer@customer.com");
 
         Mockito.doReturn(barber)
                 .when(userRepository)
                 .findByUserId(1L);
 
-        BarberWaitTimeResponse barberWaitTimeResponse = testSubject.waitTimeEstimate(1L);
+        BarberWaitTimeResponse barberWaitTimeResponse = testSubject.waitTimeEstimate(Optional.of(1L));
 
         Assertions.assertEquals(barberWaitTimeResponse.getWaitTime(), "30");
     }
@@ -313,14 +344,15 @@ class CheckInFacadeTest {
                 .authorityId(2)
                 .email("barber@barber.com")
                 .userId(1L)
+                .authority(Authorities.builder().authority("BARBER").build())
                 .build();
 
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(customer.getEmail(), "encryptedPassword"));
 
-        Mockito.doReturn(customer)
+        Mockito.doReturn(barber)
                 .when(userRepository)
-                .findByEmail(customer.getEmail());
+                .findByEmail("customer@customer.com");
 
         Mockito.doReturn(barber)
                 .when(userRepository)
@@ -388,6 +420,7 @@ class CheckInFacadeTest {
                 .barberCalendarSet(barberCalendarSet)
                 .checkInSet(checkInSet)
                 .userId(1L)
+                .authority(Authorities.builder().authority("BARBER").build())
                 .build();
 
         SecurityContextHolder.getContext().setAuthentication(

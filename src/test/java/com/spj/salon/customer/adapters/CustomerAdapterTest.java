@@ -1,12 +1,7 @@
 package com.spj.salon.customer.adapters;
 
-import com.spj.salon.customer.entities.User;
-import com.spj.salon.customer.messaging.UserRegisterPublisher;
-import com.spj.salon.customer.repository.UserRepository;
-import com.spj.salon.exception.NotFoundCustomException;
-import com.spj.salon.openapi.resources.UpdatePasswordRequest;
-import com.spj.salon.otp.ports.in.IMyOtpAdapter;
-import org.junit.jupiter.api.Assertions;
+import com.spj.salon.user.entities.User;
+import com.spj.salon.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,10 +17,6 @@ class CustomerAdapterTest {
     @Mock
     private CustomerAdapter testSubject;
     @Mock
-    private IMyOtpAdapter iMyOtpAdapter;
-    @Mock
-    private UserRegisterPublisher userRegisterPublisher;
-    @Mock
     private UserRepository userRepository;
 
     @BeforeEach
@@ -33,7 +24,7 @@ class CustomerAdapterTest {
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(user.getEmail(), "encryptedPassword"));
 
-        testSubject = new CustomerAdapter(iMyOtpAdapter, userRegisterPublisher, userRepository);
+        testSubject = new CustomerAdapter(userRepository);
     }
 
     final User user = User.builder()
@@ -67,7 +58,7 @@ class CustomerAdapterTest {
         Mockito.verifyNoMoreInteractions(userRepository);
     }
 
-    @Test
+    /*@Test
     void updatePasswordNoEmailNoPhone() {
         UpdatePasswordRequest updatePasswordRequest = new UpdatePasswordRequest().email("customer@customer.com").newPassword("12345");
 
@@ -75,7 +66,7 @@ class CustomerAdapterTest {
                 () -> testSubject.updatePassword(updatePasswordRequest));
     }
 
-    /*@Test
+    @Test
     void updatePasswordWrongOTP() {
         UpdatePasswordRequest updatePasswordRequest = new UpdatePasswordRequest().email("customer@customer.com")
                 .newPassword("12345").otpNumber(12345);
