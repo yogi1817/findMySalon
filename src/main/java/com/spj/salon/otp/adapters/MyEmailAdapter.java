@@ -115,7 +115,12 @@ public class MyEmailAdapter implements IMyOtpAdapter {
         simpleMailMessage.setText("Your OTP is " + otp + " .OTP will expire in 30 mins");
 
         // Uncomment to send mail
-        javaMailSender.send(simpleMailMessage);
+        try {
+            javaMailSender.send(simpleMailMessage);
+        } catch (Exception e) {
+            log.error("Unable to send email -> {}", e.getMessage());
+        }
+
         return new OtpResponse().emailOrPhone(user.getEmail()).message("Otp sent").verified(false);
     }
 }
