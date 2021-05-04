@@ -53,7 +53,8 @@ public class CheckIn implements Serializable {
     private Long serviceMappingId;
 
     @CreationTimestamp
-    private OffsetDateTime createTimestamp;
+    private OffsetDateTime checkInTimestamp;
+    private OffsetDateTime checkOutTimestamp;
 
     @CreationTimestamp
     private LocalDate createDate;
@@ -62,4 +63,7 @@ public class CheckIn implements Serializable {
 
     private boolean checkedOut;
     private Long updatedBy;
+
+    @Transient
+    private int rank;
 }

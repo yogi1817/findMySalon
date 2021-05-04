@@ -31,6 +31,7 @@ import java.time.DayOfWeek;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -48,6 +49,8 @@ public class CheckInFacade implements ICheckinFacade {
     private final AddressRepository addressRepo;
     private final GeoCoding googleGeoCodingClient;
     private final CheckInAdapterMapper checkInAdapterMapper;
+
+    private final int waitTimeBetweenCustomers = 15;
 
     @Override
     public BarberWaitTimeResponse waitTimeEstimate(Optional<Long> barberIdOptional) {
@@ -72,7 +75,7 @@ public class CheckInFacade implements ICheckinFacade {
             CheckIn checkIn = findCheckedInBarberId(user.getUserId());
             if (checkIn != null) {
                 return new BarberWaitTimeResponse()
-                        .waitTime("" + findTimeLeft(checkIn.getEta(), checkIn.getCreateTimestamp()))
+                        .waitTime("" + findTimeLeft(checkIn.getEta(), checkIn.getCheckInTimestamp()))
                         .salonName("Already checked in");
             }
         } else {
@@ -147,7 +150,7 @@ public class CheckInFacade implements ICheckinFacade {
             return "No Barbers available at this time";
         }
 
-        long waitTime = (noOfCheckIns / todaysBarberCount.getBarbersCount()) * 15;
+        long waitTime = (noOfCheckIns / todaysBarberCount.getBarbersCount()) * waitTimeBetweenCustomers;
         return waitTime + "";
     }
 
@@ -248,6 +251,7 @@ public class CheckInFacade implements ICheckinFacade {
     private void checkOut(CheckIn checkIn, long checkOutBy) {
         checkIn.setCheckedOut(true);
         checkIn.setUpdatedBy(checkOutBy);
+        checkIn.setCheckOutTimestamp(OffsetDateTime.now());
         checkInRepository.saveAndFlush(checkIn);
     }
 
@@ -388,5 +392,75 @@ public class CheckInFacade implements ICheckinFacade {
         return new BarberDetailsCalendar()
                 .holidays(holidays)
                 .weeklySchedule(checkInAdapterMapper.toResponseList(barberDayOfWeekWithTimeList));
+    }
+
+    @Override
+    public BarberWaitTimeResponse currentWaitTimeEstimateForCustomer(long barberId) {
+        long waitTime = 0;
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = (String) auth.getPrincipal();
+        User user = userRepository.findByEmail(email);
+
+        //Find barber count at current time
+        int currentBarberCount = userRepository.findByUserId(barberId).getDailyBarberSet()
+                .stream()
+                .filter(a -> a.getBarbersCount() > 0)
+                .findFirst()
+                .orElse(null).getBarbersCount();
+
+        List<CheckIn> checkInList = checkInRepository
+                .findByBarberMappingIdAndCreateDateOrderByCheckInTimestampAsc(barberId, LocalDate.now());
+
+        CheckIn lastCheckoutUser = checkInList.stream()
+                .filter(checkIn -> checkIn.isCheckedOut())
+                .reduce((first, second) -> second).orElse(null);
+
+        OffsetDateTime checkOutTimestamp = null;
+        if (lastCheckoutUser != null) {
+            checkOutTimestamp = lastCheckoutUser.getCheckOutTimestamp();
+        }
+
+        AtomicInteger counter = new AtomicInteger(0);
+
+        //Set correct rank only for the one that matches the user mapping ID
+        //This will help later to filter to the record that has rank and for current User
+        //Get the CheckIn data for user in context
+        CheckIn userCheckInRecord = checkInList.stream()
+                .filter(checkIn -> !checkIn.isCheckedOut())
+                .map(checkIn -> setRank(checkIn, user, counter))
+                .filter(checkIn -> checkIn.getRank() != -1)
+                .findFirst().orElse(null);
+
+        //Rank multiplier is the field that is calculated based on number of barbers ex:
+        //if there are 3 barbers then until 3 customer the wait time should be 0
+        int rankMultiplier = 0;
+        if (userCheckInRecord.getRank() != -1) {
+            rankMultiplier = (userCheckInRecord.getRank() - 1) / currentBarberCount;
+        }
+
+        if (checkOutTimestamp == null || checkOutTimestamp.plusMinutes(waitTimeBetweenCustomers)
+                .isBefore(userCheckInRecord.getCheckInTimestamp())) {
+            waitTime = Duration.between(OffsetDateTime.now(),
+                    userCheckInRecord.getCheckInTimestamp()
+                            .plusMinutes(rankMultiplier * waitTimeBetweenCustomers)).toMinutes();
+        } else {
+            waitTime = Duration.between(OffsetDateTime.now(),
+                    checkOutTimestamp
+                            .plusMinutes(rankMultiplier * waitTimeBetweenCustomers)).toMinutes();
+        }
+
+        return new BarberWaitTimeResponse().waitTime(waitTime < 0 ? "0" : waitTime + "");
+    }
+
+    private CheckIn setRank(CheckIn checkIn, User user, AtomicInteger counter) {
+
+        int count = counter.incrementAndGet();
+        if (checkIn.getUserMappingId() == user.getUserId()) {
+            checkIn.setRank(count);
+            return checkIn;
+        }
+        checkIn.setRank(-1);
+        return checkIn;
+
     }
 }

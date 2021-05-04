@@ -8,14 +8,16 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * 
  * @author Yogesh Sharma
- *
  */
 @Repository
-public interface CheckInRepository extends JpaRepository<CheckIn, Long>{
-	
-	//There should be only 1 record for a user unless the barber dosent check him out
-	List<CheckIn> findByUserMappingIdAndCheckedOutAndCreateDate(Long userMappingId, boolean checkedOut, LocalDate todaysDate);
-	int countByUserMappingIdAndCheckedOutAndCreateDate(long id, boolean checkoutOut, LocalDate todaysDate);
+public interface CheckInRepository extends JpaRepository<CheckIn, Long> {
+
+    //There should be only 1 record for a user unless the barber dosent check him out
+    List<CheckIn> findByUserMappingIdAndCheckedOutAndCreateDate(Long userMappingId, boolean checkedOut, LocalDate todaysDate);
+
+    int countByUserMappingIdAndCheckedOutAndCreateDate(long id, boolean checkoutOut, LocalDate todaysDate);
+
+    List<CheckIn> findByBarberMappingIdAndCreateDateOrderByCheckInTimestampAsc(Long barberMappingId, LocalDate todaysDate);
+
 }

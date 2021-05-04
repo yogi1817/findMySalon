@@ -51,4 +51,10 @@ public class CheckInController implements CheckInApiDelegate {
         log.info("Inside CheckInController findBarbersAtZip service");
         return ResponseEntity.ok(checkInFacade.findBarbersAtZip(barberWaitTimeRequest));
     }
+
+    @Override
+    public ResponseEntity<BarberWaitTimeResponse> currentWaitTimeEstimateForCustomer(Long barberId) {
+        log.info("Inside CheckInController currentWaitTimeEstimateForCustomer service");
+        return ResponseEntity.ok(checkInFacade.currentWaitTimeEstimateForCustomer(barberId));
+    }
 }

@@ -34,6 +34,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .antMatchers("/checkin/customer/*/time/*").hasAnyAuthority("BARBER")
                 .antMatchers("/checkin/customer").hasAnyAuthority("BARBER")
                 .antMatchers("/checkin/customer/checkout").hasAnyAuthority("BARBER", "CUSTOMER", "SUPERUSER")
+                .antMatchers("/checkin/customer/currentwaittime").hasAnyAuthority("CUSTOMER")
                 .antMatchers("/barber/barbersCount").hasAnyAuthority("BARBER")
                 .antMatchers("/barber/calendar").hasAnyAuthority("BARBER")
                 .antMatchers("/user/address").hasAnyAuthority("BARBER", "CUSTOMER")

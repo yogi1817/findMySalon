@@ -424,6 +424,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BarbersWaitTimeResponse'
+  /checkin/customer/currentwaittime:
+    get:
+      operationId: currentWaitTimeEstimateForCustomer
+      tags:
+        - checkIn
+      summary: This api will find the current wait time for a customer at the checkedin barber.
+      description: This api will find the current wait time for a customer at the checkedin barber.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: barberId
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BarberWaitTimeResponse'
   /otp/postlogin:
     get:
       operationId: sendOtpOnEmailOrPhoneForLoggedInUser

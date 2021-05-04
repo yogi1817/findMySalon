@@ -19,7 +19,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import java.util.Properties;
+import java.util.TimeZone;
 
 @SpringBootApplication
 @EnableResourceServer
@@ -28,6 +30,12 @@ public class FindMySalonApplication {
 
     private final ServiceConfig serviceConfig;
     private final EnvironmentConfig envConfig;
+
+    @PostConstruct
+    public void init() {
+        // Setting Spring Boot SetTimeZone
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+    }
 
     public static void main(String[] args) {
         System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
