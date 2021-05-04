@@ -100,6 +100,7 @@ public class CheckInFacade implements ICheckinFacade {
 
             long noOfCheckIns = barber.getCheckInSet()
                     .stream()
+                    .filter(a -> a.getCheckInTimestamp().isAfter(OffsetDateTime.now().minusMinutes(90)))
                     .filter(a -> !a.isCheckedOut())
                     .count();
 
