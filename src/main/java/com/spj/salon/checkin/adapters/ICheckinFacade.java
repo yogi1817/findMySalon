@@ -26,4 +26,6 @@ public interface ICheckinFacade {
     BarberDetailsCalendar getUserCalendar(Set<BarberCalendar> barberCalendarSet);
 
     BarberWaitTimeResponse currentWaitTimeEstimateForCustomer(long barberId);
+
+    BarberWaitTimeResponse currentWaitTimeEstimateForCustomerAtBarber(long customerId, long barberId);
 }

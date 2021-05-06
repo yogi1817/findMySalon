@@ -396,12 +396,23 @@ public class CheckInFacade implements ICheckinFacade {
     }
 
     @Override
+    public BarberWaitTimeResponse currentWaitTimeEstimateForCustomerAtBarber(long customerId, long barberId) {
+        User user = userRepository.findByUserId(customerId);
+        return calculateWaitTime(user, barberId);
+    }
+
+    @Override
     public BarberWaitTimeResponse currentWaitTimeEstimateForCustomer(long barberId) {
-        long waitTime = 0;
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = (String) auth.getPrincipal();
         User user = userRepository.findByEmail(email);
 
+        return calculateWaitTime(user, barberId);
+    }
+
+    private BarberWaitTimeResponse calculateWaitTime(User user, long barberId) {
+        long waitTime = 0;
         //Find barber count at current time
         int currentBarberCount = userRepository.findByUserId(barberId).getDailyBarberSet()
                 .stream()

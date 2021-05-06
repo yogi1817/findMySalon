@@ -42,16 +42,16 @@ public class UserAdapter implements IUserAdapter {
     @Qualifier("emailOtp")
     private final IMyOtpAdapter myEmailService;
     private final UserRegisterPublisher userRegisterPublisher;
-    
+
     @Override
-    public UserProfile getUserProfile(Optional<Long> barberId, Optional<Long> customerId) {
+    public UserProfile getUserProfile(Optional<Long> barberIdOptional, Optional<Long> customerId) {
         Long userId = null;
         String email;
         User user;
-        if (barberId.isPresent() && customerId.isPresent()) {
+        if (barberIdOptional.isPresent() && customerId.isPresent()) {
             throw new NotFoundCustomException("Invalid request", "Make sure yu pass only 1 userID");
-        } else if (barberId.isPresent()) {
-            userId = barberId.get();
+        } else if (barberIdOptional.isPresent()) {
+            userId = barberIdOptional.get();
         } else if (customerId.isPresent()) {
             userId = customerId.get();
         }
@@ -67,7 +67,11 @@ public class UserAdapter implements IUserAdapter {
 
         if (user.getAuthorityId() == 1) {
             CheckIn checkIn = iCheckinFacade.findCheckedInBarberId(user.getUserId());
-
+            long barberId = checkIn == null ? null : checkIn.getBarberMappingId();
+            String waitTime = "Not Available";
+            if (checkIn != null) {
+                waitTime = iCheckinFacade.currentWaitTimeEstimateForCustomerAtBarber(user.getUserId(), barberId).getWaitTime();
+            }
             return new UserProfile()
                     .email(user.getEmail())
                     .firstName(user.getFirstName())
@@ -76,6 +80,7 @@ public class UserAdapter implements IUserAdapter {
                     .verified(user.isVerified())
                     .checkedInBarberId(checkIn == null ? null : checkIn.getBarberMappingId())
                     .userId(user.getUserId())
+                    .currentWaitTime(waitTime)
                     .favouriteSalonId(user.getFavouriteSalonId());
         }
 
