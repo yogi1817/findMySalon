@@ -67,7 +67,7 @@ public class UserAdapter implements IUserAdapter {
 
         if (user.getAuthorityId() == 1) {
             CheckIn checkIn = iCheckinFacade.findCheckedInBarberId(user.getUserId());
-            long barberId = checkIn == null ? null : checkIn.getBarberMappingId();
+            Long barberId = checkIn == null ? null : checkIn.getBarberMappingId();
             String waitTime = "Not Available";
             if (checkIn != null) {
                 waitTime = iCheckinFacade.currentWaitTimeEstimateForCustomerAtBarber(user.getUserId(), barberId).getWaitTime();
