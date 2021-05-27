@@ -80,7 +80,7 @@ public class UserAdapter implements IUserAdapter {
                     .verified(user.isVerified())
                     .checkedInBarberId(checkIn == null ? null : checkIn.getBarberMappingId())
                     .userId(user.getUserId())
-                    .currentWaitTime(waitTime)
+                    .waitTime(waitTime)
                     .favouriteSalonId(user.getFavouriteSalonId());
         }
 

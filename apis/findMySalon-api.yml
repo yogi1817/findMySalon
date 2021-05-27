@@ -1124,7 +1124,7 @@ components:
         userId:
           type: integer
           format: int64
-        currentWaitTime:
+        waitTime:
           type: string
         calendar:
           type: object

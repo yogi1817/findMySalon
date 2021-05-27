@@ -26,6 +26,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -239,10 +240,10 @@ class CheckInFacadeTest {
         ));
 
         Set<CheckIn> checkInSet = new HashSet<>(Arrays.asList(
-                CheckIn.builder().checkedOut(false).barberMappingId(1L).userMappingId(2L).build(),
-                CheckIn.builder().checkedOut(false).barberMappingId(1L).userMappingId(3L).build(),
-                CheckIn.builder().checkedOut(true).barberMappingId(1L).userMappingId(4L).build(),
-                CheckIn.builder().checkedOut(true).barberMappingId(1L).userMappingId(5L).build()
+                CheckIn.builder().checkedOut(false).checkInTimestamp(OffsetDateTime.now()).barberMappingId(1L).userMappingId(2L).build(),
+                CheckIn.builder().checkedOut(false).checkInTimestamp(OffsetDateTime.now()).barberMappingId(1L).userMappingId(3L).build(),
+                CheckIn.builder().checkedOut(true).checkInTimestamp(OffsetDateTime.now()).barberMappingId(1L).userMappingId(4L).build(),
+                CheckIn.builder().checkedOut(true).checkInTimestamp(OffsetDateTime.now()).barberMappingId(1L).userMappingId(5L).build()
         ));
 
         final User barber = User.builder()
@@ -309,10 +310,10 @@ class CheckInFacadeTest {
         ));
 
         Set<CheckIn> checkInSet = new HashSet<>(Arrays.asList(
-                CheckIn.builder().checkedOut(false).barberMappingId(1L).userMappingId(2L).build(),
-                CheckIn.builder().checkedOut(false).barberMappingId(1L).userMappingId(3L).build(),
-                CheckIn.builder().checkedOut(false).barberMappingId(1L).userMappingId(4L).build(),
-                CheckIn.builder().checkedOut(false).barberMappingId(1L).userMappingId(5L).build()
+                CheckIn.builder().checkedOut(false).checkInTimestamp(OffsetDateTime.now()).barberMappingId(1L).userMappingId(2L).build(),
+                CheckIn.builder().checkedOut(false).checkInTimestamp(OffsetDateTime.now()).barberMappingId(1L).userMappingId(3L).build(),
+                CheckIn.builder().checkedOut(false).checkInTimestamp(OffsetDateTime.now()).barberMappingId(1L).userMappingId(4L).build(),
+                CheckIn.builder().checkedOut(false).checkInTimestamp(OffsetDateTime.now()).barberMappingId(1L).userMappingId(5L).build()
         ));
 
         final User barber = User.builder()
@@ -407,10 +408,10 @@ class CheckInFacadeTest {
         ));
 
         Set<CheckIn> checkInSet = new HashSet<>(Arrays.asList(
-                CheckIn.builder().checkedOut(false).barberMappingId(1L).userMappingId(2L).build(),
-                CheckIn.builder().checkedOut(false).barberMappingId(1L).userMappingId(3L).build(),
-                CheckIn.builder().checkedOut(false).barberMappingId(1L).userMappingId(4L).build(),
-                CheckIn.builder().checkedOut(false).barberMappingId(1L).userMappingId(5L).build()
+                CheckIn.builder().checkedOut(false).checkInTimestamp(OffsetDateTime.now()).barberMappingId(1L).userMappingId(2L).build(),
+                CheckIn.builder().checkedOut(false).checkInTimestamp(OffsetDateTime.now()).barberMappingId(1L).userMappingId(3L).build(),
+                CheckIn.builder().checkedOut(false).checkInTimestamp(OffsetDateTime.now()).barberMappingId(1L).userMappingId(4L).build(),
+                CheckIn.builder().checkedOut(false).checkInTimestamp(OffsetDateTime.now()).barberMappingId(1L).userMappingId(5L).build()
         ));
 
         final User barber = User.builder()
@@ -501,10 +502,10 @@ class CheckInFacadeTest {
         ));
 
         Set<CheckIn> checkInSet = new HashSet<>(Arrays.asList(
-                CheckIn.builder().checkedOut(false).barberMappingId(1L).userMappingId(2L).build(),
-                CheckIn.builder().checkedOut(false).barberMappingId(1L).userMappingId(3L).build(),
-                CheckIn.builder().checkedOut(false).barberMappingId(1L).userMappingId(4L).build(),
-                CheckIn.builder().checkedOut(false).barberMappingId(1L).userMappingId(5L).build()
+                CheckIn.builder().checkedOut(false).checkInTimestamp(OffsetDateTime.now()).barberMappingId(1L).userMappingId(2L).build(),
+                CheckIn.builder().checkedOut(false).checkInTimestamp(OffsetDateTime.now()).barberMappingId(1L).userMappingId(3L).build(),
+                CheckIn.builder().checkedOut(false).checkInTimestamp(OffsetDateTime.now()).barberMappingId(1L).userMappingId(4L).build(),
+                CheckIn.builder().checkedOut(false).checkInTimestamp(OffsetDateTime.now()).barberMappingId(1L).userMappingId(5L).build()
         ));
 
         final User barber = User.builder()
@@ -586,10 +587,10 @@ class CheckInFacadeTest {
         ));
 
         Set<CheckIn> checkInSet = new HashSet<>(Arrays.asList(
-                CheckIn.builder().checkedOut(false).barberMappingId(1L).userMappingId(2L).build(),
-                CheckIn.builder().checkedOut(false).barberMappingId(1L).userMappingId(3L).build(),
-                CheckIn.builder().checkedOut(false).barberMappingId(1L).userMappingId(4L).build(),
-                CheckIn.builder().checkedOut(false).barberMappingId(1L).userMappingId(5L).build()
+                CheckIn.builder().checkedOut(false).checkInTimestamp(OffsetDateTime.now()).barberMappingId(1L).userMappingId(2L).build(),
+                CheckIn.builder().checkedOut(false).checkInTimestamp(OffsetDateTime.now()).barberMappingId(1L).userMappingId(3L).build(),
+                CheckIn.builder().checkedOut(false).checkInTimestamp(OffsetDateTime.now()).barberMappingId(1L).userMappingId(4L).build(),
+                CheckIn.builder().checkedOut(false).checkInTimestamp(OffsetDateTime.now()).barberMappingId(1L).userMappingId(5L).build()
         ));
 
         final User barber = User.builder()
