@@ -84,8 +84,7 @@ public class User implements Serializable {
     @JoinColumn(name = "barber_mapping_id", referencedColumnName = "user_id")
     private Set<CheckIn> checkInSet;
 
-    @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Address address;
 
     /**

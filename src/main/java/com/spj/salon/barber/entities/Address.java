@@ -1,5 +1,6 @@
 package com.spj.salon.barber.entities;
 
+import com.spj.salon.user.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -47,10 +48,10 @@ public class Address implements Serializable {
     private OffsetDateTime modifyDate;
     private double longitude;
     private double latitude;
-	
-	/*@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="user_Id", referencedColumnName = "user_id", insertable = false, updatable = false) 
-    private User user;*/
+
+    @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
+    private User user;
 
     @Column(name = "user_id")
     private Long userId;
