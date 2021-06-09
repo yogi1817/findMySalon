@@ -6,6 +6,7 @@ import com.spj.salon.openapi.resources.BarberCalendarRequest;
 import com.spj.salon.openapi.resources.BarberServicesRequest;
 import com.spj.salon.openapi.resources.DailyBarbersRequest;
 import com.spj.salon.user.entities.User;
+import com.spj.salon.user.ports.out.OAuthClient;
 import com.spj.salon.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,8 @@ class BarberAdapterTest {
     private BarberAdapterMapper facadeMapper = new com.spj.salon.barber.adapters.BarberAdapterMapperImpl();
     @Mock
     private ServicesRepository servicesRepo;
+    @Mock
+    private OAuthClient oAuthClient;
 
     final User barber = User.builder()
             .authorityId(2)
@@ -41,7 +44,7 @@ class BarberAdapterTest {
 
     @BeforeEach
     void setUp() {
-        testSubject = new BarberAdapter(userRepository, serviceRepo, facadeMapper, servicesRepo);
+        testSubject = new BarberAdapter(userRepository, serviceRepo, facadeMapper, servicesRepo, oAuthClient);
 
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(barber.getEmail(), "encryptedPassword"));

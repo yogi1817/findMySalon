@@ -473,6 +473,22 @@ public class CheckInFacade implements ICheckinFacade {
         }
         checkIn.setRank(-1);
         return checkIn;
+    }
 
+    @Override
+    public List<UserProfile> getCheckedInCustomer() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = (String) auth.getPrincipal();
+
+        User barber = userRepository.findByEmail(email);
+        List<CheckIn> checkedInUsers = checkInRepository.findByBarberMappingIdAndCreateDateAndCheckedOutOrderByCheckInTimestampAsc(
+                barber.getUserId(), LocalDate.now(), false);
+
+        List<UserProfile> userprofileList = new ArrayList<>();
+        checkedInUsers.stream().forEach(checkedInUser -> {
+            userprofileList.add(
+                    checkInAdapterMapper.toUserProfile(userRepository.findByUserId(checkedInUser.getUserMappingId())));
+        });
+        return userprofileList;
     }
 }

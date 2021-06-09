@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import java.util.Optional;
+
 /**
  * @author Yogesh Sharma
  */
@@ -49,5 +51,15 @@ public class BarberController implements BarberApiDelegate {
     public ResponseEntity<BarberCalendarResponse> addBarberCalendar(BarberCalendarRequest barberCalendarRequest) {
         log.info("Inside BarberController calendar service");
         return ResponseEntity.ok(barberAdapter.addBarberCalendar(barberCalendarRequest));
+    }
+
+    @Override
+    public ResponseEntity<AuthenticationResponse> authenticateBarber(AuthenticationRequest authenticationRequest, Optional<String> clientHeader) {
+        return ResponseEntity.ok(barberAdapter.getJwtToken(authenticationRequest, clientHeader.orElse(null)));
+    }
+
+    @Override
+    public ResponseEntity<AuthenticationResponse> refreshBarber(RefreshRequest refreshRequest, Optional<String> clientHost) {
+        return ResponseEntity.ok(barberAdapter.getRefreshToken(refreshRequest, clientHost.orElse(null)));
     }
 }

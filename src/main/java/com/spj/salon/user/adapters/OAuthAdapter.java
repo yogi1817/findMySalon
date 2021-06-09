@@ -3,8 +3,11 @@ package com.spj.salon.user.adapters;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.spj.salon.configs.ServiceConfig;
+import com.spj.salon.exception.AuthorizationException;
 import com.spj.salon.openapi.resources.AuthenticationResponse;
+import com.spj.salon.user.entities.User;
 import com.spj.salon.user.ports.out.OAuthClient;
+import com.spj.salon.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
@@ -31,6 +34,7 @@ public class OAuthAdapter implements OAuthClient {
 
     private final Gson gson;
     private final ServiceConfig serviceConfig;
+    private final UserRepository userRepository;
 
     /**
      * This method calls the oauth service with login id and password and
@@ -43,7 +47,7 @@ public class OAuthAdapter implements OAuthClient {
      * @return
      */
     @Override
-    public AuthenticationResponse getAuthenticationData(String email, String password, String clientHost) throws OAuth2Exception {
+    public AuthenticationResponse getAuthenticationData(String email, String password, String clientHost, boolean barberFlag) throws OAuth2Exception {
         RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
                 .addFormDataPart("grant_type", "password")
                 .addFormDataPart("scope", "read")
@@ -51,21 +55,21 @@ public class OAuthAdapter implements OAuthClient {
                 .addFormDataPart("password", password)
                 .build();
 
-        return getAuthData(clientHost, body, email);
+        return getAuthData(clientHost, body, email, barberFlag);
     }
 
     @Override
-    public AuthenticationResponse getRefreshToken(String refreshToken, String email, String clientHost) throws OAuth2Exception {
+    public AuthenticationResponse getRefreshToken(String refreshToken, String email, String clientHost, boolean barberFlag) throws OAuth2Exception {
         RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
                 .addFormDataPart("grant_type", "refresh_token")
                 .addFormDataPart("scope", "read")
                 .addFormDataPart("refresh_token", refreshToken)
                 .build();
 
-        return getAuthData(clientHost, body, email);
+        return getAuthData(clientHost, body, email, barberFlag);
     }
 
-    private AuthenticationResponse getAuthData(String clientHost, RequestBody body, String email) {
+    private AuthenticationResponse getAuthData(String clientHost, RequestBody body, String email, boolean barberFlag) {
         String authenticateClient = clientHost + serviceConfig.getAuthenticateService();
 
         String authString = serviceConfig.getApplicationId() + ":" + serviceConfig.getApplicationPassword();
@@ -110,6 +114,12 @@ public class OAuthAdapter implements OAuthClient {
 
         if (!email.equals(token.get("email")))
             throw new OAuth2Exception("Invalid email passed");
+
+        User user = userRepository.findByEmail(email);
+        if ((barberFlag && user.getAuthority().getAuthority().equals("CUSTOMER"))
+                || (!barberFlag && user.getAuthority().getAuthority().equals("BARBER"))) {
+            throw new AuthorizationException("Invalid User Type, please login to the correct app", "unauthorised");
+        }
 
         return new AuthenticationResponse()
                 .accessToken(token.get("access_token"))

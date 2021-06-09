@@ -8,6 +8,7 @@ import com.spj.salon.barber.ports.in.IBarberAdapter;
 import com.spj.salon.barber.repository.ServicesRepository;
 import com.spj.salon.openapi.resources.*;
 import com.spj.salon.user.entities.User;
+import com.spj.salon.user.ports.out.OAuthClient;
 import com.spj.salon.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ public class BarberAdapter implements IBarberAdapter {
     private final ServicesRepository serviceRepo;
     private final BarberAdapterMapper facadeMapper;
     private final ServicesRepository servicesRepo;
+    private final OAuthClient oAuthClient;
 
     /**
      * This method will be called every morning by Barber to provide how many barbers are available today.
@@ -125,5 +127,16 @@ public class BarberAdapter implements IBarberAdapter {
         log.info("Service saved");
 
         return new BarberServicesResponse().message("service added");
+    }
+
+    @Override
+    public AuthenticationResponse getJwtToken(AuthenticationRequest authenticationRequest, String clientHeader) {
+        return oAuthClient.getAuthenticationData(authenticationRequest.getEmail().toLowerCase(),
+                authenticationRequest.getPassword(), clientHeader, true);
+    }
+
+    @Override
+    public AuthenticationResponse getRefreshToken(RefreshRequest refreshRequest, String clientHeader) {
+        return oAuthClient.getRefreshToken(refreshRequest.getRefreshToken(), refreshRequest.getEmail(), clientHeader, true);
     }
 }

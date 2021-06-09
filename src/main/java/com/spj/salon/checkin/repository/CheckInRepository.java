@@ -20,4 +20,6 @@ public interface CheckInRepository extends JpaRepository<CheckIn, Long> {
 
     List<CheckIn> findByBarberMappingIdAndCreateDateOrderByCheckInTimestampAsc(Long barberMappingId, LocalDate todaysDate);
 
+    List<CheckIn> findByBarberMappingIdAndCreateDateAndCheckedOutOrderByCheckInTimestampAsc(Long barberMappingId, LocalDate todaysDate, boolean checkedOut);
+
 }

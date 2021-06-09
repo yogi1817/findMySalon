@@ -12,7 +12,6 @@ import com.spj.salon.user.entities.User;
 import com.spj.salon.user.messaging.UserRegisterPayload;
 import com.spj.salon.user.messaging.UserRegisterPublisher;
 import com.spj.salon.user.ports.in.IUserAdapter;
-import com.spj.salon.user.ports.out.OAuthClient;
 import com.spj.salon.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +37,6 @@ public class UserAdapter implements IUserAdapter {
     private final ICheckinFacade iCheckinFacade;
     private final GeoCoding googleGeoCodingAdapter;
     private final UserAdapterMapper userAdapterMapper;
-    private final OAuthClient oAuthClient;
     @Qualifier("emailOtp")
     private final IMyOtpAdapter myEmailService;
     private final UserRegisterPublisher userRegisterPublisher;
@@ -145,17 +143,6 @@ public class UserAdapter implements IUserAdapter {
         }
 
         return user;
-    }
-
-    @Override
-    public AuthenticationResponse getJwtToken(AuthenticationRequest authenticationRequest, String clientHeader) {
-        return oAuthClient.getAuthenticationData(authenticationRequest.getEmail().toLowerCase(),
-                authenticationRequest.getPassword(), clientHeader);
-    }
-
-    @Override
-    public AuthenticationResponse getRefreshToken(RefreshRequest refreshRequest, String clientHeader) {
-        return oAuthClient.getRefreshToken(refreshRequest.getRefreshToken(), refreshRequest.getEmail(), clientHeader);
     }
 
     @Override

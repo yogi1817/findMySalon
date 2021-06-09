@@ -32,16 +32,6 @@ public class UserController implements UserApiDelegate {
     }
 
     @Override
-    public ResponseEntity<AuthenticationResponse> authenticateUser(AuthenticationRequest authenticationRequest, Optional<String> clientHost) {
-        return ResponseEntity.ok(userAdapter.getJwtToken(authenticationRequest, clientHost.orElse(null)));
-    }
-
-    @Override
-    public ResponseEntity<AuthenticationResponse> refreshUser(RefreshRequest refreshRequest, Optional<String> clientHost) {
-        return ResponseEntity.ok(userAdapter.getRefreshToken(refreshRequest, clientHost.orElse(null)));
-    }
-
-    @Override
     public ResponseEntity<UpdatePasswordResponse> updatePassword(UpdatePasswordRequest updatePasswordRequest) {
         log.info("Inside UserController authenticate service");
         return ResponseEntity.ok(userAdapter.updatePassword(updatePasswordRequest));

@@ -11,6 +11,10 @@ public interface IBarberAdapter {
     BarberServicesResponse addServices(long serviceId, int cost, int time);
 
     BarberCalendarResponse addBarberCalendar(BarberCalendarRequest barberCalendar);
-    
+
     BarberServicesResponse addService(BarberServicesRequest services);
+
+    AuthenticationResponse getJwtToken(AuthenticationRequest authenticationRequest, String clientHeader);
+
+    AuthenticationResponse getRefreshToken(RefreshRequest refreshRequest, String orElse);
 }

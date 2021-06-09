@@ -115,4 +115,23 @@ public class DateUtils {
         }
         return null;
     }
+
+    //Ex todays Cal close time is 10PM and current time is 8:59 PM then return false
+    //Ex todays Cal close time is 10PM and current time is 9:01 PM then return true
+    public static boolean isTodaysCalenderCloseTimeInOneHour(Date closeTime) {
+        if (closeTime.after(getNowTimePlus60Mins1970()))
+            return false;
+
+        return true;
+    }
+
+    public static Date getFormattedDateAsDate(String calendarDateString, String dateFormat) {
+        DateFormat df = new SimpleDateFormat(dateFormat);
+        try {
+            return df.parse(calendarDateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

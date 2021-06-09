@@ -4,6 +4,7 @@ import com.spj.salon.barber.entities.BarberCalendar;
 import com.spj.salon.checkin.entities.CheckIn;
 import com.spj.salon.openapi.resources.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -28,4 +29,6 @@ public interface ICheckinFacade {
     BarberWaitTimeResponse currentWaitTimeEstimateForCustomer(long barberId);
 
     BarberWaitTimeResponse currentWaitTimeEstimateForCustomerAtBarber(long customerId, long barberId);
+
+    List<UserProfile> getCheckedInCustomer();
 }

@@ -12,9 +12,5 @@ public interface IUserAdapter {
 
     User getLoggedInUserDetails();
 
-    AuthenticationResponse getJwtToken(AuthenticationRequest authenticationRequest, String clientHeader);
-
-    AuthenticationResponse getRefreshToken(RefreshRequest refreshRequest, String clientHeader);
-
     UpdatePasswordResponse updatePassword(UpdatePasswordRequest updatePasswordRequest);
 }

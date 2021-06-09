@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -56,5 +57,11 @@ public class CheckInController implements CheckInApiDelegate {
     public ResponseEntity<BarberWaitTimeResponse> currentWaitTimeEstimateForCustomer(Long barberId) {
         log.info("Inside CheckInController currentWaitTimeEstimateForCustomer service");
         return ResponseEntity.ok(checkInFacade.currentWaitTimeEstimateForCustomer(barberId));
+    }
+
+    @Override
+    public ResponseEntity<List<UserProfile>> getCheckedInCustomer() {
+        log.info("Inside CheckInController getCheckedInCustomer service");
+        return ResponseEntity.ok(checkInFacade.getCheckedInCustomer());
     }
 }

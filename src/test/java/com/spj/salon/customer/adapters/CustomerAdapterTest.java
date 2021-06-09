@@ -1,6 +1,7 @@
 package com.spj.salon.customer.adapters;
 
 import com.spj.salon.user.entities.User;
+import com.spj.salon.user.ports.out.OAuthClient;
 import com.spj.salon.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,13 +19,15 @@ class CustomerAdapterTest {
     private CustomerAdapter testSubject;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private OAuthClient oAuthClient;
 
     @BeforeEach
     void setUp() {
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(user.getEmail(), "encryptedPassword"));
 
-        testSubject = new CustomerAdapter(userRepository);
+        testSubject = new CustomerAdapter(userRepository, oAuthClient);
     }
 
     final User user = User.builder()
