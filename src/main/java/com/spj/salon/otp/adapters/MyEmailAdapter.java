@@ -2,15 +2,17 @@ package com.spj.salon.otp.adapters;
 
 import com.spj.salon.openapi.resources.OtpResponse;
 import com.spj.salon.otp.ports.in.IMyOtpAdapter;
+import com.spj.salon.otp.ports.out.GmailService;
 import com.spj.salon.user.entities.User;
 import com.spj.salon.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import javax.mail.MessagingException;
+import java.io.IOException;
 
 /**
  * @author Yogesh Sharma
@@ -19,7 +21,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 public class MyEmailAdapter implements IMyOtpAdapter {
-    private final JavaMailSender javaMailSender;
+    private final GmailService gmailService;
     public final OtpCache otpCache;
     private final UserRepository userRepository;
 
@@ -104,21 +106,12 @@ public class MyEmailAdapter implements IMyOtpAdapter {
         log.info("barber.getEmail() {}", user.getEmail());
         log.info("OTP : {}", otp);
 
-        //Generate The Template to send OTP
-        //EmailTemplate template = new EmailTemplate("SendOtp.html");
-
-        //String message = template.getTemplate(replacements);
-
-        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-        simpleMailMessage.setTo(user.getEmail());
-        simpleMailMessage.setSubject("Welcome to find my barber - OTP");
-        simpleMailMessage.setText("Your OTP is " + otp + " .OTP will expire in 30 mins");
-
-        // Uncomment to send mail
         try {
-            javaMailSender.send(simpleMailMessage);
-        } catch (Exception e) {
-            log.error("Unable to send email -> {}", e.getMessage());
+            gmailService.sendMessage(user.getEmail(),
+                    "Welcome to URNext App - OTP",
+                    "Your OTP is " + otp + ".OTP will expire in 30 mins");
+        } catch (MessagingException | IOException e) {
+            e.printStackTrace();
         }
 
         return new OtpResponse().emailOrPhone(user.getEmail()).message("Otp sent").verified(false);

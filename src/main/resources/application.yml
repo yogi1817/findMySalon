@@ -1,6 +1,6 @@
-info: 
+info:
   description: This is a find my salon spring boot project
-  
+
 server:
   port: ${PORT:8081}
   servlet:
@@ -31,14 +31,10 @@ spring:
         user-registered-out:
           destination: user-registered
 
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    
   flyway:
     baseline-on-migrate: true
     schemas:
-    - usa
+      - usa
 
 management:
   endpoint:
@@ -48,7 +44,7 @@ management:
 logging:
   level:
     com.spg.salon: DEBUG
-    
+
 spj:
   services:
     authenticate: /findmysalon/oauth/token

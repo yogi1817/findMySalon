@@ -1,7 +1,11 @@
 package com.spj.salon;
 
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.spj.salon.configs.EnvironmentConfig;
 import com.spj.salon.configs.ServiceConfig;
+import com.spj.salon.otp.gmail.GmailCredentials;
+import com.spj.salon.otp.gmail.GmailServiceImpl;
+import com.spj.salon.otp.ports.out.GmailService;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.impl.client.HttpClients;
 import org.openapitools.jackson.nullable.JsonNullableModule;
@@ -12,15 +16,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
-import java.util.Properties;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.TimeZone;
 
 @SpringBootApplication
@@ -70,19 +73,21 @@ public class FindMySalonApplication {
     }
 
     @Bean
-    public JavaMailSender getJavaMailSender() {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost(serviceConfig.getMailHost());
-        mailSender.setPort(serviceConfig.getMailPort());
-
-        mailSender.setUsername(envConfig.getMailUsername());
-        mailSender.setPassword(envConfig.getMailPassword());
-
-        Properties props = mailSender.getJavaMailProperties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-
-        return mailSender;
+    public GmailService getJavaMailSender() {
+        GmailService gmailService = null;
+        try {
+            gmailService = new GmailServiceImpl(GoogleNetHttpTransport.newTrustedTransport());
+            gmailService.setGmailCredentials(GmailCredentials.builder()
+                    .userEmail(envConfig.getEmail())
+                    .clientId(envConfig.getClientId())
+                    .clientSecret(envConfig.getClientSecret())
+                    .accessToken(envConfig.getAccessToken())
+                    .refreshToken(envConfig.getRefreshToken())
+                    .build());
+        } catch (GeneralSecurityException | IOException e) {
+            e.printStackTrace();
+        }
+        return gmailService;
     }
 
     //This is required for JSONNullable in openAPI for BarberCalendarRequest Enum type
