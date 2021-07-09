@@ -8,9 +8,6 @@ import com.spj.salon.otp.gmail.GmailServiceImpl;
 import com.spj.salon.otp.ports.out.GmailService;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.impl.client.HttpClients;
-import org.openapitools.jackson.nullable.JsonNullableModule;
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -90,11 +87,6 @@ public class FindMySalonApplication {
         return gmailService;
     }
 
-    //This is required for JSONNullable in openAPI for BarberCalendarRequest Enum type
-    @Bean
-    public JsonNullableModule jsonNullableModule() {
-        return new JsonNullableModule();
-    }
     // Uncomment below code if you want to use google api for location
     /*
      * @Bean public GeoApiContext getGeoApiContext() { return new
@@ -102,18 +94,4 @@ public class FindMySalonApplication {
      *
      * @PreDestroy public void preDestroy() { getGeoApiContext().shutdown(); }
      */
-
-    @Bean
-    public ConnectionFactory connectionFactory() {
-        String uri = System.getenv("CLOUDAMQP_URL");
-        if (uri == null)
-            uri = "amqp://guest:guest@localhost";
-
-        CachingConnectionFactory factory = new CachingConnectionFactory();
-        factory.setUri(uri);
-        factory.setRequestedHeartBeat(30);
-        factory.setConnectionTimeout(30);
-
-        return factory;
-    }
 }

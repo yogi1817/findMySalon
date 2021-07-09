@@ -16,7 +16,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .authorizeRequests()
                 .antMatchers("/barber/register").permitAll()
                 .antMatchers("/barber/*/waittime").permitAll()
-                .antMatchers("/customer/updatepassword").permitAll()
+                .antMatchers("/user/updatepassword").permitAll()
                 .antMatchers("/customer/register").permitAll()
                 .antMatchers("/customer/authenticate").permitAll()
                 .antMatchers("/barber/authenticate").permitAll()

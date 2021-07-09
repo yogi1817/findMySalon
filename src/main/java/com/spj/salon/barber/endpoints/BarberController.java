@@ -5,6 +5,7 @@ import com.spj.salon.openapi.endpoint.BarberApiDelegate;
 import com.spj.salon.openapi.resources.*;
 import com.spj.salon.user.ports.in.IRegisterBarber;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ public class BarberController implements BarberApiDelegate {
     private final IBarberAdapter barberAdapter;
     private final IRegisterBarber registerBarber;
 
+    @SneakyThrows
     @Override
     public ResponseEntity<RegisterBarberResponse> registerBarber(RegisterBarberRequest registerBarberRequest) {
         log.info("Inside BarberController registerBarber service");

@@ -48,8 +48,7 @@ logging:
 spj:
   services:
     authenticate: /findmysalon/oauth/token
-    oauthRegister: http://localhost:8080/findmysalon/user/register
-    updatePassword: http://localhost:8080/findmysalon/user/updatepassword
+    oauthHost: http://localhost:8080/findmysalon
 
 security:
   oauth2:

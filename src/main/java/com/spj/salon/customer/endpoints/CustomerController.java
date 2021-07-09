@@ -5,6 +5,7 @@ import com.spj.salon.openapi.endpoint.CustomerApiDelegate;
 import com.spj.salon.openapi.resources.*;
 import com.spj.salon.user.ports.in.IRegisterCustomer;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,7 @@ public class CustomerController implements CustomerApiDelegate {
     private final ICustomerAdapter customerAdapter;
     private final IRegisterCustomer registerCustomer;
 
+    @SneakyThrows
     @Override
     public ResponseEntity<RegisterCustomerResponse> registerCustomer(RegisterCustomerRequest registerCustomerRequest) {
         log.info("Inside CustomerController registerBarber service");

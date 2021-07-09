@@ -6,15 +6,16 @@ import com.spj.salon.checkin.adapters.ICheckinFacade;
 import com.spj.salon.checkin.entities.CheckIn;
 import com.spj.salon.checkin.ports.out.GeoCoding;
 import com.spj.salon.exception.NotFoundCustomException;
+import com.spj.salon.openapi.client.resources.RegisterUserRequest;
 import com.spj.salon.openapi.resources.*;
 import com.spj.salon.otp.ports.in.IMyOtpAdapter;
 import com.spj.salon.user.entities.User;
-import com.spj.salon.user.messaging.UserRegisterPayload;
-import com.spj.salon.user.messaging.UserRegisterPublisher;
 import com.spj.salon.user.ports.in.IUserAdapter;
+import com.spj.salon.user.ports.out.AuthorizationClient;
 import com.spj.salon.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.client.HttpResponseException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,7 +40,7 @@ public class UserAdapter implements IUserAdapter {
     private final UserAdapterMapper userAdapterMapper;
     @Qualifier("emailOtp")
     private final IMyOtpAdapter myEmailService;
-    private final UserRegisterPublisher userRegisterPublisher;
+    private final AuthorizationClient authorizationClient;
 
     @Override
     public UserProfile getUserProfile(Optional<Long> barberIdOptional, Optional<Long> customerId) {
@@ -146,7 +147,7 @@ public class UserAdapter implements IUserAdapter {
     }
 
     @Override
-    public UpdatePasswordResponse updatePassword(UpdatePasswordRequest updatePasswordRequest) {
+    public UpdatePasswordResponse updatePassword(UpdatePasswordRequest updatePasswordRequest) throws HttpResponseException {
         if (updatePasswordRequest.getPhoneNumber() == null && updatePasswordRequest.getEmail() == null) {
             log.info("No Phone number or email address provided -> {}", updatePasswordRequest);
             throw new NotFoundCustomException("No Phone number or email address provided", "");
@@ -173,13 +174,15 @@ public class UserAdapter implements IUserAdapter {
         }
     }
 
-    private UpdatePasswordResponse updatePassword(User persistedUser, String password) {
-        userRegisterPublisher.sendUserRegisterDetails(UserRegisterPayload.builder()
-                .email(persistedUser.getEmail().toLowerCase())
+    private UpdatePasswordResponse updatePassword(User persistedUser, String password) throws HttpResponseException {
+        if(!authorizationClient.registerUserOnAuthorizationServer(new RegisterUserRequest()
+                .email(persistedUser.getEmail())
                 .password(password)
-                .updatePasswordRequest(true)
                 .authorityId(persistedUser.getAuthorityId())
-                .build());
+                .updatePasswordRequest(true))){
+
+            throw new HttpResponseException(500, "Auth Server call failed");
+        }
 
         return new UpdatePasswordResponse()
                 .message("Password changed successfully");

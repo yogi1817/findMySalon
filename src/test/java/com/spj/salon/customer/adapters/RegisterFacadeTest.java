@@ -1,15 +1,17 @@
 package com.spj.salon.customer.adapters;
 
+import com.spj.salon.openapi.client.resources.RegisterUserRequest;
 import com.spj.salon.openapi.resources.*;
 import com.spj.salon.otp.adapters.MyEmailAdapter;
 import com.spj.salon.user.adapters.RegisterFacade;
 import com.spj.salon.user.adapters.RegisterMapper;
 import com.spj.salon.user.entities.Authorities;
 import com.spj.salon.user.entities.User;
-import com.spj.salon.user.messaging.UserRegisterPublisher;
 import com.spj.salon.user.ports.in.IUserDao;
+import com.spj.salon.user.ports.out.AuthorizationClient;
 import com.spj.salon.user.repository.AuthoritiesRepository;
 import com.spj.salon.user.repository.UserRepository;
+import org.apache.http.client.HttpResponseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +36,7 @@ class RegisterFacadeTest {
     @Mock
     private AuthoritiesRepository authoritiesRepository;
     @Mock
-    private UserRegisterPublisher userRegisterPublisher;
+    private AuthorizationClient authorizationClient;
     @Mock
     private UserRepository userRepository;
     @Mock
@@ -58,16 +60,22 @@ class RegisterFacadeTest {
 
     @BeforeEach
     void setUp() {
-        testSubject = new RegisterFacade(userDao, authoritiesRepository, userRegisterPublisher, userRepository, myEmailAdapter, registerMapper);
+        testSubject = new RegisterFacade(userDao, authoritiesRepository, userRepository, myEmailAdapter, registerMapper, authorizationClient);
     }
 
     @Test
-    void registerCustomer() {
+    void registerCustomer() throws HttpResponseException {
         RegisterCustomerRequest registerCustomerRequest = new RegisterCustomerRequest()
                 .email("customer@customer.com")
                 .firstName("customer")
                 .lastName("last")
                 .password("customersecret");
+
+        RegisterUserRequest registerUserRequest = new RegisterUserRequest()
+                .email(registerCustomerRequest.getEmail())
+                .updatePasswordRequest(false)
+                .password(registerCustomerRequest.getPassword())
+                .authorityId(1L);
 
         RegisterCustomerResponse expected = new RegisterCustomerResponse()
                 .email("customer@customer.com")
@@ -92,6 +100,10 @@ class RegisterFacadeTest {
         Mockito.doReturn(new OtpResponse().message("otp sent"))
                 .when(myEmailAdapter)
                 .sendOtpMessage(registerCustomerRequest.getEmail());
+
+        Mockito.doReturn(true)
+                .when(authorizationClient)
+                .registerUserOnAuthorizationServer(registerUserRequest);
 
         RegisterCustomerResponse registerCustomerResponse = testSubject.registerCustomer(registerCustomerRequest);
 
@@ -133,13 +145,19 @@ class RegisterFacadeTest {
     }
 
     @Test
-    void registerBarber() {
+    void registerBarber() throws HttpResponseException {
         RegisterBarberRequest registerBarberRequest = new RegisterBarberRequest()
                 .email("barber@barber.com")
                 .firstName("barber")
                 .lastName("secret")
                 .password("barbersecret")
                 .storeName("barberthebarber");
+
+        RegisterUserRequest registerUserRequest = new RegisterUserRequest()
+                .email(registerBarberRequest.getEmail())
+                .password(registerBarberRequest.getPassword())
+                .authorityId(2L)
+                .updatePasswordRequest(false);
 
         RegisterBarberResponse expected = new RegisterBarberResponse()
                 .email("barber@barber.com")
@@ -160,6 +178,10 @@ class RegisterFacadeTest {
         Mockito.doReturn(barber)
                 .when(userRepository)
                 .saveAndFlush(barber);
+
+        Mockito.doReturn(true)
+                .when(authorizationClient)
+                .registerUserOnAuthorizationServer(registerUserRequest);
 
         RegisterBarberResponse registerBarberResponse = testSubject.registerBarber(registerBarberRequest);
 

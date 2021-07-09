@@ -1,0 +1,94 @@
+openapi: 3.0.2
+info:
+  title: Register Services API
+  description: API used to register user for FindMySalon Services
+  version: Initial
+servers:
+  - url: http://localhost:8080
+    description: local
+  - url: https://authorization-spj.herokuapp.com
+    description: heroku
+tags:
+  - name: registerUser
+  - name: registerClient
+paths:
+  /client/register:
+    post:
+      operationId: registerClient
+      tags:
+        - registerClient
+      summary: Register a client
+      description: Register a client
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterClientRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterClientResponse'
+  /user/register:
+    post:
+      operationId: registerUser
+      tags:
+        - registerUser
+      summary: Register a User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterUserResponse'
+components:
+  schemas:
+    RegisterClientRequest:
+      type: object
+      properties:
+        clientName:
+          type: string
+        clientPassword:
+          type: string
+        redirectUri:
+          type: string
+      required:
+        - clientName
+        - clientPassword
+        - redirectUri
+    RegisterClientResponse:
+      type: object
+      properties:
+        clientName:
+          type: string
+        message:
+          type: string
+    RegisterUserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        authorityId:
+          type: integer
+          format: int64
+        updatePasswordRequest:
+          type: boolean
+    RegisterUserResponse:
+      type: object
+      properties:
+        userName:
+          type: string
+        message:
+          type: string

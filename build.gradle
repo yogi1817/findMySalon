@@ -52,8 +52,6 @@ dependencies {
     implementation 'io.springfox:springfox-swagger2:2.9.2'
     implementation 'io.springfox:springfox-swagger-ui:2.9.2'
     implementation 'io.springfox:springfox-spring-web:2.9.2'
-    implementation 'org.springframework.cloud:spring-cloud-stream'
-    implementation 'org.springframework.cloud:spring-cloud-stream-binder-rabbit'
 
     implementation 'javax.mail:mail:1.4.7'
     implementation 'com.google.api-client:google-api-client:1.23.0'
@@ -83,15 +81,29 @@ test {
     useJUnitPlatform()
 }
 
+task buildAuthorizationClient(type: org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
+    inputSpec = "$rootDir/apis/register-user.yml".toString()
+    generatorName = "java"
+    apiPackage = "com.spj.salon.openapi.client.api"
+    modelPackage = "com.spj.salon.openapi.client.resources"
+    generateModelTests = false
+    generateApiTests = false
+    groupId = "com.spj.find.salon"
+    configOptions = [
+            library            : "resttemplate",
+            dateLibrary        : "java14-localdatetime",
+            java14             : "true",
+            toApiName          : "AuthorizationClient"
+    ]
+    outputDir = "$rootDir/build/generated".toString()
+}
+
 openApiGenerate {
     inputSpec = "$rootDir/apis/findMySalon-api.yml".toString()
     generatorName = "spring"
     apiPackage = "com.spj.salon.openapi.endpoint"
     modelPackage = "com.spj.salon.openapi.resources"
-    generateModelTests = false
-    generateApiTests = false
-    library = "spring-boot"
-    groupId = "com.spj.find.salon"
+    invokerPackage = "com.spj.salon.openapi.handler"
     configOptions = [
             useTags            : "true",
             configPackage      : "com.spj.salon.openapi.config",
@@ -106,7 +118,7 @@ openApiGenerate {
 }
 
 compileJava {
-    dependsOn tasks.openApiGenerate
+    dependsOn buildAuthorizationClient, tasks.openApiGenerate
     options.compilerArgs = [
             '-s', "$rootDir/build/generated"
     ]

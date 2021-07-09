@@ -25,7 +25,4 @@ public class ServiceConfig {
 
     @Value("${security.oauth2.client.client-secret}")
     private String applicationPassword;
-
-    @Value("${spj.services.oauthRegister}")
-    private String oauthRegisterUrl;
 }
