@@ -380,7 +380,7 @@ public class CheckInFacade implements ICheckinFacade {
         }
 
         Date nowTimePlus1Hour = DateUtils.getNowTimePlus60Mins1970(timeZone);
-        if(todaysDay.getSalonCloseTime().before(nowTimePlus1Hour)){
+        if(todaysDay==null || todaysDay.getSalonCloseTime().before(nowTimePlus1Hour)){
             return true;
         }
         return false;
