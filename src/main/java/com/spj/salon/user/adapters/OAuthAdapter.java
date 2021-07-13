@@ -98,7 +98,7 @@ public class OAuthAdapter implements OAuthClient {
             String responseBody = new BufferedReader(in)
                     .lines()
                     .collect(Collectors.joining("\n"));
-            log.debug("responseBody -->{}", responseBody);
+            //log.debug("responseBody -->{}", responseBody);
 
             token = gson.fromJson(responseBody, empMapType);
 

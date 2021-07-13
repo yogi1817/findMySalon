@@ -32,7 +32,6 @@ import java.time.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * @author Yogesh Sharma
@@ -53,7 +52,7 @@ public class CheckInFacade implements ICheckinFacade {
     private final int waitTimeBetweenCustomers = 15;
 
     @Override
-    public BarberWaitTimeResponse waitTimeEstimate(Optional<Long> barberIdOptional) {
+    public BarberWaitTimeResponse waitTimeEstimate(Optional<Long> barberIdOptional, TimeZone timeZone) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = (String) auth.getPrincipal();
 
@@ -81,17 +80,12 @@ public class CheckInFacade implements ICheckinFacade {
         } else {
             barberId = user.getUserId();
         }
-        return waitTimeEstimateAtBarber(barberId);
+        return waitTimeEstimateAtBarber(barberId, timeZone);
     }
 
-    private BarberWaitTimeResponse waitTimeEstimateAtBarber(Long barberId) {
+    private BarberWaitTimeResponse waitTimeEstimateAtBarber(Long barberId, TimeZone timeZone) {
         User barber = userRepository.findByUserId(barberId);
         if (barber != null) {
-            List<BarberCalendar> todaysCal = barber.getBarberCalendarSet()
-                    .stream()
-                    .filter(this::getTodaysBarberCal)
-                    .collect(Collectors.toList());
-
             DailyBarbers todaysBarber = barber.getDailyBarberSet()
                     .stream()
                     .filter(a -> a.getBarbersCount() > 0)
@@ -104,7 +98,7 @@ public class CheckInFacade implements ICheckinFacade {
                     .filter(a -> !a.isCheckedOut())
                     .count();
 
-            return new BarberWaitTimeResponse().waitTime(getEstimateWaitTime(todaysCal, todaysBarber, noOfCheckIns))
+            return new BarberWaitTimeResponse().waitTime(getEstimateWaitTime(barber.getBarberCalendarSet(), todaysBarber, noOfCheckIns, timeZone))
                     .salonName(barber.getStoreName());
         }
         return new BarberWaitTimeResponse().waitTime("Unable to find wait-time");
@@ -131,20 +125,15 @@ public class CheckInFacade implements ICheckinFacade {
     /**
      * This method will calculate the checkin time available for a given service
      *
-     * @param todaysCal
      * @param todaysBarberCount
      * @param noOfCheckIns
      * @return
      */
-    private String getEstimateWaitTime(List<BarberCalendar> todaysCal, DailyBarbers todaysBarberCount,
-                                       long noOfCheckIns) {
+    private String getEstimateWaitTime(Set<BarberCalendar> barberCalendarSet, DailyBarbers todaysBarberCount,
+                                       long noOfCheckIns, TimeZone timeZone) {
 
-        if (CollectionUtils.isEmpty(todaysCal)) {
-            return "Barber Calender not set for today";
-        }
-        //If any record for today date exists then its a holiday
-        else if (todaysCal.stream().anyMatch(a -> DateUtils.isTodayDate(a.getCalendarDate()))) {
-            return "Barber closed";
+        if(isBarberClosed(barberCalendarSet, timeZone)){
+            return "Barber is either closed or calender not set for today";
         }
 
         if (todaysBarberCount.getBarbersCount() == 0) {
@@ -156,21 +145,36 @@ public class CheckInFacade implements ICheckinFacade {
     }
 
     /**
-     * This method will find out todays working hours  y filtering on todays date
+     * This method will find out todays working hours by filtering on todays date
      * It will also check if it a special day like 4th July
-     *
-     * @param barberCalendar
-     * @return
      */
-    private boolean getTodaysBarberCal(BarberCalendar barberCalendar) {
-        if (DateUtils.getTodaysDay().equals(barberCalendar.getCalendarDay())) {
+    private boolean isBarberClosed(Set<BarberCalendar> barberCalendarSet, TimeZone timeZone) {
+        BarberCalendar todaysDay = null;
+        BarberCalendar todaysDate = null;
+        for (BarberCalendar barberCalendar: barberCalendarSet) {
+            if (DateUtils.getTodaysDay(timeZone).equals(barberCalendar.getCalendarDay())) {
+                todaysDay = barberCalendar;
+            }
+            else if(DateUtils.isTodayDate(barberCalendar.getCalendarDate(), timeZone)){
+                todaysDate = barberCalendar;
+            }
+        }
+
+        if (todaysDay == null || todaysDate != null) {
             return true;
         }
-        return DateUtils.isTodayDate(barberCalendar.getCalendarDate());
+
+        Date nowTime = DateUtils.getNowTime1970Format(timeZone);
+        if(todaysDay.getSalonOpenTime().after(nowTime)
+                || todaysDay.getSalonCloseTime().before(nowTime)){
+            return true;
+        }
+
+        return false;
     }
 
     @Override
-    public CustomerCheckInResponse checkInCustomerByCustomer(Optional<Long> barberIdOpt) {
+    public CustomerCheckInResponse checkInCustomerByCustomer(Optional<Long> barberIdOpt, TimeZone timeZone) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = (String) auth.getPrincipal();
         User customer = userRepository.findByEmail(email);
@@ -185,18 +189,18 @@ public class CheckInFacade implements ICheckinFacade {
         }
 
         User barber = userRepository.findByUserId(barberId);
-        return checkin(customer, barber, customer.getUserId());
+        return checkin(customer, barber, customer.getUserId(), timeZone);
     }
 
     @Override
-    public CustomerCheckInResponse checkInCustomerByBarber(long userId) {
+    public CustomerCheckInResponse checkInCustomerByBarber(long userId, TimeZone timeZone) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = (String) auth.getPrincipal();
         User barber = userRepository.findByEmail(email);
 
         User customer = userRepository.findByUserId(userId);
 
-        return checkin(customer, barber, barber.getUserId());
+        return checkin(customer, barber, barber.getUserId(), timeZone);
     }
 
     @Override
@@ -204,8 +208,8 @@ public class CheckInFacade implements ICheckinFacade {
         return checkInRepository.countByUserMappingIdAndCheckedOutAndCreateDate(userId, false, LocalDate.now()) > 0;
     }
 
-    private CustomerCheckInResponse checkin(User customer, User barber, long updatedBy) {
-        String waitTimeEstimate = waitTimeEstimateAtBarber(barber.getUserId()).getWaitTime();
+    private CustomerCheckInResponse checkin(User customer, User barber, long updatedBy, TimeZone timeZone) {
+        String waitTimeEstimate = waitTimeEstimateAtBarber(barber.getUserId(), timeZone).getWaitTime();
 
         try {
             int waitTime = Integer.parseInt(waitTimeEstimate);
@@ -260,7 +264,7 @@ public class CheckInFacade implements ICheckinFacade {
      * @throws ServiceUnavailableException
      */
     @Override
-    public BarbersWaitTimeResponse findBarbersAtZip(BarberWaitTimeRequest barberCheckInRequest) {
+    public BarbersWaitTimeResponse findBarbersAtZip(BarberWaitTimeRequest barberCheckInRequest, TimeZone timeZone) {
         double longitude;
         double latitude;
 
@@ -302,7 +306,7 @@ public class CheckInFacade implements ICheckinFacade {
             log.debug("latitude " + latitude);
         }
 
-        return findBarbersWithinXMiles(longitude, latitude, barberCheckInRequest.getDistance());
+        return findBarbersWithinXMiles(longitude, latitude, barberCheckInRequest.getDistance(), timeZone);
     }
 
     /**
@@ -313,12 +317,15 @@ public class CheckInFacade implements ICheckinFacade {
      * @param latitude
      * @param distance
      */
-    private BarbersWaitTimeResponse findBarbersWithinXMiles(double longitude, double latitude, Double distance) {
+    private BarbersWaitTimeResponse findBarbersWithinXMiles(double longitude, double latitude,
+                                                            Double distance, TimeZone timeZone) {
         BarberDetails barberDetails;
         BarbersWaitTimeResponse barbersWaitTimeResponse = new BarbersWaitTimeResponse();
 
-        double long1 = longitude - distance / Math.abs(Math.cos(Math.toRadians(latitude)) * 69);
-        double long2 = longitude + distance / Math.abs(Math.cos(Math.toRadians(latitude)) * 69);
+        double multiplier  = distance / Math.abs(Math.cos(Math.toRadians(latitude)) * 69);
+
+        double long1 = longitude - multiplier;
+        double long2 = longitude + multiplier;
         double lat1 = latitude - (distance / 69);
         double lat2 = latitude + (distance / 69);
 
@@ -334,6 +341,7 @@ public class CheckInFacade implements ICheckinFacade {
             if (barbersAddress.isPresent()) {
                 Optional<User> userOpt = userRepository.findById(barbersAddress.get().getUserId());
                 User user = userOpt.get();
+                BarberDetailsCalendar barberDetailsCalendar = getUserCalendar(user.getBarberCalendarSet());
 
                 barberDetails = new BarberDetails()
                         .address(checkInAdapterMapper.toResponse(barbersAddress.get()))
@@ -345,8 +353,10 @@ public class CheckInFacade implements ICheckinFacade {
                         .phone(user.getPhone())
                         .storeName(user.getStoreName())
                         .distance((Double) map.get("distance"))
-                        .waitTime(waitTimeEstimateAtBarber(barbersAddress.get().getUserId()).getWaitTime())
-                        .calendar(getUserCalendar(user.getBarberCalendarSet()));
+                        .waitTime(waitTimeEstimateAtBarber(barbersAddress.get().getUserId(), timeZone).getWaitTime())
+                        .calendar(barberDetailsCalendar)
+                        .isShopOpen(!isBarberClosed(user.getBarberCalendarSet(), timeZone))
+                        .storeCloseIn1HourFlag(isStoreClosingIn1Hour(user.getBarberCalendarSet(), timeZone));
 
                 barbersWaitTimeResponse.addBarberDetailsItem(barberDetails);
             }
@@ -358,6 +368,22 @@ public class CheckInFacade implements ICheckinFacade {
             barbersWaitTimeResponse.setMessage(barbersWaitTimeResponse.getBarberDetails().size() + " Barbers Found");
         }
         return barbersWaitTimeResponse;
+    }
+
+    private Boolean isStoreClosingIn1Hour(Set<BarberCalendar> barberCalendarSet, TimeZone timeZone) {
+        BarberCalendar todaysDay = null;
+        for (BarberCalendar barberCalendar: barberCalendarSet) {
+            if (DateUtils.getTodaysDay(timeZone).equals(barberCalendar.getCalendarDay())) {
+                todaysDay = barberCalendar;
+                break;
+            }
+        }
+
+        Date nowTimePlus1Hour = DateUtils.getNowTimePlus60Mins1970(timeZone);
+        if(todaysDay.getSalonCloseTime().before(nowTimePlus1Hour)){
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -412,7 +438,7 @@ public class CheckInFacade implements ICheckinFacade {
     }
 
     private BarberWaitTimeResponse calculateWaitTime(User user, long barberId) {
-        long waitTime = 0;
+        long waitTime;
         //Find barber count at current time
         int currentBarberCount = userRepository.findByUserId(barberId).getDailyBarberSet()
                 .stream()
@@ -424,7 +450,7 @@ public class CheckInFacade implements ICheckinFacade {
                 .findByBarberMappingIdAndCreateDateOrderByCheckInTimestampAsc(barberId, LocalDate.now());
 
         CheckIn lastCheckoutUser = checkInList.stream()
-                .filter(checkIn -> checkIn.isCheckedOut())
+                .filter(CheckIn::isCheckedOut)
                 .reduce((first, second) -> second).orElse(null);
 
         OffsetDateTime checkOutTimestamp = null;
@@ -454,11 +480,11 @@ public class CheckInFacade implements ICheckinFacade {
                 .isBefore(userCheckInRecord.getCheckInTimestamp())) {
             waitTime = Duration.between(OffsetDateTime.now(),
                     userCheckInRecord.getCheckInTimestamp()
-                            .plusMinutes(rankMultiplier * waitTimeBetweenCustomers)).toMinutes();
+                            .plusMinutes((long) rankMultiplier * waitTimeBetweenCustomers)).toMinutes();
         } else {
             waitTime = Duration.between(OffsetDateTime.now(),
                     checkOutTimestamp
-                            .plusMinutes(rankMultiplier * waitTimeBetweenCustomers)).toMinutes();
+                            .plusMinutes((long) rankMultiplier * waitTimeBetweenCustomers)).toMinutes();
         }
 
         return new BarberWaitTimeResponse().waitTime(waitTime < 0 ? "0" : waitTime + "");
@@ -467,7 +493,7 @@ public class CheckInFacade implements ICheckinFacade {
     private CheckIn setRank(CheckIn checkIn, User user, AtomicInteger counter) {
 
         int count = counter.incrementAndGet();
-        if (checkIn.getUserMappingId() == user.getUserId()) {
+        if (Objects.equals(checkIn.getUserMappingId(), user.getUserId())) {
             checkIn.setRank(count);
             return checkIn;
         }
@@ -485,10 +511,8 @@ public class CheckInFacade implements ICheckinFacade {
                 barber.getUserId(), LocalDate.now(), false);
 
         List<UserProfile> userprofileList = new ArrayList<>();
-        checkedInUsers.stream().forEach(checkedInUser -> {
-            userprofileList.add(
-                    checkInAdapterMapper.toUserProfile(userRepository.findByUserId(checkedInUser.getUserMappingId())));
-        });
+        checkedInUsers.forEach(checkedInUser -> userprofileList.add(
+                checkInAdapterMapper.toUserProfile(userRepository.findByUserId(checkedInUser.getUserMappingId()))));
         return userprofileList;
     }
 }

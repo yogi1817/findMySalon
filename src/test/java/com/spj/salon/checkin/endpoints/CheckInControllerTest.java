@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import static org.mockito.Mockito.*;
 
@@ -35,6 +36,7 @@ public class CheckInControllerTest {
     private static final String CHECKIN_BARBERS_LOCATION = "/checkin/barbers/waittime/forlocation";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
+    private final TimeZone timeZone = TimeZone.getTimeZone("EST");
     static {
         OBJECT_MAPPER.findAndRegisterModules();
     }
@@ -49,7 +51,7 @@ public class CheckInControllerTest {
     void shouldCheckInByCustomerAndReturnCustomerCheckInResponse() throws Exception {
         doReturn(new CustomerCheckInResponse().message("CheckedIn"))
                 .when(checkInFacade)
-                .checkInCustomerByCustomer(Optional.of(1L));
+                .checkInCustomerByCustomer(Optional.of(1L), timeZone);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(CHECKIN_BY_USER, 1L)
@@ -61,7 +63,7 @@ public class CheckInControllerTest {
                 .andExpect(MockMvcResultMatchers.content().json(OBJECT_MAPPER.writeValueAsString(new CustomerCheckInResponse().message("CheckedIn"))));
 
         verify(checkInFacade, times(1))
-                .checkInCustomerByCustomer(Optional.of(1L));
+                .checkInCustomerByCustomer(Optional.of(1L), timeZone);
         verifyNoMoreInteractions(checkInFacade);
     }
 
@@ -69,7 +71,7 @@ public class CheckInControllerTest {
     void shouldCheckInByBarberAndReturnCustomerCheckInResponse() throws Exception {
         doReturn(new CustomerCheckInResponse().customerId("1234").message("checkin"))
                 .when(checkInFacade)
-                .checkInCustomerByBarber(1);
+                .checkInCustomerByBarber(1, timeZone);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(CHECKIN_BY_BARBER, 1L)
@@ -81,7 +83,7 @@ public class CheckInControllerTest {
                 .andExpect(MockMvcResultMatchers.content().json(OBJECT_MAPPER.writeValueAsString(new CustomerCheckInResponse().customerId("1234").message("checkin"))));
 
         verify(checkInFacade, times(1))
-                .checkInCustomerByBarber(1);
+                .checkInCustomerByBarber(1, timeZone);
         verifyNoMoreInteractions(checkInFacade);
     }
 
@@ -89,7 +91,7 @@ public class CheckInControllerTest {
     void shouldFindWaitTimeEstimateAtBarberAndReturnString() throws Exception {
         doReturn(new BarberWaitTimeResponse().waitTime("15"))
                 .when(checkInFacade)
-                .waitTimeEstimate(Optional.of(1L));
+                .waitTimeEstimate(Optional.of(1L), timeZone);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get(BARBER_WAIT_TIME, 1L)
@@ -101,7 +103,7 @@ public class CheckInControllerTest {
                 .andExpect(MockMvcResultMatchers.content().json(OBJECT_MAPPER.writeValueAsString(new BarberWaitTimeResponse().waitTime("15"))));
 
         verify(checkInFacade, times(1))
-                .waitTimeEstimate(Optional.of(1L));
+                .waitTimeEstimate(Optional.of(1L), timeZone);
         verifyNoMoreInteractions(checkInFacade);
     }
 
@@ -142,7 +144,7 @@ public class CheckInControllerTest {
                 .barberDetails(list);
         doReturn(barberCheckInResponse)
                 .when(checkInFacade)
-                .findBarbersAtZip(barberCheckInRequest);
+                .findBarbersAtZip(barberCheckInRequest, timeZone);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(CHECKIN_BARBERS_LOCATION)
@@ -155,7 +157,7 @@ public class CheckInControllerTest {
                 .andExpect(MockMvcResultMatchers.content().json(OBJECT_MAPPER.writeValueAsString(barberCheckInResponse)));
 
         verify(checkInFacade, times(1))
-                .findBarbersAtZip(barberCheckInRequest);
+                .findBarbersAtZip(barberCheckInRequest, timeZone);
         verifyNoMoreInteractions(checkInFacade);
     }
 }

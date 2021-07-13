@@ -7,18 +7,19 @@ import com.spj.salon.openapi.resources.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TimeZone;
 
 public interface ICheckinFacade {
 
-    BarberWaitTimeResponse waitTimeEstimate(Optional<Long> barberIdOptional);
+    BarberWaitTimeResponse waitTimeEstimate(Optional<Long> barberIdOptional, TimeZone timeZone);
 
-    CustomerCheckInResponse checkInCustomerByCustomer(Optional<Long> barberId);
+    CustomerCheckInResponse checkInCustomerByCustomer(Optional<Long> barberId, TimeZone timeZone);
 
-    CustomerCheckInResponse checkInCustomerByBarber(long barberId);
+    CustomerCheckInResponse checkInCustomerByBarber(long barberId, TimeZone timeZone);
 
     CustomerCheckoutResponse checkOut(Optional<Long> customerId);
 
-    BarbersWaitTimeResponse findBarbersAtZip(BarberWaitTimeRequest barberCheckInRequest);
+    BarbersWaitTimeResponse findBarbersAtZip(BarberWaitTimeRequest barberCheckInRequest, TimeZone timeZone);
 
     boolean isUserAlreadyCheckedIn(long userId);
 

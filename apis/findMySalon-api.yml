@@ -376,6 +376,10 @@ paths:
           schema:
             type: integer
             format: int64
+        - in: header
+          name: timeZone
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -399,6 +403,10 @@ paths:
           schema:
             type: integer
             format: int64
+        - in: header
+          name: timeZone
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -422,6 +430,10 @@ paths:
           schema:
             type: integer
             format: int64
+        - in: header
+          name: timeZone
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -461,6 +473,11 @@ paths:
       description: This method will return all barbers near a certain distance
       security:
         - bearerAuth: [ ]
+      parameters:
+        - in: header
+          name: timeZone
+          schema:
+            type: string
       requestBody:
         required: true
         content:

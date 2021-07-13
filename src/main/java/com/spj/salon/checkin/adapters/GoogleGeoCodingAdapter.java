@@ -72,7 +72,7 @@ public class GoogleGeoCodingAdapter implements GeoCoding {
             log.info(e.getMessage());
             e.printStackTrace();
         }
-        log.info("responseBody -->{}", responseBody);
+        //log.info("responseBody -->{}", responseBody);
         Response response = gson.fromJson(responseBody, Response.class);
 
         return response.results;
